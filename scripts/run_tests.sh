@@ -26,8 +26,8 @@ while getopts "n:sr:" option; do
             ;;
         r) # report outcome to slack
             CI_STEP_NAME=$OPTARG
-            load_env_files "$WORKSPACE_DIR/development/common/SLACK_WEBHOOK_LIBS.enc.env"
-            trap 'slack_ci_report "$ROOT_DIR" "$CI_STEP_NAME" "$?" "$SLACK_WEBHOOK_LIBS"' EXIT
+            load_env_files "$WORKSPACE_DIR/development/common/SLACK_WEBHOOK_JOBS.enc.env"
+            trap 'slack_ci_report "$ROOT_DIR" "$CI_STEP_NAME" "$?" "$SLACK_WEBHOOK_JOBS"' EXIT
             ;;
         *)
             ;;
@@ -37,7 +37,7 @@ done
 ## Init workspace
 ##
 
-. "$WORKSPACE_DIR/development/workspaces/libs/libs.sh" krawler-ekosystem
+. "$WORKSPACE_DIR/development/workspaces/jobs/jobs.sh" krawler-ekosystem
 
 ## Run tests
 ##
