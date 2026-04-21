@@ -4,3 +4,5 @@
 
 This repository contains the following packages:
 
+- **[@kalisio/krawler](../packages/krawler)**
+
