@@ -1,0 +1,63 @@
+{
+  "name": "krawler-ekosystem",
+  "description": "Kalisio Krawler and all related jobs for data collection",
+  "type": "module",
+  "packageManager": "pnpm@10.1.0",
+  "scripts": {
+    "build": "pnpm -r build",
+    "changeset": "changeset",
+    "changeset:status": "changeset status",
+    "changeset:version": "changeset version",
+    "changeset:release": "pnpm build && changeset publish",
+    "docs:build": "vitepress build docs",
+    "docs:dev": "vitepress dev docs",
+    "lint": "pnpm -r lint",
+    "prepare": "husky",
+    "pretest": "mkdir -p coverage",
+    "test": "pnpm -r test --coverage",
+    "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info"
+  },
+  "keywords": [
+    "kalisio"
+  ],
+  "author": {
+    "name": "KALISIO <contact@kalisio.com>",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kalisio/krawler-ekosystem.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kalisio/krawler-ekosystem/issues"
+  },
+  "homepage": "git://github.com/kalisio/krawler-ekosystem#readme",
+  "dependencies": {
+    "keycloak-js": "catalog:",
+    "lodash": "catalog:",
+    "moment": "catalog:",
+    "quasar": "catalog:"
+  },
+  "devDependencies": {
+    "@changesets/cli": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "cross-env": "catalog:",
+    "husky": "catalog:",
+    "lcov-result-merger": "catalog:",
+    "lint-staged": "catalog:",
+    "mermaid": "catalog:",
+    "standard": "catalog:",
+    "vite": "catalog:",
+    "vite-bundle-visualizer": "catalog:",
+    "vitepress": "catalog:",
+    "vitepress-plugin-mermaid": "catalog:",
+    "vitepress-theme-kalisio": "catalog:",
+    "vitest": "catalog:"
+  },
+  "metaCatalog": {
+    "version": "0.7.0",
+    "syncedAt": "2026-04-21T09:08:03.211Z"
+  }
+}
