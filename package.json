@@ -5,17 +5,20 @@
   "packageManager": "pnpm@10.1.0",
   "scripts": {
     "build": "pnpm -r build",
+    "build:krawler": "pnpm --filter @kalisio/krawler build",
     "changeset": "changeset",
+    "changeset:release": "pnpm build && changeset publish",
     "changeset:status": "changeset status",
     "changeset:version": "changeset version",
-    "changeset:release": "pnpm build && changeset publish",
     "docs:build": "vitepress build docs",
     "docs:dev": "vitepress dev docs",
     "lint": "pnpm -r lint",
+    "lint:krawler": "pnpm --filter @kalisio/krawler lint",
+    "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
     "prepare": "husky",
     "pretest": "mkdir -p coverage",
     "test": "pnpm -r test --coverage",
-    "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info"
+    "test:krawler": "pnpm --filter @kalisio/krawler test --coverage"
   },
   "keywords": [
     "kalisio"
