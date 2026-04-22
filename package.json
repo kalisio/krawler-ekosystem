@@ -17,8 +17,8 @@
     "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
     "prepare": "husky",
     "pretest": "mkdir -p coverage",
-    "test": "pnpm -r test --coverage",
-    "test:krawler": "pnpm --filter @kalisio/krawler test --coverage"
+    "test": "pnpm -r test",
+    "test:krawler": "pnpm --filter @kalisio/krawler test"
   },
   "keywords": [
     "kalisio"
@@ -62,5 +62,10 @@
   "metaCatalog": {
     "version": "0.7.0",
     "syncedAt": "2026-04-21T09:08:03.211Z"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "gdal-async"
+    ]
   }
 }

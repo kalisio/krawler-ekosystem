@@ -13,6 +13,11 @@ on:
         default: false
         required: false
         type: boolean
+      build_app:
+        description: "Build app"
+        default: false
+        required: false
+        type: boolean
       build_docs:
         description: "Build docs"
         default: false
@@ -57,7 +62,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [ 24 ]
+        node: [ 20, 22 ]
+        mongo: [ 7, 8 ]
     name: Additional tests
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.additional_tests ||
@@ -84,11 +90,39 @@ jobs:
       - name: Setup workspace
         env:
           KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
-        run: bash ./scripts/setup_workspace.sh
+        run: bash ./scripts/setup_workspace.sh -n ${{ matrix.node }}
       - name: Run tests
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        run: bash ./scripts/run_tests.sh -n ${{ matrix.node }}
+        run: bash ./scripts/run_tests.sh -n ${{ matrix.node }} -m ${{ matrix.mongo }}
+
+  build_app:
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [ 20 ]
+        debian: [ 'bookworm' ]
+    name: Build app
+    if: ${{
+      github.event_name == 'workflow_dispatch' && inputs.build_app ||
+      github.event_name == 'push' && !contains(github.event.head_commit.message, 'skip app')
+      }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Init runner
+        run: bash ./scripts/init_runner.sh ${{ github.job }}
+      - name: Setup workspace
+        env:
+          KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
+        run: bash ./scripts/setup_workspace.sh
+      - name: Build app
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: bash ./scripts/build_app.sh -n ${{ matrix.node }} -d ${{ matrix.debian }} -p -r ${{ github.job }}
 
   build_docs:
     name: Build doc

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm rebuild *)",
+      "Bash(pnpm approve-builds *)",
+      "Bash(pnpm -v)",
+      "Bash(awk '{print $3}')",
+      "Bash(node --input-type=module -e ' *)",
+      "Bash(grep -A 20 \"reads MongoDB collection\\\\$\")",
+      "Bash(docker pull *)"
+    ],
+    "additionalDirectories": [
+      "/home/mehdi/kalisio/krawler-ekosystem/node_modules/.pnpm"
+    ]
+  }
+}

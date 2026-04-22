@@ -16,8 +16,11 @@ NODE_VER=20
 MONGO_VER="7"
 CI_STEP_NAME="Run tests"
 RUN_SONAR=false
-while getopts "n:sr:" option; do
+while getopts "m:n:sr:" option; do
     case $option in
+        m) # defines mongo version
+            MONGO_VER=$OPTARG
+            ;;
         n) # defines node version
             NODE_VER=$OPTARG
              ;;
@@ -38,6 +41,9 @@ done
 ##
 
 . "$WORKSPACE_DIR/development/workspaces/jobs/jobs.sh" krawler-ekosystem
+
+# Required by krawler tests
+docker pull v4tech/imagemagick
 
 ## Run tests
 ##

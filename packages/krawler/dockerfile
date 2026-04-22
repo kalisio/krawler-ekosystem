@@ -1,0 +1,56 @@
+ARG DEBIAN_VERSION=bookworm
+ARG NODE_VERSION=20
+
+#
+# Builder stage: install workspace deps and build @kalisio/krawler
+#
+FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
+
+WORKDIR /app
+
+RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
+
+# Bring in workspace manifests first to leverage layer caching
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY packages/krawler/package.json ./packages/krawler/
+
+# Install all workspace deps (needs dev deps to run `vite build`)
+RUN pnpm install --frozen-lockfile --filter @kalisio/krawler...
+
+# Copy source and build
+COPY packages/krawler/vite.config.js ./packages/krawler/
+COPY packages/krawler/src ./packages/krawler/src/
+COPY packages/krawler/healthcheck.js ./packages/krawler/
+
+RUN pnpm --filter @kalisio/krawler build
+
+# Prune to production-only deps
+RUN pnpm install --frozen-lockfile --filter @kalisio/krawler --prod
+
+#
+# Runtime stage: slim image with prod deps, built artifacts and the krawler bin
+#
+FROM node:${NODE_VERSION}-${DEBIAN_VERSION}-slim
+LABEL maintainer="Kalisio <contact@kalisio.xyz>"
+
+WORKDIR /app
+
+RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
+
+COPY --from=builder --chown=node:node /app/pnpm-workspace.yaml /app/pnpm-lock.yaml /app/package.json ./
+COPY --from=builder --chown=node:node /app/node_modules ./node_modules
+COPY --from=builder --chown=node:node /app/packages/krawler ./packages/krawler
+
+# Expose the `krawler` bin globally. The bin is declared in packages/krawler/package.json
+# and pnpm install materialises it at ./node_modules/.bin/krawler for the workspace.
+RUN ln -s /app/node_modules/.bin/krawler /usr/local/bin/krawler
+
+USER node
+
+WORKDIR /app/packages/krawler
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=30s CMD node ./healthcheck.js
+
+ENV NODE_ENV=production
+
+CMD ["sh", "-c", "krawler $ARGS"]
