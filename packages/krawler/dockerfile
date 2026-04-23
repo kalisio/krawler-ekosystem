@@ -11,7 +11,7 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
 
 # Bring in workspace manifests first to leverage layer caching
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json vite.base-config.js ./
 COPY packages/krawler/package.json ./packages/krawler/
 
 # Install all workspace deps (needs dev deps to run `vite build`)
