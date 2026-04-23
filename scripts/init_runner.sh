@@ -20,6 +20,10 @@ init_github_additional_tests() {
     sudo apt-get install gdal-bin
 }
 
+init_github_build_app() {
+    install_reqs age sops
+}
+
 init_github_build_docs() {
     install_reqs age sops nvm node20
 }

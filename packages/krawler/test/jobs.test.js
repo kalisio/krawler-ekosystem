@@ -81,6 +81,9 @@ describe('krawler:jobs', () => {
   }, 5000)
 
   it('creates a HTTP job', async () => {
+    nock('https://www.google.com')
+      .get('/')
+      .reply(200, '<html></html>')
     await jobsService.create({
       id: 'job',
       tasks: [
