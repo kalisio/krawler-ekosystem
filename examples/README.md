@@ -30,4 +30,4 @@ pnpm exec krawler adsb/jobfile.js
 
 ## License
 
-Licensed under the [MIT license](../../LICENSE.md).
+Licensed under the [MIT license](../LICENSE.md).

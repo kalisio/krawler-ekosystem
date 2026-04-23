@@ -1,0 +1,59 @@
+{
+  "name": "@kalisio/krawler-examples",
+  "description": "A collection of krawler job examples (adsb, airports, bdtopo, csv2db, dem2csv, docker, extend, wms2yaml, aeroway)",
+  "version": "0.0.0",
+  "type": "module",
+  "standard": {
+    "ignore": [
+      "docker/src/**"
+    ]
+  },
+  "scripts": {
+    "lint": "standard --fix",
+    "example:adsb": "NODE_OPTIONS='--conditions=development' krawler adsb/jobfile.js",
+    "example:aeroway": "NODE_OPTIONS='--conditions=development' krawler aeroway/jobfile.js",
+    "example:airports": "NODE_OPTIONS='--conditions=development' krawler airports/jobfile.js",
+    "example:bdtopo": "NODE_OPTIONS='--conditions=development' krawler bdtopo/jobfile.js",
+    "example:csv2db:mongo": "NODE_OPTIONS='--conditions=development' krawler csv2db/jobfile.mongo.js",
+    "example:csv2db:pg": "NODE_OPTIONS='--conditions=development' krawler csv2db/jobfile.pg.js",
+    "example:dem2csv": "NODE_OPTIONS='--conditions=development' krawler dem2csv/jobfile.js",
+    "example:docker:convert": "NODE_OPTIONS='--conditions=development' krawler docker/jobfile-convert.js",
+    "example:docker:print": "NODE_OPTIONS='--conditions=development' krawler docker/jobfile-print.js",
+    "example:extend": "node --conditions=development extend/index.js",
+    "example:wms2yaml": "NODE_OPTIONS='--conditions=development' krawler wms2yaml/jobfile.js"
+  },
+  "keywords": [
+    "krawler",
+    "etl",
+    "examples",
+    "kalisio"
+  ],
+  "author": {
+    "name": "KALISIO <contact@kalisio.com>",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kalisio/krawler-ekosystem.git",
+    "directory": "examples"
+  },
+  "bugs": {
+    "url": "https://github.com/kalisio/krawler-ekosystem/issues"
+  },
+  "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/examples",
+  "dependencies": {
+    "@kalisio/krawler": "workspace:*",
+    "@turf/turf": "6.2.0-alpha.3",
+    "debug": "catalog:",
+    "fs-blob-store": "^5.2.1",
+    "fs-extra": "catalog:",
+    "lodash": "catalog:",
+    "request": "^2.88.0",
+    "sift": "catalog:"
+  },
+  "devDependencies": {
+    "standard": "catalog:"
+  }
+}

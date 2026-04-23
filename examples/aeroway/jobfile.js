@@ -37,9 +37,9 @@ const generateTasks = (options) => {
     const tasks = []
     options.airports.list.forEach(value => {
       // Find airport
-      const results = sift({
+      const results = airportsDB.filter(sift({
         'properties.ICAO': value
-      }, airportsDB)
+      }))
       if (results.length === 0) {
         console.error('Could not found airport', value)
         return

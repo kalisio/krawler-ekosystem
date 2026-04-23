@@ -50,7 +50,7 @@ coverage/
 .nyc_output/
 jest-*.json
 packages/krawler/test/output/
-packages/examples/*/output/
+examples/output/
 
 # Husky hooks
 .husky/_

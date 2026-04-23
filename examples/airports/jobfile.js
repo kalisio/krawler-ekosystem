@@ -46,10 +46,10 @@ const generateTasks = (options) => {
       // Find runway
       const icao = value.substr(0, 4)
       const id = value.substr(4, 3)
-      const results = sift({
+      const results = runways.filter(sift({
         'properties.Airport': { $regex: `^${icao}` },
         'properties.Ident': { $regex: `${id}$` }
-      }, runways)
+      }))
       if (results.length === 0) {
         console.error('Could not found runway', icao, id)
         return
@@ -60,9 +60,9 @@ const generateTasks = (options) => {
     })
     options.airports.list.forEach(value => {
       // Find airport
-      const results = sift({
+      const results = airports.filter(sift({
         'properties.ICAO': value
-      }, airports)
+      }))
       if (results.length === 0) {
         console.error('Could not found airport', value)
         return
