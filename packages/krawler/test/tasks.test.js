@@ -213,6 +213,10 @@ describe('krawler:tasks', () => {
   }, 30000)
 
   it('creates an OVERPASS task', async () => {
+    nock('https://overpass-api.de')
+      .get('/api/interpreter')
+      .query(true)
+      .reply(200, { version: 0.6, generator: 'mock', elements: [] })
     await tasksService.create({
       id: 'overpass.json',
       store: 'test-store',
