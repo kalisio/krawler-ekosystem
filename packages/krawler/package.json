@@ -110,7 +110,7 @@
     "@feathersjs/memory": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "feathers-mongodb": "catalog:",
-    "nock": "^14.0.0",
+    "nock": "catalog:",
     "standard": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",

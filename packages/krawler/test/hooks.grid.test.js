@@ -61,47 +61,44 @@ describe('krawler:hooks:grid', () => {
     expect(hook.data.size).toEqual([20, 20])
   })
 
-  it('creates a WMS gridded job', (done) => {
+  it('creates a WMS gridded job', async () => {
     const datetime = moment.utc()
     datetime.startOf('day')
-    jobsService.create({
-      id: 'wms-grid',
-      taskTemplate: {
-        id: '<%= jobId %>-<%= taskId %>.png',
-        type: 'wms',
-        options: {
-          url: 'https://public-api.meteofrance.fr/public/arpege/1.0/wms/MF-NWP-GLOBAL-ARPEGE-025-GLOBE-WMS/GetMap',
-          version: '1.3.0',
-          apikey: process.env.METEO_FRANCE_TOKEN,
-          layers: 'TEMPERATURE__ISOBARIC_SURFACE',
-          crs: 'EPSG:4326',
-          styles: 'T__ISOBARIC__SHADING',
-          format: 'image/png',
-          width: 512,
-          height: 512,
-          dim_reference_time: datetime.format(),
-          time: datetime.format()
-        }
-      },
-      origin: [-10, 35],
-      resolution: [0.5, 0.5],
-      size: [2, 2]
-    }, { store: outputStore })
-      .then(tasks => {
-        expect(tasks.length).toBe(4)
-        tasks.forEach(task => {
-          expect(fs.existsSync(path.join(outputStore.path, task.id))).toBe(true)
-        })
-        done()
+    try {
+      const tasks = await jobsService.create({
+        id: 'wms-grid',
+        taskTemplate: {
+          id: '<%= jobId %>-<%= taskId %>.png',
+          type: 'wms',
+          options: {
+            url: 'https://public-api.meteofrance.fr/public/arpege/1.0/wms/MF-NWP-GLOBAL-ARPEGE-025-GLOBE-WMS/GetMap',
+            version: '1.3.0',
+            apikey: process.env.METEO_FRANCE_TOKEN,
+            layers: 'TEMPERATURE__ISOBARIC_SURFACE',
+            crs: 'EPSG:4326',
+            styles: 'T__ISOBARIC__SHADING',
+            format: 'image/png',
+            width: 512,
+            height: 512,
+            dim_reference_time: datetime.format(),
+            time: datetime.format()
+          }
+        },
+        origin: [-10, 35],
+        resolution: [0.5, 0.5],
+        size: [2, 2]
+      }, { store: outputStore })
+      expect(tasks.length).toBe(4)
+      tasks.forEach(task => {
+        expect(fs.existsSync(path.join(outputStore.path, task.id))).toBe(true)
       })
-      .catch(error => {
+    } catch (error) {
       // Sometimes meteo france servers reply 404 or 503
-        console.log(error)
-        done()
-      })
+      console.log(error)
+    }
   }, 30000)
 
-  it('creates a WCS gridded job with resampling', (done) => {
+  it('creates a WCS gridded job with resampling', async () => {
     // These hooke only work with Geotiff
     tasksService.hooks({
       after: {
@@ -146,49 +143,46 @@ describe('krawler:hooks:grid', () => {
 
     const datetime = moment.utc()
     datetime.startOf('day')
-    jobsService.create({
-      id: 'wcs-grid',
-      taskTemplate: {
-        id: '<%= jobId %>-<%= taskId %>.tif',
-        type: 'wcs',
-        options: {
-          /*
-          url: 'http://geoserver.kalisio.xyz/geoserver/Kalisio/wcs',
-          version: '2.0.1',
-          format: 'image/tiff',
-          coverageid: 'Kalisio:GMTED2010_15',
-          longitudeLabel: 'Long',
-          latitudeLabel: 'Lat'
-          */
-          url: 'https://public-api.meteofrance.fr/public/arpege/1.0/wcs/MF-NWP-GLOBAL-ARPEGE-025-GLOBE-WCS/GetCoverage',
-          version: '2.0.1',
-          apikey: process.env.METEO_FRANCE_TOKEN,
-          coverageid: 'TEMPERATURE__SPECIFIC_HEIGHT_LEVEL_ABOVE_GROUND' + '___' + datetime.format(),
-          subsets: {
-            time: datetime.format(),
-            height: 3000
+    try {
+      const tasks = await jobsService.create({
+        id: 'wcs-grid',
+        taskTemplate: {
+          id: '<%= jobId %>-<%= taskId %>.tif',
+          type: 'wcs',
+          options: {
+            /*
+            url: 'http://geoserver.kalisio.xyz/geoserver/Kalisio/wcs',
+            version: '2.0.1',
+            format: 'image/tiff',
+            coverageid: 'Kalisio:GMTED2010_15',
+            longitudeLabel: 'Long',
+            latitudeLabel: 'Lat'
+            */
+            url: 'https://public-api.meteofrance.fr/public/arpege/1.0/wcs/MF-NWP-GLOBAL-ARPEGE-025-GLOBE-WCS/GetCoverage',
+            version: '2.0.1',
+            apikey: process.env.METEO_FRANCE_TOKEN,
+            coverageid: 'TEMPERATURE__SPECIFIC_HEIGHT_LEVEL_ABOVE_GROUND' + '___' + datetime.format(),
+            subsets: {
+              time: datetime.format(),
+              height: 3000
+            }
           }
-        }
-      },
-      origin: [-10, 35],
-      resolution: [0.5, 0.5],
-      size: [2, 2]
-    }, { store: outputStore })
-      .then(tasks => {
-        expect(tasks.length).toBe(4)
-        tasks.forEach(task => {
-          expect(task.data).toBeTruthy()
-          expect(task.data.length).toBe(1) // Downsampling 4 => 1
-          expect(fs.existsSync(path.join(outputStore.path, task.id))).toBe(true)
-          expect(fs.existsSync(path.join(outputStore.path, task.id + '.json'))).toBe(true)
-        })
-        done()
+        },
+        origin: [-10, 35],
+        resolution: [0.5, 0.5],
+        size: [2, 2]
+      }, { store: outputStore })
+      expect(tasks.length).toBe(4)
+      tasks.forEach(task => {
+        expect(task.data).toBeTruthy()
+        expect(task.data.length).toBe(1) // Downsampling 4 => 1
+        expect(fs.existsSync(path.join(outputStore.path, task.id))).toBe(true)
+        expect(fs.existsSync(path.join(outputStore.path, task.id + '.json'))).toBe(true)
       })
-      .catch(error => {
+    } catch (error) {
       // Sometimes meteo france servers reply 404 or 503
-        console.log(error)
-        done()
-      })
+      console.log(error)
+    }
   }, 30000)
 
   // Cleanup

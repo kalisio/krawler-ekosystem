@@ -43,29 +43,19 @@ describe('krawler:hooks:utils', () => {
     expect(hook.data.value).toBe(6)
   }, 5000)
 
-  it('apply function raising error', (done) => {
-    pluginHooks.apply({
+  it('apply function raising error', async () => {
+    await expect(pluginHooks.apply({
       function: (item) => { throw new Error('apply error') }
-    })(applyHook)
-      .catch(error => {
-        expect(error).toBeTruthy()
-        expect(error.message).toBe('apply error')
-        done()
-      })
+    })(applyHook)).rejects.toThrow('apply error')
   })
 
-  it('apply async function raising error', (done) => {
-    pluginHooks.apply({
+  it('apply async function raising error', async () => {
+    await expect(pluginHooks.apply({
       function: async (item) => {
         await utils.promisify(setTimeout)(1000)
         throw new Error('apply error')
       }
-    })(applyHook)
-      .catch(error => {
-        expect(error).toBeTruthy()
-        expect(error.message).toBe('apply error')
-        done()
-      })
+    })(applyHook)).rejects.toThrow('apply error')
   }, 5000)
 
   it('apply function with match filter', async () => {

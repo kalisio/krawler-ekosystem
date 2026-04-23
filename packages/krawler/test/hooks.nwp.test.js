@@ -52,8 +52,8 @@ describe('krawler:hooks:nwp', () => {
     })
   })
 
-  it('creates a ARPEGE download job', (done) => {
-    jobsService.create({
+  it('creates a ARPEGE download job', async () => {
+    const tasks = await jobsService.create({
       id: 'ARPEGE-025-GLOBE',
       options: { faultTolerant: true },
       taskTemplate: {
@@ -73,17 +73,14 @@ describe('krawler:hooks:nwp', () => {
         }
       }
     }, { store: outputStore })
-      .then(tasks => {
-        expect(tasks.length).toBe(6)
-        tasks.forEach(task => {
-          expect(fs.existsSync(path.join(outputStore.path, task.id))).toBe(true)
-        })
-        done()
-      })
+    expect(tasks.length).toBe(6)
+    tasks.forEach(task => {
+      expect(fs.existsSync(path.join(outputStore.path, task.id))).toBe(true)
+    })
   }, 30000)
 
-  it('creates a GFS download job', (done) => {
-    jobsService.create({
+  it('creates a GFS download job', async () => {
+    const tasks = await jobsService.create({
       id: 'GFS-05-GLOBE',
       // Test for options given in job
       runInterval: 6 * 3600, // Produced every 6h
@@ -118,13 +115,10 @@ describe('krawler:hooks:nwp', () => {
         }
       }
     }, { store: outputStore })
-      .then(tasks => {
-        expect(tasks.length).toBe(6)
-        tasks.forEach(task => {
-          expect(fs.existsSync(path.join(outputStore.path, task.id))).toBe(true)
-        })
-        done()
-      })
+    expect(tasks.length).toBe(6)
+    tasks.forEach(task => {
+      expect(fs.existsSync(path.join(outputStore.path, task.id))).toBe(true)
+    })
   }, 30000)
 
   // Cleanup

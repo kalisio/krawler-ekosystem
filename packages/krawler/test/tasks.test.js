@@ -143,30 +143,26 @@ describe('krawler:tasks', () => {
     expect(json).toEqual({ content: [] })
   }, 5000)
 
-  it('creates a failed HTTP task (403)', (done) => {
+  it('creates a failed HTTP task (403)', async () => {
     nock('https://www.google.com')
       .get('/')
       .reply(403)
-    tasksService.create({
+    await expect(tasksService.create({
       id: 'task-403.html',
       store: 'test-store',
       type: 'http',
       options: {
         url: 'https://www.google.com'
       }
-    })
-      .catch(error => {
-        expect(error).toBeTruthy()
-        done()
-      })
+    })).rejects.toBeTruthy()
   }, 5000)
 
-  it('creates a failed HTTP task (timeout)', (done) => {
+  it('creates a failed HTTP task (timeout)', async () => {
     nock('https://www.google.com')
       .get('/')
       .delay(10000)
       .reply(200, '<html></html>')
-    tasksService.create({
+    await expect(tasksService.create({
       id: 'task-timeout.html',
       store: 'test-store',
       type: 'http',
@@ -174,11 +170,7 @@ describe('krawler:tasks', () => {
         url: 'https://www.google.com',
         timeout: 5000
       }
-    })
-      .catch(error => {
-        expect(error).toBeTruthy()
-        done()
-      })
+    })).rejects.toBeTruthy()
   }, 10000)
 
   itWcs('creates a WCS task', async () => {

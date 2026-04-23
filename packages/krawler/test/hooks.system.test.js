@@ -38,17 +38,13 @@ describe('krawler:hooks:system', () => {
     })(commandHook)
   }, 5000)
 
-  it('raise error on command timeout', (done) => {
-    pluginHooks.runCommand({
+  it('raise error on command timeout', async () => {
+    await expect(pluginHooks.runCommand({
       command: 'pause',
       options: {
         timeout: 3000
       }
-    })(commandHook)
-      .catch(error => {
-        expect(error).toBeTruthy()
-        done()
-      })
+    })(commandHook)).rejects.toBeTruthy()
   }, 5000)
 
   it('run multiple commands', async () => {

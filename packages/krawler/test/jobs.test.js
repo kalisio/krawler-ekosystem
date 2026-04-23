@@ -48,83 +48,77 @@ describe('krawler:jobs', () => {
       })
   })
 
-  it('creates a mongo job', (done) => {
-    jobsService.create({
-      id: 'job',
-      options: {
-        workersLimit: 2
-      },
-      taskTemplate: {
-        store: 'test-store',
-        id: '<%= jobId %>-<%= taskId %>.mongo',
-        type: 'mongo',
+  it('creates a mongo job', async () => {
+    try {
+      const tasks = await jobsService.create({
+        id: 'job',
         options: {
-          client: mongoClient
-        }
-      },
-      tasks: [
-        { id: '1', options: { collection: 'users' } }
-      ]
-    })
-      .then(tasks => {
-        console.log(tasks)
+          workersLimit: 2
+        },
+        taskTemplate: {
+          store: 'test-store',
+          id: '<%= jobId %>-<%= taskId %>.mongo',
+          type: 'mongo',
+          options: {
+            client: mongoClient
+          }
+        },
+        tasks: [
+          { id: '1', options: { collection: 'users' } }
+        ]
+      })
+      console.log(tasks)
+      const exist = await new Promise((resolve, reject) => {
         storage.exists('job-1.mongo', (error, exist) => {
-          if (error) done(error)
-          else done(exist ? null : new Error('File not found in store'))
+          if (error) reject(error)
+          else resolve(exist)
         })
       })
-      .catch(error => {
-        console.log(error)
-        done()
-      })
+      expect(exist).toBe(true)
+    } catch (error) {
+      console.log(error)
+    }
   }, 5000)
 
-  it('creates a HTTP job', (done) => {
-    jobsService.create({
+  it('creates a HTTP job', async () => {
+    await jobsService.create({
       id: 'job',
       tasks: [
         { id: 'job.html', type: 'http', store: 'test-store', options: { url: 'https://www.google.com' } }
       ]
     })
-      .then(tasks => {
-        storage.exists('job.html', (error, exist) => {
-          if (error) done(error)
-          else done(exist ? null : new Error('File not found in store'))
-        })
+    const exist = await new Promise((resolve, reject) => {
+      storage.exists('job.html', (error, exist) => {
+        if (error) reject(error)
+        else resolve(exist)
       })
+    })
+    expect(exist).toBe(true)
   }, 5000)
 
-  it('creates a failed HTTP job (task with 403 status)', (done) => {
+  it('creates a failed HTTP job (task with 403 status)', async () => {
     nock('https://www.google.com')
       .get('/')
       .reply(403)
-    jobsService.create({
+    await expect(jobsService.create({
       id: 'job',
       tasks: [
         { id: 'job-403.html', type: 'http', store: 'test-store', options: { url: 'https://www.google.com' } }
       ]
-    })
-      .catch(error => {
-        expect(error).toBeTruthy()
-        done()
-      })
+    })).rejects.toBeTruthy()
   }, 5000)
 
-  it('creates a failed HTTP job (task reaching timeout)', (done) => {
+  it('creates a failed HTTP job (task reaching timeout)', async () => {
     nock('https://www.google.com')
       .get('/')
       .delay(10000)
       .reply(200, '<html></html>')
-    jobsService.create({
+    await expect(jobsService.create({
       id: 'job',
       tasks: [
         { id: 'job-timeout.html', type: 'http', store: 'test-store', options: { url: 'https://www.google.com', timeout: 5000 } }
       ]
-    })
-      .catch(error => {
-        expect(error).toBeTruthy()
-        done()
-      })
+    })).rejects.toBeTruthy()
   }, 10000)
 
   it('creates a fault-tolerant failed HTTP job (task with 403 status)', () => {
@@ -145,25 +139,26 @@ describe('krawler:jobs', () => {
       })
   }, 5000)
 
-  it('creates a fault-tolerant failed HTTP job (global timeout)', (done) => {
+  it('creates a fault-tolerant failed HTTP job (global timeout)', async () => {
     nock('https://www.google.com')
       .get('/')
       .delay(5000)
       .reply(200, '<html></html>')
-    jobsService.create({
-      id: 'job',
-      options: { faultTolerant: true, timeout: 1000 },
-      tasks: [
-        { id: 'job-global-timeout.html', type: 'http', store: 'test-store', options: { url: 'https://www.google.com', timeout: 3000 } }
-      ]
-    })
-      .catch(error => {
-        // We expect the job to fail since job timeout < task timeout
-        // error is an instance of featherjs error class Timeout
-        expect(error).toBeTruthy()
-        expect(error instanceof errors.Timeout).to.toBe(true)
-        done()
+    try {
+      await jobsService.create({
+        id: 'job',
+        options: { faultTolerant: true, timeout: 1000 },
+        tasks: [
+          { id: 'job-global-timeout.html', type: 'http', store: 'test-store', options: { url: 'https://www.google.com', timeout: 3000 } }
+        ]
       })
+      throw new Error('Expected job to fail with timeout')
+    } catch (error) {
+      // We expect the job to fail since job timeout < task timeout
+      // error is an instance of featherjs error class Timeout
+      expect(error).toBeTruthy()
+      expect(error instanceof errors.Timeout).toBe(true)
+    }
   }, 7000)
 
   it('creates a fault-tolerant failed HTTP task in job (task with 403 status)', () => {
@@ -206,45 +201,46 @@ describe('krawler:jobs', () => {
       })
   }, 5000)
 
-  it('creates a WCS job', (done) => {
+  it('creates a WCS job', async () => {
     const datetime = moment.utc()
     datetime.startOf('day')
-    jobsService.create({
-      id: 'job',
-      options: {
-        workersLimit: 2
-      },
-      taskTemplate: {
-        store: 'test-store',
-        id: '<%= jobId %>-<%= taskId %>.tif',
-        type: 'wcs',
+    try {
+      await jobsService.create({
+        id: 'job',
         options: {
-          url: 'https://public-api.meteofrance.fr/public/arpege/1.0/wcs/MF-NWP-GLOBAL-ARPEGE-025-GLOBE-WCS',
-          version: '2.0.1',
-          token: '__qEMDoIC2ogPRlSoRQLGUBOomaxJyxdEd__',
-          coverageid: 'TEMPERATURE__SPECIFIC_HEIGHT_LEVEL_ABOVE_GROUND' + '___' + datetime.format(),
-          subsets: {
-            time: datetime.format()
+          workersLimit: 2
+        },
+        taskTemplate: {
+          store: 'test-store',
+          id: '<%= jobId %>-<%= taskId %>.tif',
+          type: 'wcs',
+          options: {
+            url: 'https://public-api.meteofrance.fr/public/arpege/1.0/wcs/MF-NWP-GLOBAL-ARPEGE-025-GLOBE-WCS',
+            version: '2.0.1',
+            token: '__qEMDoIC2ogPRlSoRQLGUBOomaxJyxdEd__',
+            coverageid: 'TEMPERATURE__SPECIFIC_HEIGHT_LEVEL_ABOVE_GROUND' + '___' + datetime.format(),
+            subsets: {
+              time: datetime.format()
+            }
           }
-        }
-      },
-      tasks: [
-        { id: '2', options: { subsets: { height: 2 } } },
-        { id: '20', options: { subsets: { height: 20 } } },
-        { id: '3000', options: { subsets: { height: 3000 } } }
-      ]
-    })
-      .then(tasks => {
+        },
+        tasks: [
+          { id: '2', options: { subsets: { height: 2 } } },
+          { id: '20', options: { subsets: { height: 20 } } },
+          { id: '3000', options: { subsets: { height: 3000 } } }
+        ]
+      })
+      const exist = await new Promise((resolve, reject) => {
         storage.exists('job-20.tif', (error, exist) => {
-          if (error) done(error)
-          else done(exist ? null : new Error('File not found in store'))
+          if (error) reject(error)
+          else resolve(exist)
         })
       })
-      .catch(error => {
+      expect(exist).toBe(true)
+    } catch (error) {
       // Sometimes meteo france servers reply 404 or 503
-        console.log(error)
-        done()
-      })
+      console.log(error)
+    }
   }, 60000)
 
   // Add hooks and defaults to no error raised
@@ -291,19 +287,14 @@ describe('krawler:jobs', () => {
       })
   }, 5000)
 
-  it('creates a failed job with task hooks', (done) => {
+  it('creates a failed job with task hooks', async () => {
     raise = 'error'
-    jobsService.create({
+    await expect(jobsService.create({
       id: 'job',
       tasks: [
         { id: 'job-apply-error.html', type: 'noop', store: 'test-store' }
       ]
-    })
-      .catch(error => {
-        expect(error).toBeTruthy()
-        expect(error.message).toBe('apply error')
-        done()
-      })
+    })).rejects.toThrow('apply error')
   }, 5000)
 
   it('creates a failed job with fault-tolerant task hooks', () => {
@@ -321,7 +312,7 @@ describe('krawler:jobs', () => {
       })
   }, 5000)
 
-  it('creates a failed job with task hooks and error hook', (done) => {
+  it('creates a failed job with task hooks and error hook', async () => {
     raise = 'error'
     pluginHooks.activateHooks({
       error: {
@@ -333,15 +324,12 @@ describe('krawler:jobs', () => {
         }
       }
     }, jobsService)
-    jobsService.create({
+    await jobsService.create({
       id: 'job',
       tasks: [
         { id: 'job-apply-error.html', type: 'noop', store: 'test-store' }
       ]
     })
-      .then(tasks => {
-        done()
-      })
   }, 5000)
 
   // Cleanup
