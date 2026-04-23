@@ -10,25 +10,25 @@ catalogs:
       specifier: ~2.30.0
       version: 2.30.0
     '@feathersjs/authentication':
-      specifier: ~5.0.8
+      specifier: ~5.0.44
       version: 5.0.44
     '@feathersjs/client':
-      specifier: ~5.0.8
+      specifier: ~5.0.44
       version: 5.0.44
     '@feathersjs/errors':
-      specifier: ~5.0.8
+      specifier: ~5.0.44
       version: 5.0.44
     '@feathersjs/express':
-      specifier: ~5.0.8
+      specifier: ~5.0.44
       version: 5.0.44
     '@feathersjs/feathers':
-      specifier: ~5.0.8
+      specifier: ~5.0.44
       version: 5.0.44
     '@feathersjs/memory':
-      specifier: ~5.0.8
+      specifier: ~5.0.44
       version: 5.0.44
     '@feathersjs/socketio':
-      specifier: ~5.0.8
+      specifier: ~5.0.44
       version: 5.0.44
     '@kalisio/feathers-distributed':
       specifier: ~2.4.0
