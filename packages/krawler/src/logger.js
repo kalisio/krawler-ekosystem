@@ -1,7 +1,4 @@
-// Dynamic import so that user jobs bringing their own winston plugins are not
-// locked out of the shared winston registry. See hooks/hooks.logger.js for the
-// per-job equivalent.
-const winston = await import('winston')
+import winston from 'winston'
 
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || (process.env.NODE_ENV === 'development' ? 'debug' : 'info'),
