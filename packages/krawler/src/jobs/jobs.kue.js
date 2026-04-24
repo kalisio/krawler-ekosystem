@@ -1,6 +1,7 @@
 import kue from 'kue'
 // import cluster from 'cluster'
 import makeDebug from 'debug'
+import logger from '../logger.js'
 
 const debug = makeDebug('krawler:jobs')
 let queue
@@ -59,7 +60,7 @@ function createJob (options, store, tasks, id) {
         result = await this.tasksService.create(task.data, params)
       } catch (error) {
         if (faultTolerant) {
-          console.error(error)
+          logger.error(error)
           result = task.data
           result.error = error
         } else {

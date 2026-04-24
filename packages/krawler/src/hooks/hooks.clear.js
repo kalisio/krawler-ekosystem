@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import makeDebug from 'debug'
 import { getStoreFromHook, callOnHookItems } from '../utils.js'
+import logger from '../logger.js'
 
 const debug = makeDebug('krawler:hooks:clear')
 
@@ -15,7 +16,7 @@ function clearObjectOutputs (object, store, type) {
         debug('Cannot remove output data ' + output + ' for ' + object.id + ' from store')
         // Continue cleanup on error, does not stop
         // reject(error)
-        console.error(error)
+        logger.error(error)
         resolve()
       } else {
         debug('Removing output data ' + output + ' for ' + object.id + ' from store')

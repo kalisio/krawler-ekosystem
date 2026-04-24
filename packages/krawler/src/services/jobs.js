@@ -3,6 +3,7 @@ import makeDebug from 'debug'
 import Service from './service.js'
 import { getStore } from '../utils.js'
 import defaultJobGenerators from '../jobs/index.js'
+import logger from '../logger.js'
 
 const debug = makeDebug('krawler:jobs')
 
@@ -74,7 +75,7 @@ class JobsService extends Service {
       store.remove(id, error => {
         // Continue cleanup on error
         if (error) {
-          console.error(error)
+          logger.error(error)
           // reject(error)
           // return
         }

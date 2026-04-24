@@ -19,6 +19,7 @@ import makeDebug from 'debug'
 import * as hooks from './hooks/index.js'
 import { stores, tasks, jobs } from './services/index.js'
 import { healthcheck, Healthcheck } from './healthcheck.js'
+import logger from './logger.js'
 import plugin from './plugin.js'
 
 const { CronJob } = cron
@@ -113,7 +114,7 @@ export async function createApp (job, options = {}) {
   })
   // Run the app, this is required to correctly setup Feathers
   const port = options.port || 3030
-  if (options.api) console.log('Server listening to ' + port)
+  if (options.api) logger.info('Server listening to ' + port)
   server = await app.listen(port)
   if (sync) {
     server.on('close', () => app.sync.close())
@@ -132,7 +133,7 @@ export function getServer () {
 export async function runJob (job, options = {}) {
   // Function to effectively run the job
   async function runJobWithOptions () {
-    console.log(boxen(`Launching job at ${(new Date()).toISOString()}`, {
+    logger.info(boxen(`Launching job at ${(new Date()).toISOString()}`, {
       title: _.toUpper(job.id),
       titleAlignment: 'center',
       width: 80,
@@ -149,7 +150,7 @@ export async function runJob (job, options = {}) {
       // the operation finishes without error but the return object is the job itself
       if (tasks.error) throw tasks.error
       const duration = (performance.now() - startTime) / 1000
-      console.log(boxen(`Job terminated: ${tasks.length} tasks ran in ${duration.toFixed(4)} seconds`, {
+      logger.info(boxen(`Job terminated: ${tasks.length} tasks ran in ${duration.toFixed(4)} seconds`, {
         title: _.toUpper(job.id),
         titleAlignment: 'center',
         borderColor: 'green',
@@ -172,7 +173,7 @@ export async function runJob (job, options = {}) {
       Healthcheck.successRate = (nbTotalTasks > 0 ? Healthcheck.nbSuccessfulTasks / nbTotalTasks : 1)
       return tasks
     } catch (error) {
-      console.error(boxen(error.message, {
+      logger.error(boxen(error.message, {
         title: _.toUpper(job.id),
         titleAlignment: 'center',
         borderColor: 'red',
@@ -187,7 +188,7 @@ export async function runJob (job, options = {}) {
   // Setup CRON job if required
   let cronJob
   if (options.cron) {
-    console.log('Scheduling job with cron pattern ' + options.cron)
+    logger.info('Scheduling job with cron pattern ' + options.cron)
     Healthcheck.nbSkippedJobs = 0
     cronJob = new CronJob(options.cron, async () => {
       // If last job has not yet finished skip this call as we are late
@@ -195,7 +196,7 @@ export async function runJob (job, options = {}) {
         await runJobWithOptions()
         Healthcheck.nbSkippedJobs = 0
       } else {
-        console.log('Skipping scheduled job as previous one is not yet finished')
+        logger.info('Skipping scheduled job as previous one is not yet finished')
         Healthcheck.nbSkippedJobs++
       }
       try {
@@ -210,7 +211,7 @@ export async function runJob (job, options = {}) {
     // In case the server is forced to exit stop the job as well
     server.on('close', () => {
       cronJob.stop()
-      console.log('Stopped scheduled job with cron pattern')
+      logger.info('Stopped scheduled job with cron pattern')
     })
   }
   // Run job

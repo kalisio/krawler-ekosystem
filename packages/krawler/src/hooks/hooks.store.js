@@ -5,6 +5,7 @@ import zlib from 'zlib'
 import unzipper from 'unzipper'
 import makeDebug from 'debug'
 import { addOutput, getStoreFromHook, writeStreamToStore, callOnHookItems, templateObject } from '../utils.js'
+import logger from '../logger.js'
 
 const { Extract } = unzipper
 const debug = makeDebug('krawler:hooks:store')
@@ -45,7 +46,7 @@ export function createStores (options = {}) {
         } catch (error) {
           if (faultTolerant) {
             debug('Could not create store for ' + hook.data.id)
-            console.error(error)
+            logger.error(error)
           } else {
             throw error
           }
@@ -86,7 +87,7 @@ export function removeStores (options = {}) {
       } catch (error) {
         if (faultTolerant) {
           debug('Could not remove store for ' + hook.data.id)
-          console.error(error)
+          logger.error(error)
         } else {
           throw error
         }

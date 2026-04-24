@@ -2,6 +2,7 @@ import _ from 'lodash'
 import errors from '@feathersjs/errors'
 import makeDebug from 'debug'
 import { templateTask } from '../utils.js'
+import logger from '../logger.js'
 
 const { Timeout } = errors
 const debug = makeDebug('krawler:jobs')
@@ -34,7 +35,7 @@ async function createJob (options, store, tasks, id, taskTemplate) {
         // On the last retry stop
         if (i === attempts) {
           if (faultTolerant) {
-            console.error(error)
+            logger.error(error)
             newTask.error = error
             // Return last attempt
             return newTask

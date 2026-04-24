@@ -6,6 +6,7 @@ import envsub from 'envsub'
 import spawn from 'cross-spawn'
 import { exec as _exec } from 'child_process'
 import { addOutput, callOnHookItems, template, templateObject } from '../utils.js'
+import logger from '../logger.js'
 
 const exec = util.promisify(_exec)
 const debug = makeDebug('krawler:hooks:system')
@@ -66,12 +67,12 @@ export function runCommand (options = {}) {
       if (options.stdout && stdout) {
         if (i > 0) item.stdout += stdout
         else item.stdout = stdout
-        console.log(stdout.toString())
+        logger.info(stdout.toString())
       }
       if (options.stderr && stderr) {
         if (i > 0) item.stderr += stderr
         else item.stderr = stderr
-        console.error(stderr.toString())
+        logger.error(stderr.toString())
       }
     }
   }

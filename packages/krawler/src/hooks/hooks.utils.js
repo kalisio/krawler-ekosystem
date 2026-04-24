@@ -6,6 +6,7 @@ import makeDebug from 'debug'
 import boxen from 'boxen'
 import { Healthcheck } from '../healthcheck.js'
 import { callOnHookItems, addOutput, templateObject, template as templateOptions, templateQueryObject, transformJsonObject } from '../utils.js'
+import logger from '../logger.js'
 
 const { getItems } = common
 const debug = makeDebug('krawler:hooks:utils')
@@ -132,7 +133,7 @@ export function printEnv (options) {
       borderColor: 'yellow',
       width: 80
     })
-    console.log(boxen(env, boxenOptions))
+    logger.info(boxen(env, boxenOptions))
     return hook
   }
 }

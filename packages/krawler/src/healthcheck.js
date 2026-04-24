@@ -5,6 +5,7 @@ import utils from 'util'
 import fs from 'fs-extra'
 import _ from 'lodash'
 import { fileURLToPath } from 'url'
+import logger from './logger.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -37,7 +38,7 @@ function readFromLog () {
     else return {} // First launch
   } catch (error) {
     // Allowed to fail to make healthcheck robust
-    console.error(error)
+    logger.error(error)
     return {}
   }
 }
@@ -47,17 +48,17 @@ function writeToLog (data) {
     fs.writeJsonSync(logFile, data)
   } catch (error) {
     // Allowed to fail to make healthcheck robust
-    console.error(error)
+    logger.error(error)
   }
 }
 
 export function publishToConsole (data, compilers, pretext, stream = 'error') {
   try {
-    if (stream === 'error') console.error(pretext, compilers.message(data))
-    else console.log(pretext, compilers.message(data))
+    if (stream === 'error') logger.error(`${pretext} ${compilers.message(data)}`)
+    else logger.info(`${pretext} ${compilers.message(data)}`)
   } catch (error) {
     // Allowed to fail to make healthcheck robust
-    console.error(error)
+    logger.error(error)
   }
 }
 
@@ -81,7 +82,7 @@ export async function publishToSlack (slackWebhook, data, compilers, posttext = 
     })
   } catch (error) {
     // Allowed to fail to make healthcheck robust
-    console.error(error)
+    logger.error(error)
   }
 }
 
@@ -103,14 +104,14 @@ export async function healthcheck (options) {
     const previousHealthcheck = readFromLog()
     previousError = previousHealthcheck.error
     if (options.debug) {
-      console.log('Requesting healthcheck endpoint', endpoint)
+      logger.info(`Requesting healthcheck endpoint ${endpoint}`)
     }
     const response = await utils.promisify(request.get)(endpoint)
     const data = JSON.parse(response.body)
     if (options.debug) {
-      console.log('Current healthcheck status from service', response.statusCode)
-      console.log('Current healthcheck output read from service', data)
-      console.log('Previous healthcheck output read from log', previousHealthcheck)
+      logger.info(`Current healthcheck status from service ${response.statusCode}`)
+      logger.info('Current healthcheck output read from service', data)
+      logger.info('Previous healthcheck output read from log', previousHealthcheck)
     }
     // Fault-tolerant jobs always return 200, we use more criteria to check for health status
     if (_.has(data, 'successRate') && (data.successRate < options.successRate)) {
@@ -138,7 +139,7 @@ export async function healthcheck (options) {
     }
   } catch (error) {
     if (options.debug) {
-      console.log('Current healthcheck raised error', error)
+      logger.info('Current healthcheck raised error', error)
     }
     // Give feedback for any error raised by the healthcheck process
     if (!(error instanceof HealthcheckError)) {

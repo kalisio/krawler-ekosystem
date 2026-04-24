@@ -3,6 +3,7 @@ import makeDebug from 'debug'
 import Service from './service.js'
 import { getStore, addOutput, writeStreamToStore, bufferToStream } from '../utils.js'
 import defaultTaskGenerators from '../tasks/index.js'
+import logger from '../logger.js'
 
 const debug = makeDebug('krawler:tasks')
 
@@ -111,7 +112,7 @@ class TasksService extends Service {
       store.remove(id, error => {
         // Continue cleanup on error
         if (error) {
-          console.error(error)
+          logger.error(error)
           // reject(error)
           // return
         }

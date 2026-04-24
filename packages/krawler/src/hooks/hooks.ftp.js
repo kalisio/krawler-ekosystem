@@ -5,6 +5,7 @@ import fs from 'fs'
 import util from 'util'
 import { exec as _exec } from 'child_process'
 import { callOnHookItems, template, getStoreFromHook, addOutput } from '../utils.js'
+import logger from '../logger.js'
 
 const exec = util.promisify(_exec)
 const debug = makeDebug('krawler:hooks:ftp')
@@ -47,7 +48,7 @@ export function listFTP (options = {}) {
     const commands = [`cd ${remoteDir}`, 'cls -1']
     const { stdout, stderr } = await lftpCommand(client, commands, options.settings)
     if (stderr) {
-      console.error(stderr.toString())
+      logger.error(stderr.toString())
     }
     if (stdout) {
       _.set(hook, options.dataPath || 'result.data', stdout.split('\n'))
@@ -70,7 +71,7 @@ export function globFTP (options = {}) {
     const commands = [`cd ${remoteDir}`, `glob -f echo ${pattern}`]
     const { stdout, stderr } = await lftpCommand(client, commands, options.settings)
     if (stderr) {
-      console.error(stderr.toString())
+      logger.error(stderr.toString())
     }
     if (stdout) {
       // split the file list into files and remove \n
@@ -111,10 +112,10 @@ export function getFTP (options = {}) {
     const commands = [`get ${remoteFile} -o ${localFilePath}`]
     const { stdout, stderr } = await lftpCommand(client, commands, options.settings)
     if (options.stderr && stderr) {
-      console.error(stderr.toString())
+      logger.error(stderr.toString())
     }
     if (options.stdout && stdout) {
-      console.log(stdout.toString())
+      logger.info(stdout.toString())
     }
     debug(remoteFile + ' copied with success')
     addOutput(item, localFile, options.outputType)
@@ -138,7 +139,7 @@ export function putFTP (options = {}) {
     const commands = [`put ${localFile} -O ${remoteFile}`]
     const { stdout, stderr } = await lftpCommand(client, commands, options.settings)
     if (stderr) {
-      console.error(stderr.toString())
+      logger.error(stderr.toString())
     }
     if (stdout) {
       debug(localFile + ' copied with success')

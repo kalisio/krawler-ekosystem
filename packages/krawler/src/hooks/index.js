@@ -3,6 +3,7 @@ import sift from 'sift'
 import common from 'feathers-hooks-common'
 import makeDebug from 'debug'
 import { templateQueryObject } from '../utils.js'
+import logger from '../logger.js'
 
 // Feathers hooks
 export * from 'feathers-hooks-common'
@@ -109,7 +110,7 @@ function getFaultTolerantHook (hookFunction) {
       return result
     } catch (error) {
       debug('Catching fault-tolerant hook')
-      console.error(error)
+      logger.error(error)
       return hook
     }
   }
@@ -163,14 +164,14 @@ export function activateHooks (serviceHooks, service) {
           items.forEach(item => addHook(item.hook, item, hooks))
           pipeline.push(parallel(hooks))
         } catch (error) {
-          console.error(error.message)
+          logger.error(error.message)
         }
       } else {
         // Jump from name/options to the real hook function
         try {
           addHook(hookName, hookOptions, pipeline)
         } catch (error) {
-          console.error(error.message)
+          logger.error(error.message)
         }
       }
     })
