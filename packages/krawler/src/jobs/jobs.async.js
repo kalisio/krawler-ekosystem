@@ -7,7 +7,7 @@ const { Timeout } = errors
 const debug = makeDebug('krawler:jobs')
 
 // Create the async job
-async function createJob (options = {}, store = null, tasks, id, taskTemplate) {
+async function createJob (options, store, tasks, id, taskTemplate) {
   debug(`Creating async job ${id} with following options`, options)
   const hrstart = process.hrtime()
 
@@ -20,7 +20,7 @@ async function createJob (options = {}, store = null, tasks, id, taskTemplate) {
         // If different options are provided for attempts use them
         if ((i > 1) && task.attemptsOptions) _.merge(task, task.attemptsOptions[i - 2])
         // Create new task by merging template and object
-        newTask = Object.assign({}, taskTemplate)
+        newTask = { ...taskTemplate }
         // Perform templating of task options
         newTask.options = templateTask(task, taskTemplate)
         _.merge(newTask, task)

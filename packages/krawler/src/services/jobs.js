@@ -21,13 +21,14 @@ class JobsService extends Service {
 
   async create (data, params = {}) {
     let { type, id, options, taskTemplate, tasks } = data
+    options = options || {}
     // Ensure a default empty template that could be used to store shared information for tasks, e.g. DB client
     if (!taskTemplate) {
       taskTemplate = data.taskTemplate = {}
     }
     // When running as API options and task template are memorized when initializing
     // Use these default values if not provided in job payload
-    if (this.jobOptions) options = _.merge(options || {}, this.jobOptions)
+    if (this.jobOptions) options = _.merge(options, this.jobOptions)
     if (this.taskTemplate) taskTemplate = _.merge(taskTemplate, this.taskTemplate)
     let store
     // If a store is found at job level it will be forwarded to all tasks
@@ -51,7 +52,7 @@ class JobsService extends Service {
       const newTask = {}
       // Create a new task with compiled ID
       if (idCompiler) {
-        newTask.id = idCompiler(Object.assign({ jobId: data.id, taskId: task.id }, taskWithoutId))
+        newTask.id = idCompiler({ jobId: data.id, taskId: task.id, ...taskWithoutId })
       }
       // When there is nothing to interpolate the returned ID is empty
       if (!newTask.id) newTask.id = task.id

@@ -108,17 +108,17 @@ export function writePGTable (options = {}) {
     // The insert query must have the following form ($1, $2), ($3, $4) .... ($i, $i+1) [param1, param2 ....... parami, param i+1]
     const table = template(hook.result, _.get(options, 'table', _.snakeCase(hook.result.id)))
     debug('Inserting GeoJSON in the ' + table + ' table')
-    for (let i = 0; i < chunks.length; ++i) {
+    for (const chunk of chunks) {
       let values = ''
       const params = []
       let counter = 1
-      for (let j = 0; j < chunks[i].length; ++j) {
+      for (let j = 0; j < chunk.length; ++j) {
         values += util.format(' (ST_SetSRID(ST_GeomFromGeoJSON($%d), 4326), $%d)', counter++, counter++)
-        if (j < (chunks[i].length - 1)) {
+        if (j < (chunk.length - 1)) {
           values += ','
         }
-        params.push(chunks[i][j].geometry)
-        params.push(chunks[i][j].properties)
+        params.push(chunk[j].geometry)
+        params.push(chunk[j].properties)
       }
       await client.query('INSERT INTO ' + table + ' (geom, properties) VALUES' + values, params)
     }

@@ -32,7 +32,7 @@ export function readXML (options = {}) {
     return new Promise((resolve, reject) => {
       parser.parseString(xml.toString(), (err, result) => {
         if (err) {
-          reject(err)
+          reject(err instanceof Error ? err : new Error(String(err)))
           return
         }
         _.set(hook, options.dataPath || 'result.data', result)

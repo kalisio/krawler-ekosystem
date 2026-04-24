@@ -139,10 +139,6 @@ export function callFeathersServiceMethod (options = {}) {
         json = await service[methodName](params)
         break
       case 'get':
-        params = templateParams(item, options)
-        debug(`Performing ${methodName} on service ${serviceName} with`, id, params)
-        json = await service[methodName](id, params)
-        break
       case 'remove':
         params = templateParams(item, options)
         debug(`Performing ${methodName} on service ${serviceName} with`, id, params)
@@ -157,11 +153,11 @@ export function callFeathersServiceMethod (options = {}) {
           json = await service[methodName](id, data, params)
         } else { // Manage multiple items and associated results, in this case id should be null
           json = []
-          for (let i = 0; i < data.length; ++i) {
-            params = templateParams(data[i], options)
-            debug(`Performing ${methodName} on service ${serviceName} with`, id, data[i], params)
+          for (const chunk of data) {
+            params = templateParams(chunk, options)
+            debug(`Performing ${methodName} on service ${serviceName} with`, id, chunk, params)
             try {
-              const result = await service[methodName](id, data[i], params)
+              const result = await service[methodName](id, chunk, params)
               json.push(result)
             } catch (error) {
               // Raise on first error ?
@@ -181,11 +177,11 @@ export function callFeathersServiceMethod (options = {}) {
           json = await service[methodName](data, params)
         } else { // Manage chunks and associated results
           json = []
-          for (let i = 0; i < data.length; ++i) {
-            params = templateParams(data[i], options)
-            debug(`Performing ${methodName} on service ${serviceName} with`, data[i], params)
+          for (const chunk of data) {
+            params = templateParams(chunk, options)
+            debug(`Performing ${methodName} on service ${serviceName} with`, chunk, params)
             try {
-              let results = await service[methodName](data[i], params)
+              let results = await service[methodName](chunk, params)
               // Manage pagination
               if (results.data) results = results.data
               json = json.concat(results)

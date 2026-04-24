@@ -21,7 +21,7 @@ function initialize () {
 }
 
 // Create the kue job
-function createJob (options = {}, store = null, tasks, id) {
+function createJob (options, store, tasks, id) {
   // Initialize queue on first job
   initialize()
   debug(`Creating kue job ${id} with following options`, options)
@@ -45,7 +45,10 @@ function createJob (options = {}, store = null, tasks, id) {
         .removeOnComplete(true)
         .save()
       // When the max attempts has been tried
-      kueTask.on('failed', (error) => queue.shutdown(err => reject(err || error)))
+      kueTask.on('failed', (error) => queue.shutdown(err => {
+        const reason = err || error
+        reject(reason instanceof Error ? reason : new Error(String(reason)))
+      }))
     })
     queue.process('task-' + id, workersLimit, async (task, done) => {
       let result
@@ -70,7 +73,7 @@ function createJob (options = {}, store = null, tasks, id) {
       // When all tasks have been ran release the queue
       if (i === tasks.length) {
         queue.shutdown(err => {
-          if (err) reject(err)
+          if (err) reject(err instanceof Error ? err : new Error(String(err)))
           else resolve(taskResults)
         })
       }

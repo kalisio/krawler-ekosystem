@@ -3,11 +3,12 @@ import { createRequestStream as createHttpRequestStream } from './tasks.http.js'
 
 // Create the request stream for a task
 function createRequestStream (options) {
-  options = Object.assign({
+  options = {
     // Default values
     service: 'WCS',
-    request: 'GetCoverage'
-  }, options)
+    request: 'GetCoverage',
+    ...options
+  }
   // Convert from a json subset key/value to standard, eg height: 10 => height(10)
   if (options.subsets) {
     options.subset = []

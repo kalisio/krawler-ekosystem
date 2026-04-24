@@ -53,8 +53,7 @@ export function computeStatistics (options = {}) {
     if (options.dataPath) {
       const data = _.get(hook, options.dataPath)
       debug('Computing statistics for ' + hook.result.id)
-      for (let i = 0; i < data.length; i++) {
-        let value = data[i]
+      for (let value of data) {
         // Check for a value property on objects
         if (typeof value === 'object') value = _.get(value, options.valuePath || 'value')
         if (_.isFinite(value)) {

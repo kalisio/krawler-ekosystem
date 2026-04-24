@@ -62,7 +62,7 @@ export function mergeCSV (options = {}) {
       const unparseOptions = _.get(options, 'unparse', {})
       const hasHeader = _.get(unparseOptions, 'header', true)
       let headerWritten = false
-      merge.apply(null, inputStreams)
+      merge(...inputStreams)
         .pipe(new stream.Transform({
           writableObjectMode: true,
           transform (chunk, encoding, callback) {

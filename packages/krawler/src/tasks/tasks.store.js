@@ -8,7 +8,7 @@ async function createStoreStream (options, id) {
 
   // Input store config given in task options
   const store = await this.storesService.get(options.store)
-  return store.createReadStream(Object.assign({ key: id }, options))
+  return store.createReadStream({ key: id, ...options })
 }
 
 export default createStoreStream

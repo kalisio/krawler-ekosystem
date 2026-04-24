@@ -33,7 +33,7 @@ class TasksService extends Service {
     if (!overwrite) {
       const exists = await new Promise((resolve, reject) => {
         store.exists(id, (error, exists) => {
-          if (error) reject(error)
+          if (error) reject(error instanceof Error ? error : new Error(String(error)))
           else resolve(exists)
         })
       })
@@ -56,7 +56,7 @@ class TasksService extends Service {
       throw new Error(message)
     }
     if (streamed) {
-      return Object.assign({ stream: taskStream }, data)
+      return { stream: taskStream, ...data }
     }
     // Otherwise we target a store
     return new Promise((resolve, reject) => {

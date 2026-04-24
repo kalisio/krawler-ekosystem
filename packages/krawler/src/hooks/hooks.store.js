@@ -26,8 +26,7 @@ export function createStores (options = {}) {
       stores = options
     }
 
-    for (let i = 0; i < stores.length; i++) {
-      const storeOptions = stores[i]
+    for (const storeOptions of stores) {
       debug('Looking for store ' + storeOptions.id)
       let store
       try {
@@ -78,8 +77,7 @@ export function removeStores (options = {}) {
       stores = options
     }
 
-    for (let i = 0; i < stores.length; i++) {
-      const storeOptions = stores[i]
+    for (const storeOptions of stores) {
       const id = (typeof storeOptions === 'string' ? storeOptions : storeOptions.id)
       debug('Removing store ' + id + ' for ' + hook.data.id)
       try {
@@ -163,7 +161,7 @@ export function unzipFromStore (options = {}) {
       inStore.createReadStream(inputOptions)
         .pipe(Extract({ path: outputPath }))
         .on('close', () => resolve())
-        .on('error', (error) => reject(error))
+        .on('error', (error) => reject(error instanceof Error ? error : new Error(String(error))))
     })
     // FIXME: add zip entries as output
     // addOutput(item, outputOptions.key, outputOptions.outputType)
@@ -180,7 +178,7 @@ export function discardIfExistsInStore (options = {}) {
     return new Promise((resolve, reject) => {
       outStore.exists(outputOptions.key, (err, exists) => {
         if (err) {
-          reject(err)
+          reject(err instanceof Error ? err : new Error(String(err)))
         } else {
           if (exists) {
             debug('Discarding ' + item.id + ' as it already exists in store', outputOptions)

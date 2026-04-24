@@ -60,9 +60,9 @@ export function pullDockerImage (options = {}) {
 
     await new Promise((resolve, reject) => {
       client.pull(options.image, _.isNil(options.auth) ? null : options.auth, (err, stream) => {
-        if (err) reject(err)
+        if (err) reject(err instanceof Error ? err : new Error(String(err)))
         client.modem.followProgress(stream, (err, output) => {
-          if (err) reject(err)
+          if (err) reject(err instanceof Error ? err : new Error(String(err)))
           resolve()
         })
       })
@@ -134,7 +134,7 @@ export function runDockerContainerCommand (options = {}) {
       await new Promise((resolve, reject) => {
         result.output
           .on('end', () => resolve())
-          .on('error', (error) => reject(error))
+          .on('error', (error) => reject(error instanceof Error ? error : new Error(String(error))))
       })
       await result.inspect()
     } else if (options.command === 'remove') {

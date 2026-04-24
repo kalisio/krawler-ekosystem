@@ -132,8 +132,8 @@ export function transformJsonObject (json, options) {
   // Transform back to object when required
   if (!isArray) {
     if (!options.asArray) json = (json.length > 0 ? json[0] : {})
-  } else {
-    if (options.asObject) json = (json.length > 0 ? json[0] : {})
+  } else if (options.asObject) {
+    json = (json.length > 0 ? json[0] : {})
   }
   // Then update JSON in place in memory
   if (options.transformPath || options.outputPath) {
@@ -154,14 +154,14 @@ export function callOnHookItems (options = {}) {
       const items = getItems(hook) || hook.data
       const isArray = Array.isArray(items)
       if (isArray && perItem) {
-        for (let i = 0; i < items.length; i++) {
+        for (const item of items) {
           // Handle error hooks as usual
           if (hook.type === 'error') {
-            items[i].error = hook.error
+            item.error = hook.error
             // Avoid circular reference
-            delete items[i].error.hook
+            delete item.error.hook
           }
-          await f(items[i], hook)
+          await f(item, hook)
         }
       } else {
         // Handle error hooks as usual
@@ -239,7 +239,10 @@ export function convertNumbers (object, options = {}) {
     if (keys.includes(key) && !excludedKeys.includes(key)) {
       // Recurse on sub objects
       if (Array.isArray(value)) {
-        return value.map(item => (typeof item === 'object' ? (isDate(item) ? item : convertNumbers(item)) : convertNumber(item)))
+        return value.map(item => {
+          if (typeof item !== 'object') return convertNumber(item)
+          return isDate(item) ? item : convertNumbers(item)
+        })
       } else if (typeof value === 'object') {
         // Take care the value is of type of ObjectID
         if (isObjectID(value)) return value
@@ -257,7 +260,7 @@ export function convertNumbers (object, options = {}) {
 export function convertComparisonOperators (queryObject, options = {}) {
   _.forOwn(queryObject, (value, key) => {
     if (options.properties && !options.properties.includes(key)) return
-    if (options.excludedProperties && options.excludedProperties.includes(key)) return
+    if (options.excludedProperties?.includes(key)) return
     // Process current attributes or  recurse
     if ((typeof value === 'object') && !isDate(value)) {
       convertComparisonOperators(value)
@@ -284,7 +287,7 @@ export function template (item, property) {
     if (typeof value === 'string') {
       const compiler = _.template(value)
       // Add env into templating context
-      const context = Object.assign({}, item, process)
+      const context = { ...item, ...process }
       return compiler(context)
     } else if (Array.isArray(value)) {
       return template(item, value)
@@ -408,7 +411,7 @@ export function writeStreamToStore (stream, store, options) {
       .on('error', reject)
       // See https://github.com/kalisio/krawler/issues/7
       .pipe(store.createWriteStream(_.cloneDeep(options), error => {
-        if (error) reject(error)
+        if (error) reject(error instanceof Error ? error : new Error(String(error)))
       }))
       .on('finish', () => {
         resolve()

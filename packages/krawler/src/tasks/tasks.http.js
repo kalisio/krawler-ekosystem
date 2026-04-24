@@ -24,7 +24,7 @@ export function getRequestParameters (options) {
 // Create the request stream for a task
 export function createRequestStream (options) {
   const method = options.method || 'GET'
-  return request(Object.assign({ method }, getRequestParameters(options)))
+  return request({ method, ...getRequestParameters(options) })
 }
 
 export default createRequestStream

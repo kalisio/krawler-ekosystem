@@ -56,12 +56,13 @@ export function generateNwpTasks (options) {
         for (let timeOffset = elementLowerLimit; timeOffset <= elementUpperLimit; timeOffset += elementInterval) {
           const forecastTime = runTime.clone().add({ seconds: timeOffset })
           if (options.keepPastForecasts || !forecastTime.isBefore(lowerTime)) {
-            const task = Object.assign({
+            const task = {
               level,
               runTime,
               forecastTime,
-              timeOffset
-            }, element)
+              timeOffset,
+              ...element
+            }
             // Check if we have to retry on previous runs
             if (oldestRunInterval) {
               // Number of retries required to reach the oldest limit
@@ -75,7 +76,7 @@ export function generateNwpTasks (options) {
               for (let i = 0; i < attemptsLimit - 1; i++) {
                 const previousRunTime = runTime.clone().subtract({ seconds: (i + 1) * runInterval })
                 if (options.keepPastRuns) {
-                  tasks.push(Object.assign({ runTime: previousRunTime }, _.omit(task, ['runTime'])))
+                  tasks.push({ runTime: previousRunTime, ..._.omit(task, ['runTime']) })
                 } else {
                   task.attemptsOptions.push({ runTime: previousRunTime })
                 }

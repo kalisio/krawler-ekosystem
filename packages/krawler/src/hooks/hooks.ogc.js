@@ -21,13 +21,13 @@ export function getCapabilities (options = {}) {
     return new Promise((resolve, reject) => {
       request(requestParameters, (error, response, body) => {
         // trivial check
-        if (error) reject(error)
+        if (error) reject(error instanceof Error ? error : new Error(String(error)))
         if (response.statusCode !== 200) reject(new Error('Request rejected with HTTP code ' + response.statusCode))
         // parse the body
         const parser = new xml2js.Parser({ explicitArray: false })
         parser.parseString(body, (err, result) => {
           if (err) {
-            reject(err)
+            reject(err instanceof Error ? err : new Error(String(err)))
           }
           // feed the hook with the parsed result
           _.set(hook, options.dataPath || 'result.data', result)

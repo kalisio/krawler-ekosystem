@@ -147,8 +147,7 @@ export function createMongoCollection (options = {}) {
       await createIndex(collection, collectionName, options.index)
     } else if (options.indices) { // Or multiple indices
       // As arguments or single object ?
-      for (let i = 0; i < options.indices.length; i++) {
-        const index = options.indices[i]
+      for (const index of options.indices) {
         await createIndex(collection, collectionName, index)
       }
     }
@@ -177,8 +176,7 @@ export function dropMongoIndex (options = {}) {
     if (options.index) {
       await dropIndex(collection, collectionName, options.index)
     } else if (options.indices) { // Or multiple indices
-      for (let i = 0; i < options.indices.length; i++) {
-        const index = options.indices[i]
+      for (const index of options.indices) {
         await dropIndex(collection, collectionName, index)
       }
     }
@@ -207,8 +205,7 @@ export function createMongoIndex (options = {}) {
     if (options.index) {
       await createIndex(collection, collectionName, options.index)
     } else if (options.indices) { // Or multiple indices
-      for (let i = 0; i < options.indices.length; i++) {
-        const index = options.indices[i]
+      for (const index of options.indices) {
         await createIndex(collection, collectionName, index)
       }
     }
@@ -262,12 +259,12 @@ export function writeMongoCollection (options = {}) {
 
     // Write the chunks
     const errors = []
-    for (let i = 0; i < chunks.length; ++i) {
-      debug(`Inserting ${chunks[i].length} JSON document in the ${collectionName} collection `)
+    for (const chunk of chunks) {
+      debug(`Inserting ${chunk.length} JSON document in the ${collectionName} collection `)
       try {
         // Unordered bulk so a duplicate key doesn't stop the rest of the chunk.
-        await collection.bulkWrite(chunks[i].map(chunk => {
-          return { insertOne: { document: chunk } }
+        await collection.bulkWrite(chunk.map(doc => {
+          return { insertOne: { document: doc } }
         }), { ordered: false, ...options })
       } catch (error) {
         // Raise on first error ?
@@ -299,14 +296,14 @@ export function updateMongoCollection (options = {}) {
 
     // Write the chunks
     const errors = []
-    for (let i = 0; i < chunks.length; ++i) {
-      debug(`Updating ${chunks[i].length} JSON document in the ${collectionName} collection `)
+    for (const chunk of chunks) {
+      debug(`Updating ${chunk.length} JSON document in the ${collectionName} collection `)
       try {
-        await collection.bulkWrite(chunks[i].map(chunk => {
-          const filter = templateQueryObject(chunk, options.filter || {}, _.omit(options, ['filter']))
+        await collection.bulkWrite(chunk.map(doc => {
+          const filter = templateQueryObject(doc, options.filter || {}, _.omit(options, ['filter']))
           const updateData = options.dotify // _id is immutable in Mongo
-            ? dotify(_.omit(chunk, ['_id']))
-            : _.omit(chunk, ['_id'])
+            ? dotify(_.omit(doc, ['_id']))
+            : _.omit(doc, ['_id'])
           return {
             updateOne: {
               filter,
@@ -396,10 +393,11 @@ export function createMongoBucket (options = {}) {
     // and memoise it here.
     if (!_.has(client, `buckets.${bucketName}`)) {
       debug('Creating the ' + bucketName + ' bucket')
-      const bucket = new GridFSBucket(client.db, Object.assign({
+      const bucket = new GridFSBucket(client.db, {
         chunkSizeBytes: 8 * 1024 * 1024,
-        bucketName
-      }, options))
+        bucketName,
+        ...options
+      })
       _.set(client, `buckets.${bucketName}`, bucket)
     }
     return hook

@@ -31,7 +31,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export const StoresService = stores()
 export const TasksService = tasks()
 export const JobsService = jobs()
-export let app
+let app
 let server
 
 // Register all default hooks
@@ -65,12 +65,13 @@ export async function createApp (job, options = {}) {
   }
   // Let krawler retirve distributed services
   if (_.has(job, 'options.distribution')) {
-    app.configure(distribution(Object.assign({
+    app.configure(distribution({
       // Distribute no services simply use remote ones by default
       services: (service) => false,
       key: 'krawler',
-      healthcheckPath: apiPrefix + '/distribution/'
-    }, _.get(job, 'options.distribution'))))
+      healthcheckPath: apiPrefix + '/distribution/',
+      ..._.get(job, 'options.distribution')
+    }))
   }
   app.configure(plugin())
   // In API mode everything is open, otherwise only health check is

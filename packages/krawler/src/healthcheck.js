@@ -130,13 +130,11 @@ export async function healthcheck (options) {
         await publishToSlack(options.slackWebhook, data, compilers, '', 'danger')
       }
       throw new HealthcheckError(data.error)
-    } else {
+    } else if (previousError) {
       // Only notify on closing errors
-      if (previousError) {
-        data.error = previousError
-        publishToConsole(data, compilers, '[CLOSED ALERT]', 'log')
-        await publishToSlack(options.slackWebhook, data, compilers, ' [RESOLVED]', 'good')
-      }
+      data.error = previousError
+      publishToConsole(data, compilers, '[CLOSED ALERT]', 'log')
+      await publishToSlack(options.slackWebhook, data, compilers, ' [RESOLVED]', 'good')
     }
   } catch (error) {
     if (options.debug) {
@@ -145,7 +143,7 @@ export async function healthcheck (options) {
     // Give feedback for any error raised by the healthcheck process
     if (!(error instanceof HealthcheckError)) {
       // Set jobId variable/error available in context so that templates will not fail
-      const data = Object.assign({ jobId: '' }, { error: _.pick(error, ['code', 'message']) })
+      const data = { jobId: '', error: _.pick(error, ['code', 'message']) }
       writeToLog(data)
       // Add env available for templates
       Object.assign(data, process.env)
