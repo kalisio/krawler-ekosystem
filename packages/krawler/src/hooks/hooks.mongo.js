@@ -56,25 +56,25 @@ async function createIndex (collection, collectionName, index) {
 export function connectMongo (options = {}) {
   return async function (hook) {
     const item = hook.data // getItems(hook)
-    let client = _.get(item, options.clientPath || 'client')
-    if (client) {
+    const existing = _.get(item, options.clientPath || 'client')
+    if (existing) {
       debug('Already connected to MongoDB for ' + item.id)
-      return hook
+    } else {
+      debug('Connecting to MongoDB for ' + item.id)
+      const url = template(item, _.get(options, 'url', _.snakeCase(item.id)))
+      const client = await MongoClient.connect(url, _.omit(options, ['hook', 'url', 'dbName', 'clientPath']))
+      let dbName = options.dbName
+      if (!dbName) {
+        // Extract database name.  Need to remove the connections options if any
+        const indexOfDBName = url.lastIndexOf('/') + 1
+        const indexOfOptions = url.indexOf('?')
+        if (indexOfOptions === -1) dbName = url.substring(indexOfDBName)
+        else dbName = url.substring(indexOfDBName, indexOfOptions)
+      }
+      client.db = client.db(dbName)
+      _.set(item, options.clientPath || 'client', client)
+      debug('Connected to MongoDB for ' + item.id)
     }
-    debug('Connecting to MongoDB for ' + item.id)
-    const url = template(item, _.get(options, 'url', _.snakeCase(item.id)))
-    client = await MongoClient.connect(url, _.omit(options, ['hook', 'url', 'dbName', 'clientPath']))
-    let dbName = options.dbName
-    if (!dbName) {
-      // Extract database name.  Need to remove the connections options if any
-      const indexOfDBName = url.lastIndexOf('/') + 1
-      const indexOfOptions = url.indexOf('?')
-      if (indexOfOptions === -1) dbName = url.substring(indexOfDBName)
-      else dbName = url.substring(indexOfDBName, indexOfOptions)
-    }
-    client.db = client.db(dbName)
-    _.set(item, options.clientPath || 'client', client)
-    debug('Connected to MongoDB for ' + item.id)
     return hook
   }
 }
@@ -86,13 +86,12 @@ export function disconnectMongo (options = {}) {
     const client = _.get(item, options.clientPath || 'client')
     if (_.isNil(client)) {
       debug('Already disconnected from MongoDB for ' + item.id)
-      return hook
+    } else {
+      debug('Disconnecting from MongoDB for ' + item.id)
+      await client.close()
+      _.unset(item, options.clientPath || 'client')
+      debug('Disconnected from MongoDB for ' + item.id)
     }
-
-    debug('Disconnecting from MongoDB for ' + item.id)
-    await client.close()
-    _.unset(item, options.clientPath || 'client')
-    debug('Disconnected from MongoDB for ' + item.id)
     return hook
   }
 }

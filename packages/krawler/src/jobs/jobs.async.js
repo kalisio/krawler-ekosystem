@@ -48,7 +48,7 @@ async function createJob (options, store, tasks, id, taskTemplate) {
   }
   // Wait for a task to be run by keeping track of it in queue
   const addToQueue = (task, queue, results) => {
-    // FIXME: not sure if possible to express this as async function
+    // We rely on the .then chain here because we need to access the constructed promise inside the callback (queue.indexOf(promise))
     const promise = task.then(result => {
       const hrend = process.hrtime(hrstart)
       const duration = (1000 * hrend[0] + hrend[1] / 1e6)

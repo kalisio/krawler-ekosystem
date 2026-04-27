@@ -274,6 +274,7 @@ describe('krawler:jobs', () => {
         }
       }
     }, tasksService)
+    expect(tasksService.__hooks).toBeTruthy()
   })
 
   it('creates a job with task hooks', () => {

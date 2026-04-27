@@ -12,36 +12,36 @@ export function createLogger (options = {}) {
     // the winston instance in krawler will not have the required plugins already loaded
     const winston = await import('winston')
     const item = hook.data // getItems(hook)
-    let logger = _.get(item, options.loggerPath || 'logger')
-    if (logger) {
+    const existing = _.get(item, options.loggerPath || 'logger')
+    if (existing) {
       debug('Logger already setup for ' + item.id)
-      return hook
+    } else {
+      debug('Setup logger for ' + item.id)
+      const logsConfig = { // Default logger erased by provided one if any
+        Console: {
+          format: winston.format.combine(winston.format.colorize(), winston.format.simple())
+        },
+        ..._.omit(options, ['loggerPath', 'level', 'format'])
+      }
+      // We have one entry per log type
+      const logsTypes = Object.getOwnPropertyNames(logsConfig)
+      // Create corresponding winston transports with options
+      const transports = []
+      for (const logType of logsTypes) {
+        const logOptions = logsConfig[logType]
+        debug(`Setup ${logType} transport with options`, logOptions)
+        // Winston plugin to be loaded ?
+        if (logOptions.import) await import(logOptions.import)
+        transports.push(new winston.transports[logType](_.omit(logOptions, ['import'])))
+      }
+      const logger = winston.createLogger({
+        level: (process.env.NODE_ENV === 'development' ? 'debug' : 'info'),
+        transports,
+        ..._.pick(options, ['level', 'format'])
+      })
+      _.set(item, options.loggerPath || 'logger', logger)
+      debug('Logger set for ' + item.id)
     }
-    debug('Setup logger for ' + item.id)
-    const logsConfig = { // Default logger erased by provided one if any
-      Console: {
-        format: winston.format.combine(winston.format.colorize(), winston.format.simple())
-      },
-      ..._.omit(options, ['loggerPath', 'level', 'format'])
-    }
-    // We have one entry per log type
-    const logsTypes = Object.getOwnPropertyNames(logsConfig)
-    // Create corresponding winston transports with options
-    const transports = []
-    for (const logType of logsTypes) {
-      const logOptions = logsConfig[logType]
-      debug(`Setup ${logType} transport with options`, logOptions)
-      // Winston plugin to be loaded ?
-      if (logOptions.import) await import(logOptions.import)
-      transports.push(new winston.transports[logType](_.omit(logOptions, ['import'])))
-    }
-    logger = winston.createLogger({
-      level: (process.env.NODE_ENV === 'development' ? 'debug' : 'info'),
-      transports,
-      ..._.pick(options, ['level', 'format'])
-    })
-    _.set(item, options.loggerPath || 'logger', logger)
-    debug('Logger set for ' + item.id)
     return hook
   }
 }
@@ -53,12 +53,12 @@ export function removeLogger (options = {}) {
     const logger = _.get(item, options.loggerPath || 'logger')
     if (_.isNil(logger)) {
       debug('Already removed logger for ' + item.id)
-      return hook
+    } else {
+      debug('Removing logger for ' + item.id)
+      // logger.clear()
+      _.unset(item, options.loggerPath || 'logger')
+      debug('Removed logger for ' + item.id)
     }
-    debug('Removing logger for ' + item.id)
-    // logger.clear()
-    _.unset(item, options.loggerPath || 'logger')
-    debug('Removed logger for ' + item.id)
     return hook
   }
 }

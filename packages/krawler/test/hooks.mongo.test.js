@@ -223,6 +223,7 @@ describe('krawler:hooks:mongo', () => {
 
   it('creates MongoDB bucket', async () => {
     await pluginHooks.createMongoBucket({ bucket: 'data' })(mongoHook)
+    expect(mongoHook.data.client.db).toBeTruthy()
   }, 5000)
 
   it('writes MongoDB bucket', async () => {

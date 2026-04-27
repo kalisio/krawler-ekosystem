@@ -33,6 +33,8 @@ describe('krawler:stores', () => {
         path: path.join(__dirname, 'data')
       }
     })
+    const created = await storesService.get('fs-in')
+    expect(created).toBeTruthy()
   })
 
   it('creates the fs output storage', async () => {

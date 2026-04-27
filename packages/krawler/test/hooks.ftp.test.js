@@ -43,6 +43,12 @@ describe('krawler:hooks:ftp', () => {
     params: { store }
   }
 
+  it('exposes FTP hooks', () => {
+    expect(typeof pluginHooks.listFTP).toBe('function')
+    expect(typeof pluginHooks.globFTP).toBe('function')
+    expect(typeof pluginHooks.getFTP).toBe('function')
+  })
+
   itLftp('list FTP', async () => {
     await pluginHooks.listFTP(ftpOptions)(ftpHook)
     expect(ftpHook.result.data).toBeTruthy()

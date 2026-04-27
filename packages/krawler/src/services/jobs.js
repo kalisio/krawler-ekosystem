@@ -37,7 +37,8 @@ class JobsService extends Service {
     try {
       store = await getStore(this.storesService, params, data)
     } catch (error) {
-      // Otherwise each task should specify its output store
+      // No job-level store: each task is expected to specify its own output store
+      debug('No job-level store available, tasks must provide their own:', error.message)
     }
 
     // The task template ID is used as a template string for the task ID

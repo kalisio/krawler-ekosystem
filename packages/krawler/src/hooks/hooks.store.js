@@ -36,6 +36,7 @@ export function createStores (options = {}) {
         if (storeOptions.storePath) _.set(hook.data, storeOptions.storePath, store)
         debug('Found existing store ' + storeOptions.id)
       } catch (error) {
+        debug('No existing store ' + storeOptions.id + ' (' + error.message + '), creating one')
         debug('Creating store for ' + hook.data.id + ' with options ', storeOptions)
         try {
           store = await hook.service.storesService.create(storeOptions)
@@ -164,8 +165,7 @@ export function unzipFromStore (options = {}) {
         .on('close', () => resolve())
         .on('error', (error) => reject(error instanceof Error ? error : new Error(String(error))))
     })
-    // FIXME: add zip entries as output
-    // addOutput(item, outputOptions.key, outputOptions.outputType)
+    // Note: zip entries are not currently exposed as outputs; see addOutput(item, outputOptions.key, outputOptions.outputType) when that becomes needed
   }
 
   return callOnHookItems(options)(unzip)

@@ -19,6 +19,6 @@ describe('krawler', () => {
   })
 
   it('registers the plugin', () => {
-    app.configure(plugin)
+    expect(() => app.configure(plugin)).not.toThrow()
   })
 })

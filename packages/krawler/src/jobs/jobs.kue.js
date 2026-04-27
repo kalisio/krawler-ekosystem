@@ -40,16 +40,18 @@ function createJob (options, store, tasks, id) {
       kueTask.on('failed', (error) => reject(error))
     })
     */
+    const onShutdownAfterFailure = (error) => (err) => {
+      const reason = err || error
+      reject(reason instanceof Error ? reason : new Error(String(reason)))
+    }
+    const onTaskFailed = (error) => queue.shutdown(onShutdownAfterFailure(error))
     tasks.forEach(task => {
       const kueTask = queue.create('task-' + id, task)
         .attempts(task.attemptsLimit || options.attemptsLimit || 1)
         .removeOnComplete(true)
         .save()
       // When the max attempts has been tried
-      kueTask.on('failed', (error) => queue.shutdown(err => {
-        const reason = err || error
-        reject(reason instanceof Error ? reason : new Error(String(reason)))
-      }))
+      kueTask.on('failed', onTaskFailed)
     })
     queue.process('task-' + id, workersLimit, async (task, done) => {
       let result

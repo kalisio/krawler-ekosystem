@@ -59,13 +59,18 @@ export function pullDockerImage (options = {}) {
     debug('Pulling docker image', item)
 
     await new Promise((resolve, reject) => {
-      client.pull(options.image, _.isNil(options.auth) ? null : options.auth, (err, stream) => {
+      const onProgress = (err) => {
         if (err) reject(err instanceof Error ? err : new Error(String(err)))
-        client.modem.followProgress(stream, (err, output) => {
-          if (err) reject(err instanceof Error ? err : new Error(String(err)))
-          resolve()
-        })
-      })
+        else resolve()
+      }
+      const onPull = (err, stream) => {
+        if (err) {
+          reject(err instanceof Error ? err : new Error(String(err)))
+          return
+        }
+        client.modem.followProgress(stream, onProgress)
+      }
+      client.pull(options.image, _.isNil(options.auth) ? null : options.auth, onPull)
     })
   }
   return callOnHookItems(options)(pull)

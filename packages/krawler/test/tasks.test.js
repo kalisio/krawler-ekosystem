@@ -35,6 +35,7 @@ describe('krawler:tasks', () => {
     storage = await storesService.create({ id: 'test-store', type: 'fs', options: { path: path.join(__dirname, 'output') } })
     // Use a promisified version of this method to ease testing
     storageExists = utility.promisify(storage.exists).bind(storage)
+    expect(storage).toBeTruthy()
   })
 
   it('creates the tasks service', () => {

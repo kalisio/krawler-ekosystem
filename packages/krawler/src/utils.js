@@ -16,6 +16,90 @@ Object.getPrototypeOf(moment()).toBSON = function () {
   return this.toDate()
 }
 
+function convertDateValue (value, units) {
+  let date
+  if (units.asDate === 'utc') {
+    date = (units.from ? moment.utc(value, units.from) : moment.utc(value))
+  } else {
+    date = (units.from ? moment(value, units.from) : moment(value))
+  }
+  // Reformat as a string when target format is given, else convert to JS Date
+  return units.to ? date.format(units.to) : date.toDate()
+}
+
+function convertUnitValue (value, units) {
+  if (units.asDate) return convertDateValue(value, units)
+  if (units.asString) {
+    if (_.isNumber(units.asString)) return value.toString(units.asString)
+    return value.toString()
+  }
+  if (units.asNumber) {
+    // Remove all spaces — large numbers are sometimes written with space separators ('120 000')
+    if (typeof value === 'string') value = value.replace(/ /g, '')
+    return _.toNumber(value)
+  }
+  return math.unit(value, units.from).toNumber(units.to)
+}
+
+function applyCaseTransform (value, asCase) {
+  if (!asCase || typeof value !== 'string') return value
+  return _[asCase] ? _[asCase](value) : value[asCase]()
+}
+
+function applyUnitMapping (json, unitMapping) {
+  _.forOwn(unitMapping, (units, path) => {
+    _.forEach(json, object => {
+      if (_.has(object, path)) {
+        let value = _.get(object, path)
+        value = convertUnitValue(value, units)
+        value = applyCaseTransform(value, units.asCase)
+        _.set(object, path, value)
+      } else if (_.has(units, 'empty')) {
+        _.set(object, path, units.empty)
+      }
+    })
+  })
+}
+
+function applyPathMapping (json, mapping) {
+  _.forOwn(mapping, (output, inputPath) => {
+    const isMappingObject = (typeof output === 'object')
+    const outputPath = (isMappingObject ? output.path : output)
+    const deleteInputPath = (isMappingObject ? _.get(output, 'delete', true) : true)
+    _.forEach(json, object => {
+      if (!_.has(object, inputPath)) return
+      let value = _.get(object, inputPath)
+      if (isMappingObject && output.values) value = output.values[value]
+      _.set(object, outputPath, value)
+    })
+    if (deleteInputPath) {
+      _.forEach(json, object => _.unset(object, inputPath))
+    }
+  })
+}
+
+function applyPickOmitMerge (json, options) {
+  for (let i = 0; i < json.length; i++) {
+    let object = json[i]
+    if (options.pick) object = _.pick(object, options.pick)
+    if (options.omit) object = _.omit(object, options.omit)
+    if (options.merge) object = _.merge(object, options.merge)
+    json[i] = object
+  }
+}
+
+function reshapeInputJson (json, options) {
+  if (options.toArray) json = _.toArray(json)
+  if (options.toObjects) {
+    json = json.map(array => array.reduce((object, value, index) => {
+      const propertyName = options.toObjects[index]
+      object[propertyName] = value
+      return object
+    }, {}))
+  }
+  return json
+}
+
 export function transformJsonObject (json, options) {
   let rootJson = json
   if (options.transformPath || options.inputPath) {
@@ -24,111 +108,19 @@ export function transformJsonObject (json, options) {
   // If no input path then we only have an output path
   // meaning we will store the array in the output object
   if (rootJson === json) rootJson = {}
-  if (options.toArray) {
-    json = _.toArray(json)
-  }
-  if (options.toObjects) {
-    json = json.map(array => array.reduce((object, value, index) => {
-      // Set the value at index on object using key provided in input list
-      const propertyName = options.toObjects[index]
-      object[propertyName] = value
-      return object
-    }, {}))
-  }
+  json = reshapeInputJson(json, options)
+
   // Safety check
   const isArray = Array.isArray(json)
-  if (!isArray) {
-    json = [json]
-  }
-  if (options.filter) {
-    json = json.filter(sift(options.filter))
-  }
+  if (!isArray) json = [json]
+  if (options.filter) json = json.filter(sift(options.filter))
   // By default we perform transformation in place
-  if (!_.get(options, 'inPlace', true)) {
-    json = _.cloneDeep(json)
-  }
-  // Iterate over path mapping
-  _.forOwn(options.mapping, (output, inputPath) => {
-    const isMappingObject = (typeof output === 'object')
-    const outputPath = (isMappingObject ? output.path : output)
-    const deleteInputPath = (isMappingObject ? _.get(output, 'delete', true) : true)
-    // Then iterate over JSON objects
-    _.forEach(json, object => {
-      if (!_.has(object, inputPath)) return
-      let value = _.get(object, inputPath)
-      // Perform value mapping (if any)
-      if (isMappingObject && output.values) {
-        value = output.values[value]
-      }
-      // Perform key mapping
-      _.set(object, outputPath, value)
-    })
-    if (deleteInputPath) {
-      _.forEach(json, object => {
-        _.unset(object, inputPath)
-      })
-    }
-  })
-  // Iterate over unit mapping
-  _.forOwn(options.unitMapping, (units, path) => {
-    // Then iterate over JSON objects
-    _.forEach(json, object => {
-      // Perform conversion
-      if (_.has(object, path)) {
-        let value = _.get(object, path)
-        // Handle dates
-        if (units.asDate) {
-          let date
-          // Handle UTC or local dates using input format if provided
-          if (units.asDate === 'utc') {
-            date = (units.from ? moment.utc(value, units.from) : moment.utc(value))
-          } else {
-            date = (units.from ? moment(value, units.from) : moment(value))
-          }
-          // In this case we'd like to reformat as a string
-          // otherwise the moment object is converted to standard JS Date
-          if (units.to) {
-            date = date.format(units.to)
-          } else {
-            date = date.toDate()
-          }
-          value = date
-        } else if (units.asString) { // Handle string conversion
-          // Convert to a target radix
-          if (_.isNumber(units.asString)) value = value.toString(units.asString)
-          else value = value.toString()
-        } else if (units.asNumber) { // Handle number conversion
-          // Remove all spaces as sometimes large numbers are written using a space separator
-          // like '120 000' causing the conversion to fail
-          if (typeof value === 'string') value = value.replace(/ /g, '')
-          value = _.toNumber(value)
-        } else { // Handle numbers
-          value = math.unit(value, units.from).toNumber(units.to)
-        }
-        if (units.asCase && (typeof value === 'string')) { // Handle case conversion as lodash/string function name
-          value = (_[units.asCase] ? _[units.asCase](value) : value[units.asCase]())
-        }
-        // Update converted value
-        _.set(object, path, value)
-      } else if (_.has(units, 'empty')) {
-        _.set(object, path, units.empty)
-      }
-    })
-  })
-  // Then iterate over JSON objects to pick/omit properties in place
-  for (let i = 0; i < json.length; i++) {
-    let object = json[i]
-    if (options.pick) {
-      object = _.pick(object, options.pick)
-    }
-    if (options.omit) {
-      object = _.omit(object, options.omit)
-    }
-    if (options.merge) {
-      object = _.merge(object, options.merge)
-    }
-    json[i] = object
-  }
+  if (!_.get(options, 'inPlace', true)) json = _.cloneDeep(json)
+
+  applyPathMapping(json, options.mapping)
+  applyUnitMapping(json, options.unitMapping)
+  applyPickOmitMerge(json, options)
+
   // Transform back to object when required
   if (!isArray) {
     if (!options.asArray) json = (json.length > 0 ? json[0] : {})

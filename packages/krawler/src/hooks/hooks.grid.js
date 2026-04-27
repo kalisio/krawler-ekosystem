@@ -48,6 +48,100 @@ export function generateGrid (options = {}) {
   }
 }
 
+function hasValidGridSpec (data) {
+  return data.origin && data.origin.length > 1 &&
+    data.size && data.size.length > 1 &&
+    data.resolution && data.resolution.length > 1
+}
+
+function readTaskTemplateContext (data) {
+  let version = _.get(data, 'taskTemplate.options.version')
+  if (version) version = _.toNumber(version.split('.').join(''))
+  const longitudeLabel = _.get(data, 'taskTemplate.options.longitudeLabel', 'long')
+  const latitudeLabel = _.get(data, 'taskTemplate.options.latitudeLabel', 'lat')
+  // Once consumed not required anymore and will avoid polluting request parameters
+  _.unset(data, 'taskTemplate.options.longitudeLabel')
+  _.unset(data, 'taskTemplate.options.latitudeLabel')
+  return {
+    type: _.get(data, 'taskTemplate.type'),
+    version,
+    longitudeLabel,
+    latitudeLabel
+  }
+}
+
+function maybeProjectToSphericalMercator (bbox, data, version) {
+  // NOTE: only EPSG:900913 / EPSG:3857 are currently handled
+  const crs = (version >= 113 ? _.get(data, 'taskTemplate.options.crs') : _.get(data, 'taskTemplate.options.srs'))
+  if (crs === 'EPSG:900913' || crs === 'EPSG:3857') {
+    return sphericalMercator.convert(bbox, '900913')
+  }
+  return bbox
+}
+
+function applyWmsTaskOptions (task, bbox, ctx, options) {
+  const { version, blockSize } = ctx
+  let wmsBbox = bbox
+  // NOTE: WMS >=1.1.3 uses SRS-defined axis order (usually lat,lon)
+  if (version >= 113) {
+    wmsBbox = [bbox[1], bbox[0], bbox[3], bbox[2]]
+  }
+  if (options.resample) {
+    if (blockSize) {
+      task.options.width = blockSize[0]
+      task.options.height = blockSize[1]
+    } else {
+      task.options.width = 1
+      task.options.height = 1
+    }
+  }
+  task.options.BBOX = wmsBbox[0] + ',' + wmsBbox[1] + ',' + wmsBbox[2] + ',' + wmsBbox[3]
+}
+
+function applyWcs2xxTaskOptions (task, bbox, ctx, options, data) {
+  const { longitudeLabel, latitudeLabel, blockSize } = ctx
+  if (!task.options.subsets) task.options.subsets = {}
+  task.options.subsets[longitudeLabel] = bbox[0] + ',' + bbox[2]
+  task.options.subsets[latitudeLabel] = bbox[1] + ',' + bbox[3]
+  if (options.resample) {
+    const resampleLongitudeLabel = _.get(data, 'taskTemplate.options.resampleLongitudeLabel', longitudeLabel)
+    const resampleLatitudeLabel = _.get(data, 'taskTemplate.options.resampleLatitudeLabel', latitudeLabel)
+    const w = blockSize ? blockSize[0] : 1
+    const h = blockSize ? blockSize[1] : 1
+    task.options.scalesize = `${resampleLongitudeLabel}(${w}),${resampleLatitudeLabel}(${h})`
+  }
+}
+
+function applyWcs1xxTaskOptions (task, bbox) {
+  // WCS 1.1 follows EPSG axis/tuple ordering for geographic CRS, so coordinates are lat/long not long/lat
+  const inverted = [bbox[1], bbox[0], bbox[3], bbox[2]]
+  task.options.boundingbox = inverted.join(',') + ',urn:ogc:def:crs:EPSG::4326'
+}
+
+function applyTaskOptionsForType (task, bbox, ctx, options, data) {
+  if (ctx.type === 'wms') {
+    applyWmsTaskOptions(task, bbox, ctx, options)
+  } else if (ctx.type === 'wcs') {
+    if (ctx.version >= 200) applyWcs2xxTaskOptions(task, bbox, ctx, options, data)
+    else applyWcs1xxTaskOptions(task, bbox)
+  }
+}
+
+function buildGridTask (i, j, ctx, options, data) {
+  const { origin, resolution } = ctx
+  const minLon = origin[0] + (i * resolution[0])
+  const minLat = origin[1] + (j * resolution[1])
+  const initialBbox = [minLon, minLat, minLon + resolution[0], minLat + resolution[1]]
+  const bbox = maybeProjectToSphericalMercator(initialBbox, data, ctx.version)
+  const task = {
+    id: j.toFixed() + '-' + i.toFixed(),
+    bbox,
+    options: {}
+  }
+  applyTaskOptionsForType(task, bbox, ctx, options, data)
+  return task
+}
+
 // Generate the task to download gridded data from grid spec
 export function generateGridTasks (options = {}) {
   return function (hook) {
@@ -55,91 +149,23 @@ export function generateGridTasks (options = {}) {
       throw new Error('The \'generateGridTasks\' hook should only be used as a \'before\' hook.')
     }
 
-    if (hook.data.origin && hook.data.origin.length > 1 &&
-        hook.data.size && hook.data.size.length > 1 &&
-        hook.data.resolution && hook.data.resolution.length > 1) {
-      const origin = hook.data.origin
-      // One task can target a block of the grid or the final grid resolution
-      const blockSize = hook.data.blockSize
-      const size = hook.data.nbBlocks || hook.data.size
-      const resolution = hook.data.blockResolution || hook.data.resolution
+    if (!hasValidGridSpec(hook.data)) return hook
 
-      const type = _.get(hook.data, 'taskTemplate.type')
-      // Depending on the version number we have different options
-      let version = _.get(hook.data, 'taskTemplate.options.version')
-      if (version) {
-        version = _.toNumber(version.split('.').join(''))
+    const origin = hook.data.origin
+    // One task can target a block of the grid or the final grid resolution
+    const blockSize = hook.data.blockSize
+    const size = hook.data.nbBlocks || hook.data.size
+    const resolution = hook.data.blockResolution || hook.data.resolution
+    const ctx = { ...readTaskTemplateContext(hook.data), origin, blockSize, resolution }
+
+    const tasks = []
+    for (let i = 0; i < size[0]; i++) {
+      for (let j = 0; j < size[1]; j++) {
+        tasks.push(buildGridTask(i, j, ctx, options, hook.data))
       }
-      const longitudeLabel = _.get(hook.data, 'taskTemplate.options.longitudeLabel', 'long')
-      const latitudeLabel = _.get(hook.data, 'taskTemplate.options.latitudeLabel', 'lat')
-      // Once consumed not required anymore and will avoid polluting request parameters
-      _.unset(hook.data, 'taskTemplate.options.longitudeLabel')
-      _.unset(hook.data, 'taskTemplate.options.latitudeLabel')
-
-      const tasks = []
-      for (let i = 0; i < size[0]; i++) {
-        for (let j = 0; j < size[1]; j++) {
-          const minLon = origin[0] + (i * resolution[0])
-          const minLat = origin[1] + (j * resolution[1])
-          let bbox = [minLon, minLat, minLon + resolution[0], minLat + resolution[1]]
-
-          // Check if we need to convert to spherical mercator
-          // FIXME: manage more CRS
-          const crs = (version >= 113 ? _.get(hook.data, 'taskTemplate.options.crs') : _.get(hook.data, 'taskTemplate.options.srs'))
-          if (crs === 'EPSG:900913' || crs === 'EPSG:3857') {
-            bbox = sphericalMercator.convert(bbox, '900913')
-          }
-          const task = {
-            id: j.toFixed() + '-' + i.toFixed(),
-            bbox,
-            options: {}
-          }
-          if (type === 'wms') {
-            // Check if we need to invert XY
-            if (version >= 113) {
-              // Before WMS v 1.1.3 order was always lon,lat but with WMS v 1.1.3 order si the same than the SRS used so usually lat,lon
-              // FIXME: check with CRS
-              bbox = [bbox[1], bbox[0], bbox[3], bbox[2]]
-            }
-            // Resample to target grid resolution ?
-            if (options.resample) {
-              if (blockSize) {
-                task.options.width = blockSize[0]
-                task.options.height = blockSize[1]
-              } else {
-                task.options.width = 1
-                task.options.height = 1
-              }
-            }
-            task.options.BBOX = bbox[0] + ',' + bbox[1] + ',' + bbox[2] + ',' + bbox[3]
-          } else if (type === 'wcs') {
-            if (version >= 200) {
-              if (!task.options.subsets) task.options.subsets = {}
-              task.options.subsets[longitudeLabel] = bbox[0] + ',' + bbox[2]
-              task.options.subsets[latitudeLabel] = bbox[1] + ',' + bbox[3]
-              // Resample to target grid resolution ?
-              if (options.resample) {
-                const resampleLongitudeLabel = _.get(hook.data, 'taskTemplate.options.resampleLongitudeLabel', longitudeLabel)
-                const resampleLatitudeLabel = _.get(hook.data, 'taskTemplate.options.resampleLatitudeLabel', latitudeLabel)
-                if (blockSize) {
-                  task.options.scalesize = resampleLongitudeLabel + '(' + blockSize[0] + ')' + ',' + resampleLatitudeLabel + '(' + blockSize[1] + ')'
-                } else {
-                  task.options.scalesize = resampleLongitudeLabel + '(' + 1 + ')' + ',' + resampleLatitudeLabel + '(' + 1 + ')'
-                }
-              }
-            } else {
-              // WCS 1.1 follows EPSG defined axis/tuple ordering for geographic coordinate systems.
-              // This means that coordinates reported are actually handled as lat/long not long/lat.
-              bbox = [bbox[1], bbox[0], bbox[3], bbox[2]]
-              task.options.boundingbox = bbox[0] + ',' + bbox[1] + ',' + bbox[2] + ',' + bbox[3] + ',' + 'urn:ogc:def:crs:EPSG::4326'
-            }
-          }
-          tasks.push(task)
-        }
-      }
-      debug('Generated grid tasks', tasks)
-      hook.data.tasks = tasks
     }
+    debug('Generated grid tasks', tasks)
+    hook.data.tasks = tasks
 
     return hook
   }

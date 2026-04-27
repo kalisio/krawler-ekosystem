@@ -21,7 +21,8 @@ async function getStream (hook, hookName) {
   try {
     readers = gtif.createReadStreams(filePath)
   } catch (error) {
-    throw new Error(`Cannot read file ${filePath}.`)
+    debug(`Failed to read GeoTiff streams for ${filePath}:`, error)
+    throw new Error(`Cannot read file ${filePath}.`, { cause: error })
   }
   // No band found
   if (readers.length === 0) {
@@ -53,9 +54,9 @@ export function computeStatistics (options = {}) {
     if (options.dataPath) {
       const data = _.get(hook, options.dataPath)
       debug('Computing statistics for ' + hook.result.id)
-      for (let value of data) {
+      for (const entry of data) {
         // Check for a value property on objects
-        if (typeof value === 'object') value = _.get(value, options.valuePath || 'value')
+        const value = (typeof entry === 'object') ? _.get(entry, options.valuePath || 'value') : entry
         if (_.isFinite(value)) {
           if (value < minValue) minValue = value
           if (value > maxValue) maxValue = value

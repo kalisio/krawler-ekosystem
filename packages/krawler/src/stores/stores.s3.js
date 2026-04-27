@@ -8,8 +8,8 @@ const debug = makeDebug('krawler:stores')
 function createStore (options, id) {
   debug('Creating S3 store ' + id + ' with following parameters', options)
   const s3 = new aws.S3(options.client)
-  // FIXME: Don't know why but some operations like headObject, used by store.exists(), fail if done first
-  // As a consequence we perform a first dummy operation to initialize the client
+  // Some S3 operations (notably headObject used by store.exists()) fail when run as the very first
+  // call against a freshly created client; a benign listObjects warm-up avoids that.
   s3.listObjects({ Bucket: options.bucket, MaxKeys: 1 }, function (err, res) {
     if (!err) debug('Client initialized for S3 store ' + id)
     else throw new Error('Failed to initialize client for S3 store ' + id)

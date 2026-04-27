@@ -3,6 +3,7 @@
 // import cluster from 'cluster'
 import { Healthcheck } from './healthcheck.js'
 import { processOptions, cli } from './cli.js'
+import logger from './logger.js'
 
 /* WIP: cluster mode, the main issue is that stores are created by a job before hook
    thus are not availalbe on workers not running the job but running only tasks
@@ -31,5 +32,6 @@ try {
   await cli(options.job, options)
   if (!options.cron && !options.api) process.exit(Healthcheck.error)
 } catch (error) {
+  logger.error(error)
   process.exit(1)
 }
