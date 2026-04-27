@@ -6,6 +6,23 @@ import { template } from '../utils.js'
 
 const debug = makeDebug('krawler:hooks:pg')
 
+// Validate and double-quote a Postgres identifier (optionally schema-qualified).
+// Identifiers cannot be passed as bound parameters, so we whitelist the syntax and
+// quote each segment to neutralize any injection attempt from templated values.
+function quoteIdentifier (name) {
+  if (typeof name !== 'string' || name.length === 0) {
+    throw new Error(`Invalid PostgreSQL identifier: ${name}`)
+  }
+  const segments = name.split('.')
+  const safe = /^[A-Za-z_]\w*$/
+  return segments.map(segment => {
+    if (!safe.test(segment)) {
+      throw new Error(`Invalid PostgreSQL identifier: ${name}`)
+    }
+    return '"' + segment.replace(/"/g, '""') + '"'
+  }).join('.')
+}
+
 // Connect to the postgres database
 export function connectPG (options = {}) {
   return async function (hook) {
@@ -58,8 +75,9 @@ export function dropPGTable (options = {}) {
 
     // Drop the table
     const table = template(hook.data, _.get(options, 'table', _.snakeCase(hook.data.id)))
+    const safeTable = quoteIdentifier(table)
     debug('Droping the ' + table + ' table')
-    await client.query('DROP TABLE IF EXISTS ' + table)
+    await client.query('DROP TABLE IF EXISTS ' + safeTable)
     return hook
   }
 }
@@ -74,8 +92,9 @@ export function createPGTable (options = {}) {
 
     // Create the table
     const table = template(hook.data, _.get(options, 'table', _.snakeCase(hook.data.id)))
+    const safeTable = quoteIdentifier(table)
     debug('Creating the ' + table + ' table')
-    await client.query('CREATE TABLE ' + table + ' (id SERIAL PRIMARY KEY, geom GEOMETRY(POINTZ, 4326), properties JSON)')
+    await client.query('CREATE TABLE ' + safeTable + ' (id SERIAL PRIMARY KEY, geom GEOMETRY(POINTZ, 4326), properties JSON)')
     return hook
   }
 }
@@ -107,6 +126,7 @@ export function writePGTable (options = {}) {
     // Write the chunks
     // The insert query must have the following form ($1, $2), ($3, $4) .... ($i, $i+1) [param1, param2 ....... parami, param i+1]
     const table = template(hook.result, _.get(options, 'table', _.snakeCase(hook.result.id)))
+    const safeTable = quoteIdentifier(table)
     debug('Inserting GeoJSON in the ' + table + ' table')
     for (const chunk of chunks) {
       let values = ''
@@ -120,7 +140,7 @@ export function writePGTable (options = {}) {
         params.push(chunk[j].geometry)
         params.push(chunk[j].properties)
       }
-      await client.query('INSERT INTO ' + table + ' (geom, properties) VALUES' + values, params)
+      await client.query('INSERT INTO ' + safeTable + ' (geom, properties) VALUES' + values, params)
     }
     return hook
   }
