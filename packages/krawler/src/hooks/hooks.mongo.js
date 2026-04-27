@@ -10,6 +10,26 @@ import {
 const { MongoClient, MongoError, GridFSBucket } = mongo
 const debug = makeDebug('krawler:hooks:mongo')
 
+// Resolve the MongoDB client from the hook payload or throw a hook-specific error.
+function requireClient (hook, options, hookName) {
+  const item = hook.data // getItems(hook)
+  const client = _.get(item, options.clientPath || 'client')
+  if (_.isNil(client)) {
+    throw new Error(`You must be connected to MongoDB before using the '${hookName}' hook`)
+  }
+  return { item, client }
+}
+
+// Resolve the templated collection name (defaulting to a snake-cased item id).
+function getCollectionName (item, options) {
+  return template(item, _.get(options, 'collection', _.snakeCase(item.id)))
+}
+
+// Resolve the templated bucket name (defaulting to a snake-cased item id).
+function getBucketName (item, options) {
+  return template(item, _.get(options, 'bucket', _.snakeCase(item.id)))
+}
+
 // mongodb v4+ removed the strict+callback existence check; use listCollections.
 async function collectionExists (db, name) {
   const match = await db.listCollections({ name }, { nameOnly: true }).toArray()
@@ -99,14 +119,8 @@ export function disconnectMongo (options = {}) {
 // Drop a collection
 export function dropMongoCollection (options = {}) {
   return async function (hook) {
-    const item = hook.data // getItems(hook)
-    const client = _.get(item, options.clientPath || 'client')
-    if (_.isNil(client)) {
-      throw new Error('You must be connected to MongoDB before using the \'dropMongoCollection\' hook')
-    }
-
-    // Drop the collection
-    const collection = template(item, _.get(options, 'collection', _.snakeCase(item.id)))
+    const { item, client } = requireClient(hook, options, 'dropMongoCollection')
+    const collection = getCollectionName(item, options)
     debug('Droping the ' + collection + ' collection')
     try {
       await client.db.dropCollection(collection)
@@ -114,7 +128,6 @@ export function dropMongoCollection (options = {}) {
       // If collection does not exist we do not raise
       if (error instanceof MongoError && error.code === 26) {
         debug(collection + ' collection does not exist, skipping drop')
-        return hook
       } else {
         // Rethrow
         throw error
@@ -127,13 +140,8 @@ export function dropMongoCollection (options = {}) {
 // Create a collection
 export function createMongoCollection (options = {}) {
   return async function (hook) {
-    const item = hook.data // getItems(hook)
-    const client = _.get(item, options.clientPath || 'client')
-    if (_.isNil(client)) {
-      throw new Error('You must be connected to MongoDB before using the \'createMongoCollection\' hook')
-    }
-
-    const collectionName = template(item, _.get(options, 'collection', _.snakeCase(item.id)))
+    const { item, client } = requireClient(hook, options, 'createMongoCollection')
+    const collectionName = getCollectionName(item, options)
     let collection
     if (await collectionExists(client.db, collectionName)) {
       collection = client.db.collection(collectionName)
@@ -141,43 +149,34 @@ export function createMongoCollection (options = {}) {
       debug('Creating the ' + collectionName + ' collection')
       collection = await client.db.createCollection(collectionName)
     }
-    // Add index if required
-    if (options.index) {
-      await createIndex(collection, collectionName, options.index)
-    } else if (options.indices) { // Or multiple indices
-      // As arguments or single object ?
-      for (const index of options.indices) {
-        await createIndex(collection, collectionName, index)
-      }
-    }
+    await applyIndexOperation(createIndex, collection, collectionName, options)
     return hook
+  }
+}
+
+// Apply a per-index operation (create/drop) over the configured index or indices.
+async function applyIndexOperation (operation, collection, collectionName, options) {
+  if (options.index) {
+    await operation(collection, collectionName, options.index)
+  } else if (options.indices) { // Or multiple indices
+    for (const index of options.indices) {
+      await operation(collection, collectionName, index)
+    }
   }
 }
 
 // Drop an index
 export function dropMongoIndex (options = {}) {
   return async function (hook) {
-    const item = hook.data // getItems(hook)
-    const client = _.get(item, options.clientPath || 'client')
-    if (_.isNil(client)) {
-      throw new Error('You must be connected to MongoDB before using the \'dropMongoCollection\' hook')
-    }
-
-    const collectionName = template(item, _.get(options, 'collection', _.snakeCase(item.id)))
+    const { item, client } = requireClient(hook, options, 'dropMongoIndex')
+    const collectionName = getCollectionName(item, options)
     const collection = (await collectionExists(client.db, collectionName))
       ? client.db.collection(collectionName)
       : null
     if (!collection) {
-      debug(collection + ' collection does not exist, skipping dropping index')
-      return hook
-    }
-    // Drop index if required
-    if (options.index) {
-      await dropIndex(collection, collectionName, options.index)
-    } else if (options.indices) { // Or multiple indices
-      for (const index of options.indices) {
-        await dropIndex(collection, collectionName, index)
-      }
+      debug(collectionName + ' collection does not exist, skipping dropping index')
+    } else {
+      await applyIndexOperation(dropIndex, collection, collectionName, options)
     }
     return hook
   }
@@ -186,27 +185,15 @@ export function dropMongoIndex (options = {}) {
 // Create an index
 export function createMongoIndex (options = {}) {
   return async function (hook) {
-    const item = hook.data // getItems(hook)
-    const client = _.get(item, options.clientPath || 'client')
-    if (_.isNil(client)) {
-      throw new Error('You must be connected to MongoDB before using the \'createMongoCollection\' hook')
-    }
-
-    const collectionName = template(item, _.get(options, 'collection', _.snakeCase(item.id)))
+    const { item, client } = requireClient(hook, options, 'createMongoIndex')
+    const collectionName = getCollectionName(item, options)
     const collection = (await collectionExists(client.db, collectionName))
       ? client.db.collection(collectionName)
       : null
     if (!collection) {
-      debug(collection + ' collection does not exist, skipping creating index')
-      return hook
-    }
-    // Add index if required
-    if (options.index) {
-      await createIndex(collection, collectionName, options.index)
-    } else if (options.indices) { // Or multiple indices
-      for (const index of options.indices) {
-        await createIndex(collection, collectionName, index)
-      }
+      debug(collectionName + ' collection does not exist, skipping creating index')
+    } else {
+      await applyIndexOperation(createIndex, collection, collectionName, options)
     }
     return hook
   }
@@ -215,13 +202,8 @@ export function createMongoIndex (options = {}) {
 // Retrieve JSON documents from a collection
 export function readMongoCollection (options = {}) {
   return async function (hook) {
-    const item = hook.data // getItems(hook)
-    const client = _.get(item, options.clientPath || 'client')
-    if (_.isNil(client)) {
-      throw new Error('You must be connected to MongoDB before using the \'readMongoCollection\' hook')
-    }
-
-    const collectionName = template(item, _.get(options, 'collection', _.snakeCase(item.id)))
+    const { item, client } = requireClient(hook, options, 'readMongoCollection')
+    const collectionName = getCollectionName(item, options)
     const collection = client.db.collection(collectionName)
     const templatedQuery = templateQueryObject(item, options.query || {}, _.omit(options, ['query']))
     const query = collection.find(templatedQuery)
@@ -242,39 +224,36 @@ export function readMongoCollection (options = {}) {
   }
 }
 
+// Run a per-chunk bulkWrite, collecting non-fatal errors unless raiseOnChunkError is set.
+async function runBulkWriteChunks (collection, collectionName, chunks, buildOps, bulkOptions, options, verb) {
+  const errors = []
+  for (const chunk of chunks) {
+    debug(`${verb} ${chunk.length} JSON document in the ${collectionName} collection `)
+    try {
+      await collection.bulkWrite(chunk.map(buildOps), bulkOptions)
+    } catch (error) {
+      // Raise on first error ?
+      if (options.raiseOnChunkError) throw error
+      // Otherwise continue until all chunks have been processed
+      errors.push(error)
+    }
+  }
+  if (errors.length > 0) {
+    throw mergeErrors(errors)
+  }
+}
+
 // Insert JSON document(s) in a collection
 export function writeMongoCollection (options = {}) {
   return async function (hook) {
-    const item = hook.data // getItems(hook)
-    const client = _.get(item, options.clientPath || 'client')
-    if (_.isNil(client)) {
-      throw new Error('You must be connected to MongoDB before using the \'writeMongoCollection\' hook')
-    }
-
-    const collectionName = template(item, _.get(options, 'collection', _.snakeCase(item.id)))
+    const { item, client } = requireClient(hook, options, 'writeMongoCollection')
+    const collectionName = getCollectionName(item, options)
     const collection = client.db.collection(collectionName)
-    // Defines the chunks
     const chunks = getChunks(hook, options)
-
-    // Write the chunks
-    const errors = []
-    for (const chunk of chunks) {
-      debug(`Inserting ${chunk.length} JSON document in the ${collectionName} collection `)
-      try {
-        // Unordered bulk so a duplicate key doesn't stop the rest of the chunk.
-        await collection.bulkWrite(chunk.map(doc => {
-          return { insertOne: { document: doc } }
-        }), { ordered: false, ...options })
-      } catch (error) {
-        // Raise on first error ?
-        if (options.raiseOnChunkError) throw error
-        // Otherwise continue until all chunks have been processed
-        errors.push(error)
-      }
-    }
-    if (errors.length > 0) {
-      throw mergeErrors(errors)
-    }
+    // Unordered bulk so a duplicate key doesn't stop the rest of the chunk.
+    const bulkOptions = { ordered: false, ...options }
+    const buildInsert = doc => ({ insertOne: { document: doc } })
+    await runBulkWriteChunks(collection, collectionName, chunks, buildInsert, bulkOptions, options, 'Inserting')
     return hook
   }
 }
@@ -282,46 +261,25 @@ export function writeMongoCollection (options = {}) {
 // Update JSON document(s) in a collection
 export function updateMongoCollection (options = {}) {
   return async function (hook) {
-    const item = hook.data // getItems(hook)
-    const client = _.get(item, options.clientPath || 'client')
-    if (_.isNil(client)) {
-      throw new Error('You must be connected to MongoDB before using the \'updateMongoCollection\' hook')
-    }
-
-    const collectionName = template(item, _.get(options, 'collection', _.snakeCase(item.id)))
+    const { item, client } = requireClient(hook, options, 'updateMongoCollection')
+    const collectionName = getCollectionName(item, options)
     const collection = client.db.collection(collectionName)
-    // Defines the chunks
     const chunks = getChunks(hook, options)
-
-    // Write the chunks
-    const errors = []
-    for (const chunk of chunks) {
-      debug(`Updating ${chunk.length} JSON document in the ${collectionName} collection `)
-      try {
-        await collection.bulkWrite(chunk.map(doc => {
-          const filter = templateQueryObject(doc, options.filter || {}, _.omit(options, ['filter']))
-          const updateData = options.dotify // _id is immutable in Mongo
-            ? dotify(_.omit(doc, ['_id']))
-            : _.omit(doc, ['_id'])
-          return {
-            updateOne: {
-              filter,
-              upsert: options.upsert || false,
-              hint: options.hint,
-              update: { $set: updateData }
-            }
-          }
-        }), options)
-      } catch (error) {
-        // Raise on first error ?
-        if (options.raiseOnChunkError) throw error
-        // Otherwise continue until all chunks have been processed
-        errors.push(error)
+    const buildUpdate = doc => {
+      const filter = templateQueryObject(doc, options.filter || {}, _.omit(options, ['filter']))
+      const updateData = options.dotify // _id is immutable in Mongo
+        ? dotify(_.omit(doc, ['_id']))
+        : _.omit(doc, ['_id'])
+      return {
+        updateOne: {
+          filter,
+          upsert: options.upsert || false,
+          hint: options.hint,
+          update: { $set: updateData }
+        }
       }
     }
-    if (errors.length > 0) {
-      throw mergeErrors(errors)
-    }
+    await runBulkWriteChunks(collection, collectionName, chunks, buildUpdate, options, options, 'Updating')
     return hook
   }
 }
@@ -329,13 +287,8 @@ export function updateMongoCollection (options = {}) {
 // Create aggregation
 export function createMongoAggregation (options = {}) {
   return async function (hook) {
-    const item = hook.data // getItems(hook)
-    const client = _.get(item, options.clientPath || 'client')
-    if (_.isNil(client)) {
-      throw new Error('You must be connected to MongoDB before using the \'createMongoAggregation\' hook')
-    }
-
-    const collectionName = template(item, _.get(options, 'collection', _.snakeCase(item.id)))
+    const { item, client } = requireClient(hook, options, 'createMongoAggregation')
+    const collectionName = getCollectionName(item, options)
     const collection = client.db.collection(collectionName)
     let pipeline = options.pipeline
     if (_.isNil(pipeline)) {
@@ -362,13 +315,8 @@ export function createMongoAggregation (options = {}) {
 // Delete documents in a collection
 export function deleteMongoCollection (options = {}) {
   return async function (hook) {
-    const item = hook.data // getItems(hook)
-    const client = _.get(item, options.clientPath || 'client')
-    if (_.isNil(client)) {
-      throw new Error('You must be connected to MongoDB before using the \'deleteMongoCollection\' hook')
-    }
-
-    const collectionName = template(item, _.get(options, 'collection', _.snakeCase(item.id)))
+    const { item, client } = requireClient(hook, options, 'deleteMongoCollection')
+    const collectionName = getCollectionName(item, options)
     const collection = client.db.collection(collectionName)
     const templatedQuery = templateQueryObject(item, options.filter || {}, _.omit(options, ['filter']))
     debug(`Deleting documents in collection ${collectionName} with`, templatedQuery)
@@ -380,13 +328,8 @@ export function deleteMongoCollection (options = {}) {
 // Create a GridFS bucket
 export function createMongoBucket (options = {}) {
   return async function (hook) {
-    const item = hook.data // getItems(hook)
-    const client = _.get(item, options.clientPath || 'client')
-    if (_.isNil(client)) {
-      throw new Error('You must be connected to MongoDB before using the \'createMongoBucket\' hook')
-    }
-
-    const bucketName = template(item, _.get(options, 'bucket', _.snakeCase(item.id)))
+    const { item, client } = requireClient(hook, options, 'createMongoBucket')
+    const bucketName = getBucketName(item, options)
     // mongodb >= 4 removed the strict+callback form of db.collection; a
     // GridFSBucket is cheap to instantiate and idempotent, so we always build
     // and memoise it here.
@@ -406,13 +349,8 @@ export function createMongoBucket (options = {}) {
 // Read file from a bucket
 export function readMongoBucket (options = {}) {
   return async function (hook) {
-    const item = hook.data // getItems(hook)
-    const client = _.get(item, options.clientPath || 'client')
-    if (_.isNil(client)) {
-      throw new Error('You must be connected to MongoDB before using the \'readMongoBucket\' hook')
-    }
-
-    const bucketName = template(item, _.get(options, 'bucket', _.snakeCase(item.id)))
+    const { item, client } = requireClient(hook, options, 'readMongoBucket')
+    const bucketName = getBucketName(item, options)
     const bucket = _.get(client, `buckets.${bucketName}`)
     const filePath = template(item, options.key || item.id)
     const store = await getStoreFromHook(hook, 'writeMongoBucket', options)
@@ -429,13 +367,8 @@ export function readMongoBucket (options = {}) {
 // Insert file in a bucket
 export function writeMongoBucket (options = {}) {
   return async function (hook) {
-    const item = hook.data // getItems(hook)
-    const client = _.get(item, options.clientPath || 'client')
-    if (_.isNil(client)) {
-      throw new Error('You must be connected to MongoDB before using the \'writeMongoBucket\' hook')
-    }
-
-    const bucketName = template(item, _.get(options, 'bucket', _.snakeCase(item.id)))
+    const { item, client } = requireClient(hook, options, 'writeMongoBucket')
+    const bucketName = getBucketName(item, options)
     const bucket = _.get(client, `buckets.${bucketName}`)
     const templatedMetadata = templateQueryObject(item, options.metadata)
     const filePath = template(item, options.key || item.id)
@@ -453,13 +386,8 @@ export function writeMongoBucket (options = {}) {
 // Delete file in a bucket
 export function deleteMongoBucket (options = {}) {
   return async function (hook) {
-    const item = hook.data // getItems(hook)
-    const client = _.get(item, options.clientPath || 'client')
-    if (_.isNil(client)) {
-      throw new Error('You must be connected to MongoDB before using the \'deleteMongoBucket\' hook')
-    }
-
-    const bucketName = template(item, _.get(options, 'bucket', _.snakeCase(item.id)))
+    const { item, client } = requireClient(hook, options, 'deleteMongoBucket')
+    const bucketName = getBucketName(item, options)
     const bucket = _.get(client, `buckets.${bucketName}`)
     const filePath = template(item, options.key || item.id)
 
@@ -475,13 +403,8 @@ export function deleteMongoBucket (options = {}) {
 // Drop a bucket
 export function dropMongoBucket (options = {}) {
   return async function (hook) {
-    const item = hook.data // getItems(hook)
-    const client = _.get(item, options.clientPath || 'client')
-    if (_.isNil(client)) {
-      throw new Error('You must be connected to MongoDB before using the \'readMongoBucket\' hook')
-    }
-
-    const bucketName = template(item, _.get(options, 'bucket', _.snakeCase(item.id)))
+    const { item, client } = requireClient(hook, options, 'dropMongoBucket')
+    const bucketName = getBucketName(item, options)
     const bucket = _.get(client, `buckets.${bucketName}`)
     await bucket.drop()
     debug(`Dropping the ${bucketName} bucket `)
