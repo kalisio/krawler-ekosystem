@@ -1,8 +1,9 @@
 {
-  "name": "@kalisio/krawler-examples",
+  "name": "adsb",
   "description": "A collection of krawler job examples (adsb, airports, bdtopo, csv2db, dem2csv, docker, extend, wms2yaml, aeroway)",
   "version": "0.0.0",
   "type": "module",
+  "private": true,
   "standard": {
     "ignore": [
       "docker/src/**"
