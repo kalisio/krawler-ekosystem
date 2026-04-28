@@ -1,0 +1,7 @@
+{
+  "ignore": [
+    "docs/.vitepress/**",
+    "examples/**"
+  ],
+  "exclude": ["catalog"]
+}

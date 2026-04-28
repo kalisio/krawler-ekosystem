@@ -13,6 +13,8 @@
     "clear": "pnpm -r exec rimraf node_modules dist coverage",
     "docs:build": "vitepress build docs",
     "docs:dev": "vitepress dev docs",
+    "inspect": "pnpm knip",
+    "lint:unused": "pnpm knip",
     "lint": "pnpm -r lint",
     "lint:krawler": "pnpm --filter @kalisio/krawler lint",
     "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
@@ -49,6 +51,7 @@
     "@vitest/coverage-v8": "catalog:",
     "cross-env": "catalog:",
     "husky": "catalog:",
+    "knip": "catalog:",
     "lcov-result-merger": "catalog:",
     "lint-staged": "catalog:",
     "mermaid": "catalog:",
@@ -63,7 +66,7 @@
   },
   "metaCatalog": {
     "version": "0.9.0",
-    "syncedAt": "2026-04-28T10:28:55.474Z"
+    "syncedAt": "2026-04-28T11:29:03.225Z"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
