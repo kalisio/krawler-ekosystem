@@ -6,14 +6,8 @@ const outputPath = path.join(__dirname, '..', 'output')
 
 export default {
   hooks: {
-    stores: {
-      before: {
-        disallow: 'external'
-      }
-    },
     tasks: {
       before: {
-        disallow: 'external',
         template: {
           appUrl: 'http://kargo-www.s3-website.eu-central-1.amazonaws.com/',
           width: 1024,
@@ -113,8 +107,11 @@ export default {
           }
         }],
         connectDocker: {
-          host: 'localhost',
-          port: process.env.DOCKER_PORT || 2375,
+          // By default connect via the local Docker socket. Set DOCKER_HOST + DOCKER_PORT
+          // to use a TCP daemon instead.
+          ...(process.env.DOCKER_HOST
+            ? { host: process.env.DOCKER_HOST, port: process.env.DOCKER_PORT || 2375 }
+            : { socketPath: process.env.DOCKER_SOCKET || '/var/run/docker.sock' }),
           // Required so that client is forwarded from job to tasks
           clientPath: 'taskTemplate.client'
         }

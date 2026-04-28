@@ -62,8 +62,8 @@
     "vitest": "catalog:"
   },
   "metaCatalog": {
-    "version": "0.8.0",
-    "syncedAt": "2026-04-23T09:10:40.483Z"
+    "version": "0.9.0",
+    "syncedAt": "2026-04-28T10:28:55.474Z"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

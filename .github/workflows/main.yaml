@@ -122,7 +122,7 @@ jobs:
       - name: Build app
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        run: bash ./scripts/build_app.sh -n ${{ matrix.node }} -d ${{ matrix.debian }} -p -r ${{ github.job }}
+        run: bash ./scripts/build_app.sh -n ${{ matrix.node }} -d ${{ matrix.debian }} -r ${{ github.job }}
 
   build_docs:
     name: Build doc
