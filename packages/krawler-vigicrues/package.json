@@ -1,0 +1,39 @@
+{
+  "name": "@kalisio/krawler-vigicrues",
+  "description": "A Krawler based job to download data from the French flood warning system Vigicrues.",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "keywords": [
+    "krawler",
+    "kargo",
+    "feathers",
+    "vigicrues",
+    "kalisio"
+  ],
+  "author": {
+    "name": "KALISIO <contact@kalisio.com>",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kalisio/krawler-ekosystem.git",
+    "directory": "packages/krawler-vigicrues"
+  },
+  "bugs": {
+    "url": "https://github.com/kalisio/krawler-ekosystem/issues"
+  },
+  "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler-vigicrues",
+  "dependencies": {
+    "@turf/turf": "^6.5.0",
+    "debug": "catalog:",
+    "lodash": "catalog:",
+    "moment": "catalog:",
+    "winston": "catalog:"
+  },
+  "peerDependencies": {
+    "@kalisio/krawler": "workspace:*"
+  }
+}

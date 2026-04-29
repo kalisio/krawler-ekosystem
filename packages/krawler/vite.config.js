@@ -37,6 +37,7 @@ export default mergeConfig(baseConfig, defineConfig({
         'feathers-hooks-common',
         'fs-blob-store',
         'fs-extra',
+        'gdal-async',
         'helmet',
         'imapflow',
         'js-yaml',
