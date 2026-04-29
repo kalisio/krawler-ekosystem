@@ -14,7 +14,6 @@
     "docs:build": "vitepress build docs",
     "docs:dev": "vitepress dev docs",
     "inspect": "pnpm knip",
-    "lint:unused": "pnpm knip",
     "lint": "pnpm -r lint",
     "lint:krawler": "pnpm --filter @kalisio/krawler lint",
     "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
