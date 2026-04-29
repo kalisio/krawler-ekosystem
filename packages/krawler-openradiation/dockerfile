@@ -1,0 +1,68 @@
+ARG DEBIAN_VERSION=bookworm
+ARG NODE_VERSION=20
+
+#
+# Builder stage: install workspace deps, build @kalisio/krawler, install the job
+#
+FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
+
+WORKDIR /app
+
+RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
+
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json vite.base-config.js ./
+COPY packages/krawler/package.json ./packages/krawler/
+COPY packages/krawler-openradiation/package.json ./packages/krawler-openradiation/
+
+# Install workspace deps for both the krawler framework (needed to build it)
+# and the job (which only declares krawler as a peer dep + a few runtime deps)
+RUN pnpm install --frozen-lockfile --filter @kalisio/krawler... --filter @kalisio/krawler-openradiation...
+
+# Copy krawler source and build it
+COPY packages/krawler/vite.config.js ./packages/krawler/
+COPY packages/krawler/src ./packages/krawler/src/
+COPY packages/krawler/healthcheck.js ./packages/krawler/
+
+RUN pnpm --filter @kalisio/krawler build
+
+# Copy the job source
+COPY packages/krawler-openradiation/jobfile.js ./packages/krawler-openradiation/
+
+# Prune to production-only deps
+RUN pnpm install --frozen-lockfile --filter @kalisio/krawler --filter @kalisio/krawler-openradiation --prod
+
+#
+# Runtime stage: slim image with prod deps, krawler bin, and the job
+#
+FROM node:${NODE_VERSION}-${DEBIAN_VERSION}-slim
+LABEL maintainer="Kalisio <contact@kalisio.xyz>"
+
+WORKDIR /app
+
+RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
+
+# Default environment variables
+ENV CRON="0 * * * * *"
+ENV NODE_ENV=production
+
+# Bring in the workspace metadata, the shared node_modules, the krawler framework
+# package and the job package from the builder.
+COPY --from=builder --chown=node:node /app/pnpm-workspace.yaml /app/pnpm-lock.yaml /app/package.json ./
+COPY --from=builder --chown=node:node /app/node_modules ./node_modules
+COPY --from=builder --chown=node:node /app/packages/krawler ./packages/krawler
+COPY --from=builder --chown=node:node /app/packages/krawler-openradiation ./packages/krawler-openradiation
+
+# Expose the `krawler` bin globally (pnpm materialises it under workspace node_modules/.bin)
+RUN ln -s /app/node_modules/.bin/krawler /usr/local/bin/krawler
+
+RUN mkdir -p /app/packages/krawler-openradiation/node_modules/@kalisio \
+ && ln -s /app/packages/krawler /app/packages/krawler-openradiation/node_modules/@kalisio/krawler \
+ && chown -R node:node /app/packages/krawler-openradiation/node_modules
+
+USER node
+
+WORKDIR /app/packages/krawler-openradiation
+
+HEALTHCHECK --interval=1m --timeout=10s --start-period=1m CMD node /app/packages/krawler/healthcheck.js
+
+CMD ["sh", "-c", "krawler --cron \"$CRON\" --run jobfile.js"]

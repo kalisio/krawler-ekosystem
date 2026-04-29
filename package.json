@@ -6,6 +6,7 @@
   "scripts": {
     "build": "pnpm -r build",
     "build:krawler": "pnpm --filter @kalisio/krawler build",
+    "build:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation build",
     "changeset": "changeset",
     "changeset:publish": "pnpm build && changeset publish",
     "changeset:status": "changeset status",
@@ -16,11 +17,14 @@
     "inspect": "pnpm knip",
     "lint": "pnpm -r lint",
     "lint:krawler": "pnpm --filter @kalisio/krawler lint",
+    "lint:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation lint",
+    "lint:unused": "pnpm knip",
     "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
     "prepare": "husky",
     "pretest": "mkdir -p coverage",
     "test": "pnpm -r test",
-    "test:krawler": "pnpm --filter @kalisio/krawler test"
+    "test:krawler": "pnpm --filter @kalisio/krawler test",
+    "test:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation test"
   },
   "keywords": [
     "kalisio"

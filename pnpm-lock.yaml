@@ -429,6 +429,21 @@ importers:
         specifier: ^5.0.7
         version: 5.1.1(winston@3.19.0)
 
+  packages/krawler-openradiation:
+    dependencies:
+      '@kalisio/krawler':
+        specifier: workspace:*
+        version: link:../krawler
+      lodash:
+        specifier: 'catalog:'
+        version: 4.18.1
+      moment:
+        specifier: 'catalog:'
+        version: 2.30.1
+      winston:
+        specifier: 'catalog:'
+        version: 3.19.0
+
 packages:
 
   '@algolia/abtesting@1.16.2':
