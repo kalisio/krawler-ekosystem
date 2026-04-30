@@ -13,8 +13,8 @@
     "changeset:status": "changeset status",
     "changeset:version": "changeset version",
     "clear": "pnpm -r exec rimraf node_modules dist coverage",
-    "docs:build": "vitepress build docs",
-    "docs:dev": "vitepress dev docs",
+    "docs:build": "pnpm --filter docs run build",
+    "docs:dev": "pnpm --filter docs run dev",
     "inspect": "pnpm knip",
     "lint": "pnpm -r lint",
     "lint:krawler": "pnpm --filter @kalisio/krawler lint",
@@ -47,10 +47,6 @@
   },
   "homepage": "git://github.com/kalisio/krawler-ekosystem#readme",
   "dependencies": {
-    "keycloak-js": "catalog:",
-    "lodash": "catalog:",
-    "moment": "catalog:",
-    "quasar": "catalog:"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",
@@ -60,14 +56,10 @@
     "knip": "catalog:",
     "lcov-result-merger": "catalog:",
     "lint-staged": "catalog:",
-    "mermaid": "catalog:",
     "rimraf": "catalog:",
     "standard": "catalog:",
     "vite": "catalog:",
     "vite-bundle-visualizer": "catalog:",
-    "vitepress": "catalog:",
-    "vitepress-plugin-mermaid": "catalog:",
-    "vitepress-theme-kalisio": "catalog:",
     "vitest": "catalog:"
   },
   "metaCatalog": {

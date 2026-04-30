@@ -145,19 +145,6 @@ catalogs:
 importers:
 
   .:
-    dependencies:
-      keycloak-js:
-        specifier: 'catalog:'
-        version: 23.0.7
-      lodash:
-        specifier: 'catalog:'
-        version: 4.18.1
-      moment:
-        specifier: 'catalog:'
-        version: 2.30.1
-      quasar:
-        specifier: 'catalog:'
-        version: 2.18.7
     devDependencies:
       '@changesets/cli':
         specifier: 'catalog:'
@@ -180,9 +167,6 @@ importers:
       lint-staged:
         specifier: 'catalog:'
         version: 16.4.0
-      mermaid:
-        specifier: 'catalog:'
-        version: 10.8.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.3
@@ -195,6 +179,27 @@ importers:
       vite-bundle-visualizer:
         specifier: 'catalog:'
         version: 1.2.1(rollup@4.60.2)
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.5(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(stylus@0.54.8)(yaml@2.8.3))
+
+  docs:
+    devDependencies:
+      keycloak-js:
+        specifier: 'catalog:'
+        version: 23.0.7
+      lodash:
+        specifier: 'catalog:'
+        version: 4.18.1
+      mermaid:
+        specifier: 'catalog:'
+        version: 10.8.0
+      moment:
+        specifier: 'catalog:'
+        version: 2.30.1
+      quasar:
+        specifier: 'catalog:'
+        version: 2.18.7
       vitepress:
         specifier: 'catalog:'
         version: 1.6.4(@algolia/client-search@5.50.2)(@types/node@25.6.0)(jwt-decode@4.0.0)(postcss@8.5.10)(search-insights@2.17.3)(stylus@0.54.8)(typescript@6.0.3)
@@ -204,9 +209,6 @@ importers:
       vitepress-theme-kalisio:
         specifier: 'catalog:'
         version: https://codeload.github.com/kalisio/vitepress-theme-kalisio/tar.gz/f9a0af8e766a6cf314b2bd29a1f58a13d3b33086(vitepress@1.6.4(@algolia/client-search@5.50.2)(@types/node@25.6.0)(jwt-decode@4.0.0)(postcss@8.5.10)(search-insights@2.17.3)(stylus@0.54.8)(typescript@6.0.3))
-      vitest:
-        specifier: 'catalog:'
-        version: 4.1.5(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(stylus@0.54.8)(yaml@2.8.3))
 
   examples:
     dependencies:
@@ -6204,6 +6206,7 @@ packages:
 
   uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uvu@0.5.6:
