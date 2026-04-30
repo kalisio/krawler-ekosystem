@@ -9,8 +9,7 @@ import { Duplex } from 'stream'
 const { getItems, replaceItems } = common
 
 const debug = makeDebug('krawler:utils')
-// Add knot unit not defined by default
-math.createUnit('knot', { definition: '0.514444 m/s', aliases: ['knots', 'kt', 'kts'] })
+math.createUnit('knot', { definition: '0.514444 m/s', aliases: ['knots', 'kt', 'kts'] }, { override: true })
 // This ensure moment objects are correctly serialized in MongoDB
 Object.getPrototypeOf(moment()).toBSON = function () {
   return this.toDate()
