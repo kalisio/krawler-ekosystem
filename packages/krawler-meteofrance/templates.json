@@ -1,0 +1,120 @@
+{
+  "arpege-isobaric": {
+    "variables": {
+      "lon": "longitude",
+      "lat": "latitude",
+      "height": "heightAboveGround",
+      "time": "valid_time"
+    },
+    "concat_dim": "step",
+    "pipelines": {
+      "preprocess": [
+        { "type": "process", "name": "load_and_merge_from_grib", "params": {
+          "discriminator": ["IP1", "IP2", "IP3", "IP4"],
+          "rename_before_merge": [{}, {}, {}, {"z": "z_IP4"}],
+          "dataset_backend_kwargs": [
+            {"filter_by_keys": {"shortName": ["r", "z", "t"]}},
+            {"filter_by_keys": {"shortName": ["wdir", "ws", "w"]}},
+            {"filter_by_keys": {"shortName": ["clwc", "tke"]}},
+            {"filter_by_keys": {"shortName": ["z"]}}
+          ]
+        }},
+        { "type": "process", "name": "keep_variables", "params": { "keep_vars": ["r", "z", "z_IP4", "t", "wdir", "ws", "w", "clwc", "tke"]} },
+        { "type": "process", "name": "rename_variables", "params": { "renameMap": {
+          "r": "relativeHumidity",
+          "z": "geopotential_pressure",
+          "z_IP4": "geopotential_potentialVorticity",
+          "t": "temperature",
+          "wdir": "windDirection",
+          "ws": "windSpeed",
+          "w": "verticalVelocity",
+          "clwc": "cloudLiquidWaterContent",
+          "tke": "turbulentKineticEnergy"
+        } } },
+        "unify_chunks",
+        "save",
+        "clean"
+      ]
+    }
+  },
+  "arome-isobaric": {
+    "variables": {
+      "lon": "longitude",
+      "lat": "latitude",
+      "height": "heightAboveGround",
+      "time": "valid_time"
+    },
+    "concat_dim": "step",
+    "pipelines": {
+      "preprocess": [
+        { "type": "process", "name": "load_and_merge_from_grib", "params": {
+          "discriminator": ["IP1", "IP2", "IP3", "IP4"],
+          "dataset_backend_kwargs": [
+            {"filter_by_keys": {"shortName": ["r", "z", "t"]}},
+            {"filter_by_keys": {"shortName": ["clwc"]}},
+            {"filter_by_keys": {"shortName": ["wdir", "ws", "w"]}},
+            {"filter_by_keys": {"shortName": "tke"}}]
+        }},
+        { "type": "process", "name": "keep_variables", "params": { "keep_vars": ["r", "z", "t", "wdir", "ws", "w", "clwc", "tke"]} },
+        { "type": "process", "name": "rename_variables", "params": { "renameMap": {
+          "r": "relativeHumidity",
+          "z": "geopotential",
+          "t": "temperature",
+          "wdir": "windDirection",
+          "ws": "windSpeed",
+          "w": "verticalVelocity",
+          "clwc": "cloudLiquidWaterContent",
+          "tke": "turbulentKineticEnergy"
+        } } },
+        "unify_chunks",
+        "save",
+        "clean"
+      ]
+    }
+  },
+  "surface": {
+    "variables": {
+      "lon": "longitude",
+      "lat": "latitude",
+      "height": "heightAboveGround",
+      "time": "step"
+    },
+    "concat_dim": "step",
+    "referenceTime": {
+      "variable": "time"
+    },
+    "pipelines": {
+      "preprocess": [
+        { "type": "process", "name": "load_and_merge_from_grib", "params": { "discriminator": ["SP1"] }},
+        { "type": "process", "name": "exclude_variables", "params": { "exclude_vars": ["unknown"] }},
+        { "type": "process", "name": "rename_variables", "params": { "renameMap": {
+          "cp": "convectivePrecipitation",
+          "crr": "convectiveRainRate",
+          "csfwe": "convectiveSnowfallWaterEquivalent",
+          "efg10": "timeMaximumEastwardWindGust10m",
+          "fg10": "timeMaximumWindGust10m",
+          "lsfwe": "largeScaleSnowfallWaterEquivalent",
+          "lsp": "largeScalePrecipitation",
+          "lsrr": "largeScaleRainRate",
+          "nfg10": "timeMaximumNorthwardWindGust10m",
+          "prmsl": "meanSeaLevelPressure",
+          "r2": "relativeHumidity2m",
+          "si10": "windSpeed10m",
+          "ssrd": "surfaceSolarRadiationDownwards",
+          "t2m": "temperature2m",
+          "tirf": "timeIntegralRainFlux",
+          "tgrp": "graupelPrecipitation",
+          "tp": "totalPrecipitation",
+          "tsnowp": "totalSnowPrecipitation",
+          "u10": "uWind10m",
+          "v10": "vWind10m",
+          "wdir10": "windDirection10m"
+        } } },
+        "delta_time_to_datetime",
+        "unify_chunks",
+        "save",
+        "clean"
+      ]
+    }
+  }
+}

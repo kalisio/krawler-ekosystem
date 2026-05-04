@@ -6,6 +6,7 @@
   "scripts": {
     "build": "pnpm -r build",
     "build:krawler": "pnpm --filter @kalisio/krawler build",
+    "build:krawler-meteofrance": "pnpm --filter @kalisio/krawler-meteofrance build",
     "build:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation build",
     "build:krawler-vigicrues": "pnpm --filter @kalisio/krawler-vigicrues build",
     "changeset": "changeset",
@@ -18,6 +19,7 @@
     "inspect": "pnpm knip",
     "lint": "pnpm -r lint",
     "lint:krawler": "pnpm --filter @kalisio/krawler lint",
+    "lint:krawler-meteofrance": "pnpm --filter @kalisio/krawler-meteofrance lint",
     "lint:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation lint",
     "lint:krawler-vigicrues": "pnpm --filter @kalisio/krawler-vigicrues lint",
     "lint:unused": "pnpm knip",
@@ -26,6 +28,7 @@
     "pretest": "mkdir -p coverage",
     "test": "pnpm -r test",
     "test:krawler": "pnpm --filter @kalisio/krawler test",
+    "test:krawler-meteofrance": "pnpm --filter @kalisio/krawler-meteofrance test",
     "test:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation test",
     "test:krawler-vigicrues": "pnpm --filter @kalisio/krawler-vigicrues test"
   },
@@ -46,8 +49,7 @@
     "url": "https://github.com/kalisio/krawler-ekosystem/issues"
   },
   "homepage": "git://github.com/kalisio/krawler-ekosystem#readme",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@changesets/cli": "catalog:",
     "@vitest/coverage-v8": "catalog:",

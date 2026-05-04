@@ -50,6 +50,7 @@ coverage/
 .nyc_output/
 jest-*.json
 packages/krawler/test/output/
+packages/krawler-meteofrance/output
 examples/output/
 
 # Husky hooks
