@@ -26,14 +26,18 @@
     "url": "https://github.com/kalisio/krawler-ekosystem/issues"
   },
   "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler-vigicrues",
+  "scripts": {
+    "build": "cross-env-shell docker build -t krawler-vigicrues:${TAG:-latest} -f dockerfile ../.."
+  },
+  "krawler": {
+    "version": "2.8.2"
+  },
   "dependencies": {
+    "@kalisio/krawler": "workspace:*",
     "@turf/turf": "^6.5.0",
     "debug": "catalog:",
     "lodash": "catalog:",
     "moment": "catalog:",
     "winston": "catalog:"
-  },
-  "peerDependencies": {
-    "@kalisio/krawler": "workspace:*"
   }
 }

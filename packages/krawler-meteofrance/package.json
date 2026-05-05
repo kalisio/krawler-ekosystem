@@ -26,12 +26,22 @@
     "url": "https://github.com/kalisio/krawler-ekosystem/issues"
   },
   "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler-meteofrance",
+  "scripts": {
+    "build:arome-france": "cross-env-shell docker build -t krawler-meteofrance:arome-france-${TAG:-latest} -f dockerfile.arome-france ../..",
+    "build:arome-france-high": "cross-env-shell docker build -t krawler-meteofrance:arome-france-high-${TAG:-latest} -f dockerfile.arome-france-high ../..",
+    "build:arpege-europe": "cross-env-shell docker build -t krawler-meteofrance:arpege-europe-${TAG:-latest} -f dockerfile.arpege-europe ../..",
+    "build:arpege-world": "cross-env-shell docker build -t krawler-meteofrance:arpege-world-${TAG:-latest} -f dockerfile.arpege-world ../..",
+    "build:grib2-to-zarr": "cross-env-shell docker build -t krawler-meteofrance:grib2-to-zarr-${TAG:-latest} -f dockerfile.grib2-to-zarr ../..",
+    "build:paquetobs-observations": "cross-env-shell docker build -t krawler-meteofrance:paquetobs-observations-${TAG:-latest} -f dockerfile.paquetobs-observations ../..",
+    "build:paquetobs-stations": "cross-env-shell docker build -t krawler-meteofrance:paquetobs-stations-${TAG:-latest} -f dockerfile.paquetobs-stations ../.."
+  },
+  "krawler": {
+    "version": "2.8.2"
+  },
   "dependencies": {
+    "@kalisio/krawler": "workspace:*",
     "lodash": "catalog:",
     "moment": "catalog:",
     "winston": "catalog:"
-  },
-  "peerDependencies": {
-    "@kalisio/krawler": "workspace:*"
   }
 }
