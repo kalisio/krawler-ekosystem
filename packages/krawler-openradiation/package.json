@@ -27,15 +27,17 @@
   },
   "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler-openradiation",
   "scripts": {
-    "build": "cross-env-shell docker build -t krawler-openradiation:${TAG:-latest} -f dockerfile ../.."
+    "build": "cross-env DOCKER_BUILDKIT=1 cross-env-shell docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-openradiation:${TAG:-latest} -f $PWD/dockerfile $PWD/../.."
   },
   "krawler": {
     "version": "2.8.2"
   },
   "dependencies": {
-    "@kalisio/krawler": "workspace:*",
     "lodash": "catalog:",
     "moment": "catalog:",
     "winston": "catalog:"
+  },
+  "peerDependencies": {
+    "@kalisio/krawler": "workspace:*"
   }
 }

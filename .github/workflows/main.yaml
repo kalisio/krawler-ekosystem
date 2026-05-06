@@ -18,6 +18,11 @@ on:
         default: false
         required: false
         type: boolean
+      build_jobs:
+        description: "Build jobs"
+        default: false
+        required: false
+        type: boolean
       build_docs:
         description: "Build docs"
         default: false
@@ -123,6 +128,35 @@ jobs:
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: bash ./scripts/build_app.sh -n ${{ matrix.node }} -d ${{ matrix.debian }} -r ${{ github.job }}
+
+  build_jobs:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - package: krawler-openradiation
+            variant: ""
+    name: Build job (${{ matrix.package }}${{ matrix.variant && format(' / {0}', matrix.variant) || '' }})
+    if: ${{
+      github.event_name == 'workflow_dispatch' && inputs.build_jobs ||
+      github.event_name == 'push' && contains(github.event.head_commit.message, 'build jobs')
+      }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Init runner
+        run: bash ./scripts/init_runner.sh ${{ github.job }}
+      - name: Setup workspace
+        env:
+          KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
+        run: bash ./scripts/setup_workspace.sh
+      - name: Build job
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: bash ./scripts/build_krawler_job.sh -j ${{ matrix.package }} ${{ matrix.variant && format('-v {0}', matrix.variant) || '' }} -r "${{ github.job }} ${{ matrix.package }}"
 
   build_docs:
     name: Build doc
