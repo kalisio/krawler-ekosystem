@@ -14,15 +14,19 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 
 JOB_PACKAGE=""
 JOB_VARIANT=""
+NODE_VER=20
 PUBLISH=false
 CI_STEP_NAME="Build job"
-while getopts "j:v:pr:" option; do
+while getopts "j:v:n:pr:" option; do
     case $option in
         j) # job package directory name under packages/
             JOB_PACKAGE=$OPTARG
             ;;
         v) # variant (optional, e.g. "metar")
             JOB_VARIANT=$OPTARG
+            ;;
+        n) # node version (used for pnpm runtime that runs the build script)
+            NODE_VER=$OPTARG
             ;;
         p) # publish image
             PUBLISH=true
@@ -43,6 +47,8 @@ if [ -z "$JOB_PACKAGE" ]; then
 fi
 
 JOB_DIR="$ROOT_DIR/packages/$JOB_PACKAGE"
+
+use_node "$NODE_VER"
 
 load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
 load_value_files "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value"
