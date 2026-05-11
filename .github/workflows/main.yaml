@@ -136,6 +136,10 @@ jobs:
         include:
           - package: krawler-openradiation
             variant: ""
+          - package: krawler-vigicrues
+            variant: ""
+          - package: krawler-meteofrance
+            variant: "arome-france"
     name: Build job (${{ matrix.package }}${{ matrix.variant && format(' / {0}', matrix.variant) || '' }})
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.build_jobs ||

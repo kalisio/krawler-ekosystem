@@ -27,13 +27,13 @@
   },
   "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler-meteofrance",
   "scripts": {
-    "build:arome-france": "cross-env DOCKER_BUILDKIT=1 cross-env-shell docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-meteofrance:arome-france-${TAG:-latest} -f $PWD/dockerfile.arome-france $PWD/../..",
-    "build:arome-france-high": "cross-env DOCKER_BUILDKIT=1 cross-env-shell docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-meteofrance:arome-france-high-${TAG:-latest} -f $PWD/dockerfile.arome-france-high $PWD/../..",
-    "build:arpege-europe": "cross-env DOCKER_BUILDKIT=1 cross-env-shell docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-meteofrance:arpege-europe-${TAG:-latest} -f $PWD/dockerfile.arpege-europe $PWD/../..",
-    "build:arpege-world": "cross-env DOCKER_BUILDKIT=1 cross-env-shell docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-meteofrance:arpege-world-${TAG:-latest} -f $PWD/dockerfile.arpege-world $PWD/../..",
-    "build:grib2-to-zarr": "cross-env DOCKER_BUILDKIT=1 cross-env-shell docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-meteofrance:grib2-to-zarr-${TAG:-latest} -f $PWD/dockerfile.grib2-to-zarr $PWD/../..",
-    "build:paquetobs-observations": "cross-env DOCKER_BUILDKIT=1 cross-env-shell docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-meteofrance:paquetobs-observations-${TAG:-latest} -f $PWD/dockerfile.paquetobs-observations $PWD/../..",
-    "build:paquetobs-stations": "cross-env DOCKER_BUILDKIT=1 cross-env-shell docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-meteofrance:paquetobs-stations-${TAG:-latest} -f $PWD/dockerfile.paquetobs-stations $PWD/../.."
+    "build:arome-france": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-meteofrance:arome-france-${TAG:-latest} -f dockerfile.arome-france ../..",
+    "build:arome-france-high": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-meteofrance:arome-france-high-${TAG:-latest} -f dockerfile.arome-france-high ../..",
+    "build:arpege-europe": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-meteofrance:arpege-europe-${TAG:-latest} -f dockerfile.arpege-europe ../..",
+    "build:arpege-world": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-meteofrance:arpege-world-${TAG:-latest} -f dockerfile.arpege-world ../..",
+    "build:grib2-to-zarr": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-meteofrance:grib2-to-zarr-${TAG:-latest} -f dockerfile.grib2-to-zarr ../..",
+    "build:paquetobs-observations": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-meteofrance:paquetobs-observations-${TAG:-latest} -f dockerfile.paquetobs-observations ../..",
+    "build:paquetobs-stations": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=$(node -p \"require('./package.json').krawler.version\") -t krawler-meteofrance:paquetobs-stations-${TAG:-latest} -f dockerfile.paquetobs-stations ../.."
   },
   "krawler": {
     "version": "2.8.2"

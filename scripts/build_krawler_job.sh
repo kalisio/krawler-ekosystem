@@ -50,12 +50,6 @@ JOB_DIR="$ROOT_DIR/packages/$JOB_PACKAGE"
 
 use_node "$NODE_VER"
 
-# The build:* npm scripts rely on cross-env / cross-env-shell, which are
-# hoisted to the workspace root by pnpm. Install at the root so they end
-# up on PATH when `pnpm --filter <job> run build` runs.
-# --ignore-scripts skips the root `prepare: husky` hook (no husky in CI).
-(cd "$ROOT_DIR" && pnpm install --frozen-lockfile --ignore-scripts)
-
 load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
 load_value_files "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value"
 

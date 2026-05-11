@@ -6,7 +6,6 @@
   "scripts": {
     "build": "pnpm -r build",
     "build:krawler": "pnpm --filter @kalisio/krawler build",
-    "build:krawler-meteofrance": "pnpm --filter @kalisio/krawler-meteofrance build",
     "build:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation build",
     "build:krawler-vigicrues": "pnpm --filter @kalisio/krawler-vigicrues build",
     "changeset": "changeset",
@@ -53,7 +52,6 @@
   "devDependencies": {
     "@changesets/cli": "catalog:",
     "@vitest/coverage-v8": "catalog:",
-    "cross-env": "catalog:",
     "husky": "catalog:",
     "knip": "catalog:",
     "lcov-result-merger": "catalog:",
