@@ -23,6 +23,10 @@ on:
         default: false
         required: false
         type: boolean
+      build_jobs_input:
+        description: "Jobs to build, space-separated <package>[:<variant>]. Leave empty for auto-detection."
+        required: false
+        default: ""
       build_docs:
         description: "Build docs"
         default: false
@@ -129,22 +133,39 @@ jobs:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: bash ./scripts/build_app.sh -n ${{ matrix.node }} -d ${{ matrix.debian }} -r ${{ github.job }}
 
-  build_jobs:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - package: krawler-openradiation
-            variant: ""
-          - package: krawler-vigicrues
-            variant: ""
-          - package: krawler-meteofrance
-            variant: "arome-france"
-    name: Build job (${{ matrix.package }}${{ matrix.variant && format(' / {0}', matrix.variant) || '' }})
+  detect_jobs:
+    name: Detect jobs
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.build_jobs ||
       github.event_name == 'push' && contains(github.event.head_commit.message, 'build jobs')
       }}
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix:   ${{ steps.compute.outputs.matrix }}
+      has_jobs: ${{ steps.compute.outputs.has_jobs }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: Detect jobs
+        id: compute
+        env:
+          GITHUB_EVENT_NAME:   ${{ github.event_name }}
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+          GITHUB_EVENT_AFTER:  ${{ github.event.after }}
+          INPUT_JOBS:          ${{ github.event.inputs.build_jobs_input }}
+        run: bash ./scripts/detect_jobs.sh
+
+  build_jobs:
+    needs: detect_jobs
+    if: needs.detect_jobs.outputs.has_jobs == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.detect_jobs.outputs.matrix) }}
+    name: Build job (${{ matrix.package }}${{ matrix.variant && format(' / {0}', matrix.variant) || '' }})
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repo
