@@ -1,6 +1,6 @@
 # krawler-vigicrues
 
-_A Krawler based service to download data from French flood warning system Vigicrues_
+_A Krawler based job to download data from the French flood warning system Vigicrues._
 
 ---
 

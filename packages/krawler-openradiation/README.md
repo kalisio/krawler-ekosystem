@@ -1,6 +1,6 @@
 # krawler-openradiation
 
-_A Krawler based service to download data from the OpenRadiation project._
+_A Krawler based job to download data from the OpenRadiation project._
 
 ---
 
