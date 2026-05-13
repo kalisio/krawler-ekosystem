@@ -125,11 +125,10 @@ _add_all_jobs() {
     done
 }
 
-# Paths that trigger a cascade (rebuild of every job)
+
 _is_cascade_path() {
     local FILE="$1"
     case "$FILE" in
-        packages/krawler/*)        return 0 ;;
         pnpm-lock.yaml)            return 0 ;;
         pnpm-workspace.yaml)       return 0 ;;
         package.json)              return 0 ;;

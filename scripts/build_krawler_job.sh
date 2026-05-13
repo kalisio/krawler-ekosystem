@@ -53,6 +53,15 @@ use_node "$NODE_VER"
 load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
 load_value_files "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value"
 
+# When building outside of a release (no git tag on the current commit), the
+# job image must rebase on the floating kalisio/krawler:latest, not on the
+# version pinned in the job's package.json (which is reserved for tag builds).
+# The job's `build` npm script reads `${KRAWLER_TAG:-<pinned>}` so exporting
+# KRAWLER_TAG here is enough to override. Respect a pre-set value (manual dev).
+if [ -z "${KRAWLER_TAG:-}" ] && [ -z "$(get_git_tag "$ROOT_DIR")" ]; then
+    export KRAWLER_TAG=latest
+fi
+
 build_krawler_job \
     "$ROOT_DIR" \
     "$JOB_DIR" \
