@@ -1,6 +1,8 @@
 name: ci
 on:
   push:
+    branches: ['**']
+    tags: ['@*/*@*']
   workflow_dispatch:
     inputs:
       run_tests:
