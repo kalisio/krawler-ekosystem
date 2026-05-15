@@ -38,7 +38,7 @@ jobs:
     name: Run tests
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.run_tests ||
-      github.event_name == 'push' && !contains(github.event.head_commit.message, 'skip tests')
+      github.event_name == 'push' && github.ref_type == 'branch' && !contains(github.event.head_commit.message, 'skip tests')
       }}
     runs-on: ubuntu-22.04
     services:
@@ -76,7 +76,7 @@ jobs:
     name: Additional tests
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.additional_tests ||
-      github.event_name == 'push' && contains(github.event.head_commit.message, 'additional tests')
+      github.event_name == 'push' && github.ref_type == 'branch' && contains(github.event.head_commit.message, 'additional tests')
       }}
     runs-on: ubuntu-22.04
     services:
@@ -114,7 +114,7 @@ jobs:
     name: Build app
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.build_app ||
-      github.event_name == 'push' && !contains(github.event.head_commit.message, 'skip app')
+      github.event_name == 'push' && github.ref_type == 'branch' && !contains(github.event.head_commit.message, 'skip app')
       }}
     runs-on: ubuntu-22.04
     steps:
@@ -137,7 +137,7 @@ jobs:
     name: Detect jobs
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.build_jobs ||
-      github.event_name == 'push' && contains(github.event.head_commit.message, 'build jobs')
+      github.event_name == 'push' && github.ref_type == 'branch' && contains(github.event.head_commit.message, 'build jobs')
       }}
     runs-on: ubuntu-22.04
     outputs:
@@ -187,7 +187,7 @@ jobs:
     name: Build doc
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.build_docs ||
-      github.event_name == 'push' && contains(github.event.head_commit.message, 'doc')
+      github.event_name == 'push' && github.ref_type == 'branch' && contains(github.event.head_commit.message, 'doc')
       }}
     runs-on: ubuntu-22.04
     steps:
@@ -205,3 +205,75 @@ jobs:
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: bash ./scripts/build_docs.sh -p -r ${{ github.job }}
+
+  detect_release:
+    name: Detect release
+    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+    runs-on: ubuntu-22.04
+    outputs:
+      target:   ${{ steps.compute.outputs.target }}
+      package:  ${{ steps.compute.outputs.package }}
+      version:  ${{ steps.compute.outputs.version }}
+      matrix:   ${{ steps.compute.outputs.matrix }}
+      has_jobs: ${{ steps.compute.outputs.has_jobs }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Detect release
+        id: compute
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: bash ./scripts/detect_release.sh
+
+  release_krawler:
+    needs: detect_release
+    if: needs.detect_release.outputs.target == 'krawler'
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [ 20 ]
+        debian: [ 'bookworm' ]
+    name: Release krawler (${{ needs.detect_release.outputs.version }})
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Init runner
+        run: bash ./scripts/init_runner.sh build_app
+      - name: Setup workspace
+        env:
+          KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
+        run: bash ./scripts/setup_workspace.sh
+      - name: Build & publish app
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: bash ./scripts/build_app.sh -n ${{ matrix.node }} -d ${{ matrix.debian }} -p -r ${{ github.job }}
+
+  release_jobs:
+    needs: detect_release
+    if: needs.detect_release.outputs.has_jobs == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.detect_release.outputs.matrix) }}
+    name: Release job (${{ matrix.package }}${{ matrix.variant && format(' / {0}', matrix.variant) || '' }})
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Init runner
+        run: bash ./scripts/init_runner.sh build_jobs
+      - name: Setup workspace
+        env:
+          KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
+        run: bash ./scripts/setup_workspace.sh
+      - name: Build & publish job
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: bash ./scripts/build_krawler_job.sh -j ${{ matrix.package }} ${{ matrix.variant && format('-v {0}', matrix.variant) || '' }} -p -r "${{ github.job }} ${{ matrix.package }}"

@@ -64,7 +64,7 @@ load_value_files "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.e
 # Remove trailing @ in module name
 IMAGE_NAME="$KALISIO_DOCKERHUB_URL/${APP:1}"
 if [[ -z "$GIT_TAG" ]]; then
-    KRAWLER_TAG="dev"
+    KRAWLER_TAG="latest"
 else
     KRAWLER_TAG="$VERSION"
 fi
