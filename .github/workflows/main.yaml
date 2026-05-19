@@ -15,11 +15,6 @@ on:
         default: false
         required: false
         type: boolean
-      build_app:
-        description: "Build app"
-        default: false
-        required: false
-        type: boolean
       build_jobs:
         description: "Build jobs"
         default: false
@@ -107,34 +102,6 @@ jobs:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: bash ./scripts/run_tests.sh -n ${{ matrix.node }} -m ${{ matrix.mongo }}
 
-  build_app:
-    strategy:
-      fail-fast: false
-      matrix:
-        node: [ 20 ]
-        debian: [ 'bookworm' ]
-    name: Build app
-    if: ${{
-      github.event_name == 'workflow_dispatch' && inputs.build_app ||
-      github.event_name == 'push' && github.ref_type == 'branch' && !contains(github.event.head_commit.message, 'skip app')
-      }}
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Init runner
-        run: bash ./scripts/init_runner.sh ${{ github.job }}
-      - name: Setup workspace
-        env:
-          KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
-        run: bash ./scripts/setup_workspace.sh
-      - name: Build app
-        env:
-          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        run: bash ./scripts/build_app.sh -n ${{ matrix.node }} -d ${{ matrix.debian }} -r ${{ github.job }}
-
   detect_jobs:
     name: Detect jobs
     if: ${{
@@ -183,7 +150,7 @@ jobs:
       - name: Build job
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        run: bash ./scripts/build_krawler_job.sh -j ${{ matrix.package }} ${{ matrix.variant && format('-v {0}', matrix.variant) || '' }} -r "${{ github.job }} ${{ matrix.package }}"
+        run: bash ./scripts/build_krawler_job.sh -j ${{ matrix.package }} ${{ matrix.variant && format('-v {0}', matrix.variant) || '' }} -p -r "${{ github.job }} ${{ matrix.package }}"
 
   build_docs:
     name: Build doc
