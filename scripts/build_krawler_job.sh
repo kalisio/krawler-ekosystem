@@ -54,11 +54,11 @@ load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
 load_value_files "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value"
 
 # When building outside of a release (no git tag on the current commit), the
-# job image rebases on the floating kalisio/krawler:latest (still published
-# by the legacy single-package CI of the kalisio/krawler repo during this
-# transition), not on the version pinned in the job's package.json (which is
-# reserved for tag builds). The job itself is published as <job>:dev to
-# signal "transitional" / monorepo-built, until we cut over fully.
+# job image rebases on the floating kalisio/krawler:latest (the last released
+# Krawler), not on kalisio/krawler:dev (bleeding edge from master) — so a
+# broken Krawler master does not silently break every <job>:dev. The version
+# pinned in the job's package.json is reserved for tag builds. The job itself
+# is published as <job>:dev to signal "built from master".
 # Both overrides only apply when not pre-set (allow manual dev override).
 if [ -z "$(get_git_tag "$ROOT_DIR")" ]; then
     : "${KRAWLER_TAG:=latest}"

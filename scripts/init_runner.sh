@@ -20,7 +20,7 @@ init_github_additional_tests() {
     sudo apt-get install gdal-bin
 }
 
-init_github_build_app() {
+init_github_build_krawler() {
     install_reqs age sops
 }
 

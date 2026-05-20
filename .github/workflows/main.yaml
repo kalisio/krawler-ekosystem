@@ -15,6 +15,11 @@ on:
         default: false
         required: false
         type: boolean
+      build_krawler:
+        description: "Build krawler"
+        default: false
+        required: false
+        type: boolean
       build_jobs:
         description: "Build jobs"
         default: false
@@ -101,6 +106,34 @@ jobs:
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: bash ./scripts/run_tests.sh -n ${{ matrix.node }} -m ${{ matrix.mongo }}
+
+  build_krawler:
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [ 20 ]
+        debian: [ 'bookworm' ]
+    name: Build krawler
+    if: ${{
+      github.event_name == 'workflow_dispatch' && inputs.build_krawler ||
+      github.event_name == 'push' && github.ref_type == 'branch' && !contains(github.event.head_commit.message, 'skip krawler')
+      }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Init runner
+        run: bash ./scripts/init_runner.sh ${{ github.job }}
+      - name: Setup workspace
+        env:
+          KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
+        run: bash ./scripts/setup_workspace.sh
+      - name: Build krawler
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: bash ./scripts/build_krawler.sh -n ${{ matrix.node }} -d ${{ matrix.debian }} -p -r ${{ github.job }}
 
   detect_jobs:
     name: Detect jobs
@@ -212,15 +245,15 @@ jobs:
         with:
           submodules: true
       - name: Init runner
-        run: bash ./scripts/init_runner.sh build_app
+        run: bash ./scripts/init_runner.sh build_krawler
       - name: Setup workspace
         env:
           KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
         run: bash ./scripts/setup_workspace.sh
-      - name: Build & publish app
+      - name: Build & publish krawler
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        run: bash ./scripts/build_app.sh -n ${{ matrix.node }} -d ${{ matrix.debian }} -p -r ${{ github.job }}
+        run: bash ./scripts/build_krawler.sh -n ${{ matrix.node }} -d ${{ matrix.debian }} -p -r ${{ github.job }}
 
   release_jobs:
     needs: detect_release
