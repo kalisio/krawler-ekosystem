@@ -5,6 +5,7 @@
   "packageManager": "pnpm@10.1.0",
   "scripts": {
     "build": "pnpm -r build",
+    "build:krawler-icos": "pnpm --filter @kalisio/krawler-icos build",
     "build:krawler": "pnpm --filter @kalisio/krawler build",
     "build:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation build",
     "build:krawler-vigicrues": "pnpm --filter @kalisio/krawler-vigicrues build",
@@ -17,6 +18,7 @@
     "docs:dev": "pnpm --filter docs run dev",
     "inspect": "pnpm knip",
     "lint": "pnpm -r lint",
+    "lint:krawler-icos": "pnpm --filter @kalisio/krawler-icos lint",
     "lint:krawler": "pnpm --filter @kalisio/krawler lint",
     "lint:krawler-meteofrance": "pnpm --filter @kalisio/krawler-meteofrance lint",
     "lint:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation lint",
@@ -26,6 +28,7 @@
     "prepare": "husky",
     "pretest": "mkdir -p coverage",
     "test": "pnpm -r test",
+    "test:krawler-icos": "pnpm --filter @kalisio/krawler-icos test",
     "test:krawler": "pnpm --filter @kalisio/krawler test",
     "test:krawler-meteofrance": "pnpm --filter @kalisio/krawler-meteofrance test",
     "test:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation test",
