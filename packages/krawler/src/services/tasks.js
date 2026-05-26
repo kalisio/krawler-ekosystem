@@ -63,7 +63,7 @@ class TasksService extends Service {
     return new Promise((resolve, reject) => {
       let statusCode
       taskStream
-        .on('timeout', reject)
+        .on('error', reject)
         .on('response', (response) => {
           statusCode = response.statusCode
           if (response.statusCode > 299) {

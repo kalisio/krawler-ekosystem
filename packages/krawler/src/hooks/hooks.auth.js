@@ -1,9 +1,25 @@
 import _ from 'lodash'
-import utils from 'util'
-import request from 'request'
 import makeDebug from 'debug'
 
 const debug = makeDebug('krawler:hooks:auth')
+
+// Apply a tough-cookie-compatible CookieJar (if provided) to fetch headers and persist Set-Cookie back to it.
+// Feature-detects getCookieString/setCookie so non-jar truthy values (e.g. `jar: true`, legacy compat) are tolerated.
+async function fetchWithJar (url, init, jar) {
+  const headers = { ...(init.headers || {}) }
+  if (jar && typeof jar.getCookieString === 'function') {
+    const cookieString = await jar.getCookieString(url)
+    if (cookieString) headers.cookie = cookieString
+  }
+  const response = await fetch(url, { ...init, headers })
+  if (jar && typeof jar.setCookie === 'function') {
+    const setCookies = response.headers.getSetCookie ? response.headers.getSetCookie() : []
+    for (const c of setCookies) {
+      await jar.setCookie(c, url)
+    }
+  }
+  return response
+}
 
 // Add headers for basic/proxy auth
 export function basicAuth (options = {}) {
@@ -19,7 +35,10 @@ export function basicAuth (options = {}) {
       // Post auth information as form data ?
       if (form) {
         // Set as well if we use cookie to store the session
-        await utils.promisify(request.post)({ url, form, jar: options.jar })
+        await fetchWithJar(url, {
+          method: 'POST',
+          body: new URLSearchParams(form)
+        }, options.jar)
         _.set(requestOptions, 'jar', options.jar)
       } else { // Default method is to directly set basic auth as header
         if (!requestOptions.headers) requestOptions.headers = {}
@@ -49,18 +68,21 @@ export function OAuth (options = {}) {
       let response
       if (!requestOptions.headers) requestOptions.headers = {}
       if (method === 'client_secret_basic') {
-        response = await utils.promisify(request.post)({
-          url,
+        response = await fetch(url, {
+          method: 'POST',
           headers: { Authorization: 'Basic ' + Buffer.from(client_id + ':' + client_secret).toString('base64') },
           body: JSON.stringify(_.omit(oauth, ['client_id', 'client_secret', 'method', 'url']))
         })
       } else if (method === 'client_secret_post') {
-        response = await utils.promisify(request.post)({
-          url,
+        response = await fetch(url, {
+          method: 'POST',
           body: JSON.stringify(_.omit(oauth, ['method', 'url']))
         })
       }
-      const { access_token, token_type } = JSON.parse(response.body)
+      if (!response.ok) {
+        throw new Error('OAuth rejected with HTTP code ' + response.status)
+      }
+      const { access_token, token_type } = await response.json()
       // Defaults to Bearer Auth
       const type = options.type || 'Authorization'
       requestOptions.headers[type] = `${token_type} ${access_token}`

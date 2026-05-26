@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import feathers from '@feathersjs/client'
 import io from 'socket.io-client'
-import fetch from 'node-fetch'
 import makeDebug from 'debug'
 // import { getItems } from 'feathers-hooks-common'
 import {
