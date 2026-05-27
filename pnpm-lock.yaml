@@ -425,6 +425,21 @@ importers:
         specifier: ^5.0.7
         version: 5.1.1(winston@3.19.0)
 
+  packages/krawler-icos:
+    dependencies:
+      '@kalisio/krawler':
+        specifier: workspace:*
+        version: link:../krawler
+      lodash:
+        specifier: 'catalog:'
+        version: 4.18.1
+      moment:
+        specifier: 'catalog:'
+        version: 2.30.1
+      winston:
+        specifier: 'catalog:'
+        version: 3.19.0
+
   packages/krawler-meteofrance:
     dependencies:
       '@kalisio/krawler':
@@ -475,6 +490,15 @@ importers:
       winston:
         specifier: 'catalog:'
         version: 3.19.0
+
+  packages/krawler-weatherlink:
+    dependencies:
+      '@kalisio/krawler':
+        specifier: workspace:*
+        version: link:../krawler
+      lodash:
+        specifier: 'catalog:'
+        version: 4.18.1
 
 packages:
 
@@ -2058,6 +2082,7 @@ packages:
 
   '@ungap/structured-clone@1.3.0':
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
+    deprecated: Potential CWE-502 - Update to 1.3.1 or higher
 
   '@vitejs/plugin-vue@5.2.4':
     resolution: {integrity: sha512-7Yx/SXSOcQq5HiiV3orevHUFn+pmMB4cgbEkDYgnkUWb0WfeQ/wa2yFv6D5ICiCQOVpjA7vYDXrC7AGO8yjDHA==}
