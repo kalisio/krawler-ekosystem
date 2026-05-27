@@ -1,0 +1,45 @@
+{
+  "name": "@kalisio/krawler-hubeau",
+  "description": "A Krawler based job to download data from the Hub'Eau API.",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "keywords": [
+    "krawler",
+    "kargo",
+    "hubeau",
+    "kalisio"
+  ],
+  "author": {
+    "name": "KALISIO <contact@kalisio.com>",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kalisio/krawler-ekosystem.git",
+    "directory": "packages/krawler-hubeau"
+  },
+  "bugs": {
+    "url": "https://github.com/kalisio/krawler-ekosystem/issues"
+  },
+  "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler-hubeau",
+  "scripts": {
+    "build:hydro-observations": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-hubeau:hydro-observations-${TAG:-latest} -f dockerfile.hydro-observations ../..",
+    "build:hydro-predictions": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-hubeau:hydro-predictions-${TAG:-latest} -f dockerfile.hydro-predictions ../..",
+    "build:hydro-stations": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-hubeau:hydro-stations-${TAG:-latest} -f dockerfile.hydro-stations ../..",
+    "build:piezo-observations": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-hubeau:piezo-observations-${TAG:-latest} -f dockerfile.piezo-observations ../..",
+    "build:piezo-stations": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-hubeau:piezo-stations-${TAG:-latest} -f dockerfile.piezo-stations ../.."
+  },
+  "krawler": {
+    "version": "2.8.2"
+  },
+  "dependencies": {
+    "lodash": "catalog:",
+    "winston": "catalog:"
+  },
+  "peerDependencies": {
+    "@kalisio/krawler": "workspace:*"
+  }
+}
