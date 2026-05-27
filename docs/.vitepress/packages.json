@@ -3,5 +3,7 @@
   "krawler-openradiation",
   "krawler-vigicrues",
   "krawler-meteofrance",
-  "krawler-icos"
+  "krawler-icos",
+  "krawler-weatherlink",
+  "krawler-atlas"
 ]

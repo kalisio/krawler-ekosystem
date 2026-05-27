@@ -1,0 +1,48 @@
+{
+  "name": "@kalisio/krawler-atlas",
+  "description": "A Krawler based job to download geographical boundary data (Admin Express, OSM, BDPR).",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "keywords": [
+    "krawler",
+    "kargo",
+    "admin-express",
+    "bdpr",
+    "osm",
+    "kalisio"
+  ],
+  "author": {
+    "name": "KALISIO <contact@kalisio.com>",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kalisio/krawler-ekosystem.git",
+    "directory": "packages/krawler-atlas"
+  },
+  "bugs": {
+    "url": "https://github.com/kalisio/krawler-ekosystem/issues"
+  },
+  "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler-atlas",
+  "scripts": {
+    "build:admin-express": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-atlas:admin-express-${TAG:-latest} -f dockerfile.admin-express ../..",
+    "build:bdpr": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-atlas:bdpr-${TAG:-latest} -f dockerfile.bdpr ../..",
+    "build:osm-boundaries": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-atlas:osm-boundaries-${TAG:-latest} -f dockerfile.osm-boundaries ../.."
+  },
+  "krawler": {
+    "version": "2.8.2"
+  },
+  "dependencies": {
+    "@turf/area": "catalog:",
+    "@turf/center-of-mass": "catalog:",
+    "@turf/flatten": "catalog:",
+    "glob": "catalog:",
+    "lodash": "catalog:"
+  },
+  "peerDependencies": {
+    "@kalisio/krawler": "workspace:*"
+  }
+}
