@@ -458,6 +458,18 @@ importers:
         specifier: 'catalog:'
         version: 4.18.1
 
+  packages/krawler-hubeau:
+    dependencies:
+      '@kalisio/krawler':
+        specifier: workspace:*
+        version: link:../krawler
+      lodash:
+        specifier: 'catalog:'
+        version: 4.18.1
+      winston:
+        specifier: 'catalog:'
+        version: 3.19.0
+
   packages/krawler-icos:
     dependencies:
       '@kalisio/krawler':
