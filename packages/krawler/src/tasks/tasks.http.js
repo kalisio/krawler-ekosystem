@@ -27,10 +27,14 @@ export function getRequestParameters (options) {
     method: options.method || 'GET',
     headers: options.headers,
     body: options.body,
-    searchParams: buildSearchParams(queryParameters),
     cookieJar: options.jar,
     // Do not throw on non-2xx so the downstream consumer can read statusCode from the 'response' event
     throwHttpErrors: false
+  }
+  // Only set searchParams when we actually have params; otherwise got would override
+  // any pre-existing query string already embedded in options.url.
+  if (Object.keys(queryParameters).length > 0) {
+    requestParameters.searchParams = buildSearchParams(queryParameters)
   }
   if (options.timeout) {
     requestParameters.timeout = { request: options.timeout }
