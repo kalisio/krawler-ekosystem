@@ -33,7 +33,12 @@
     "version": "2.8.2"
   },
   "dependencies": {
-    "@turf/turf": "^6.5.0",
+    "@turf/clean-coords": "catalog:",
+    "@turf/envelope": "catalog:",
+    "@turf/flatten": "catalog:",
+    "@turf/helpers": "catalog:",
+    "@turf/invariant": "catalog:",
+    "@turf/meta": "catalog:",
     "debug": "catalog:",
     "lodash": "catalog:",
     "moment": "catalog:",
