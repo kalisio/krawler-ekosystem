@@ -1,7 +1,12 @@
 import _ from 'lodash'
 import moment from 'moment'
 import winston from 'winston'
-import { featureEach, getType, multiLineString, getCoords, cleanCoords, envelope, flatten } from '@turf/turf'
+import { cleanCoords } from '@turf/clean-coords'
+import { envelope } from '@turf/envelope'
+import { flatten } from '@turf/flatten'
+import { multiLineString } from '@turf/helpers'
+import { getCoords, getType } from '@turf/invariant'
+import { featureEach } from '@turf/meta'
 import makeDebug from 'debug'
 
 const debug = makeDebug('k-vigicrues')

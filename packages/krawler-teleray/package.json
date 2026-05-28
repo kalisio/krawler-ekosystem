@@ -1,0 +1,41 @@
+{
+  "name": "@kalisio/krawler-teleray",
+  "description": "A Krawler based job to download data from the French gamma dose rate alert Teleray network.",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "keywords": [
+    "krawler",
+    "kargo",
+    "teleray",
+    "kalisio"
+  ],
+  "author": {
+    "name": "KALISIO <contact@kalisio.com>",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kalisio/krawler-ekosystem.git",
+    "directory": "packages/krawler-teleray"
+  },
+  "bugs": {
+    "url": "https://github.com/kalisio/krawler-ekosystem/issues"
+  },
+  "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler-teleray",
+  "scripts": {
+    "build": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-teleray:${TAG:-latest} -f dockerfile ../.."
+  },
+  "krawler": {
+    "version": "2.8.2"
+  },
+  "dependencies": {
+    "lodash": "catalog:",
+    "winston": "catalog:"
+  },
+  "peerDependencies": {
+    "@kalisio/krawler": "workspace:*"
+  }
+}

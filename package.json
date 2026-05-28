@@ -5,7 +5,14 @@
   "packageManager": "pnpm@10.1.0",
   "scripts": {
     "build": "pnpm -r build",
+    "build:krawler-atlas": "pnpm --filter @kalisio/krawler-atlas build",
+    "build:krawler-hubeau": "pnpm --filter @kalisio/krawler-hubeau build",
+    "build:krawler-icos": "pnpm --filter @kalisio/krawler-icos build",
     "build:krawler": "pnpm --filter @kalisio/krawler build",
+    "build:krawler-openaq": "pnpm --filter @kalisio/krawler-openaq build",
+    "build:krawler-rte": "pnpm --filter @kalisio/krawler-rte build",
+    "build:krawler-teleray": "pnpm --filter @kalisio/krawler-teleray build",
+    "build:krawler-weatherlink": "pnpm --filter @kalisio/krawler-weatherlink build",
     "build:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation build",
     "build:krawler-vigicrues": "pnpm --filter @kalisio/krawler-vigicrues build",
     "changeset": "changeset",
@@ -17,7 +24,14 @@
     "docs:dev": "pnpm --filter docs run dev",
     "inspect": "pnpm knip",
     "lint": "pnpm -r lint",
+    "lint:krawler-atlas": "pnpm --filter @kalisio/krawler-atlas lint",
+    "lint:krawler-hubeau": "pnpm --filter @kalisio/krawler-hubeau lint",
+    "lint:krawler-icos": "pnpm --filter @kalisio/krawler-icos lint",
     "lint:krawler": "pnpm --filter @kalisio/krawler lint",
+    "lint:krawler-openaq": "pnpm --filter @kalisio/krawler-openaq lint",
+    "lint:krawler-rte": "pnpm --filter @kalisio/krawler-rte lint",
+    "lint:krawler-teleray": "pnpm --filter @kalisio/krawler-teleray lint",
+    "lint:krawler-weatherlink": "pnpm --filter @kalisio/krawler-weatherlink lint",
     "lint:krawler-meteofrance": "pnpm --filter @kalisio/krawler-meteofrance lint",
     "lint:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation lint",
     "lint:krawler-vigicrues": "pnpm --filter @kalisio/krawler-vigicrues lint",
@@ -26,7 +40,14 @@
     "prepare": "husky",
     "pretest": "mkdir -p coverage",
     "test": "pnpm -r test",
+    "test:krawler-atlas": "pnpm --filter @kalisio/krawler-atlas test",
+    "test:krawler-hubeau": "pnpm --filter @kalisio/krawler-hubeau test",
+    "test:krawler-icos": "pnpm --filter @kalisio/krawler-icos test",
     "test:krawler": "pnpm --filter @kalisio/krawler test",
+    "test:krawler-openaq": "pnpm --filter @kalisio/krawler-openaq test",
+    "test:krawler-rte": "pnpm --filter @kalisio/krawler-rte test",
+    "test:krawler-teleray": "pnpm --filter @kalisio/krawler-teleray test",
+    "test:krawler-weatherlink": "pnpm --filter @kalisio/krawler-weatherlink test",
     "test:krawler-meteofrance": "pnpm --filter @kalisio/krawler-meteofrance test",
     "test:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation test",
     "test:krawler-vigicrues": "pnpm --filter @kalisio/krawler-vigicrues test"
@@ -63,8 +84,8 @@
     "vitest": "catalog:"
   },
   "metaCatalog": {
-    "version": "0.9.0",
-    "syncedAt": "2026-04-30T07:30:33.947Z"
+    "version": "0.10.0",
+    "syncedAt": "2026-05-28T08:11:41.097Z"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

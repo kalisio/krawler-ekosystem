@@ -1,0 +1,44 @@
+{
+  "name": "@kalisio/krawler-rte",
+  "description": "A Krawler based job to download generation data from the French electrical network operated by RTE.",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "keywords": [
+    "krawler",
+    "kargo",
+    "rte",
+    "kalisio"
+  ],
+  "author": {
+    "name": "KALISIO <contact@kalisio.com>",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kalisio/krawler-ekosystem.git",
+    "directory": "packages/krawler-rte"
+  },
+  "bugs": {
+    "url": "https://github.com/kalisio/krawler-ekosystem/issues"
+  },
+  "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler-rte",
+  "scripts": {
+    "build:generation": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-rte:generation-${TAG:-latest} -f dockerfile.generation ../..",
+    "build:units": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-rte:units-${TAG:-latest} -f dockerfile.units ../.."
+  },
+  "krawler": {
+    "version": "2.8.2"
+  },
+  "dependencies": {
+    "lodash": "catalog:",
+    "moment": "catalog:",
+    "moment-timezone": "catalog:",
+    "winston": "catalog:"
+  },
+  "peerDependencies": {
+    "@kalisio/krawler": "workspace:*"
+  }
+}

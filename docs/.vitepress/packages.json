@@ -2,5 +2,12 @@
   "krawler",
   "krawler-openradiation",
   "krawler-vigicrues",
-  "krawler-meteofrance"
+  "krawler-meteofrance",
+  "krawler-icos",
+  "krawler-weatherlink",
+  "krawler-atlas",
+  "krawler-hubeau",
+  "krawler-teleray",
+  "krawler-rte",
+  "krawler-openaq"
 ]

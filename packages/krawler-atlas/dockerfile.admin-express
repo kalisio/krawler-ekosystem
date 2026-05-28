@@ -1,0 +1,53 @@
+ARG KRAWLER_TAG=latest
+ARG NODE_VERSION=20
+ARG DEBIAN_VERSION=bookworm
+
+#
+# Builder stage: install the job's prod deps using pnpm.
+# @kalisio/krawler is a peer dep so it won't be installed here —
+# the runtime image already provides it.
+#
+FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
+
+WORKDIR /app
+
+RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
+
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY packages/krawler-atlas/package.json ./packages/krawler-atlas/
+
+RUN pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/krawler-atlas --prod
+
+COPY packages/krawler-atlas/jobfile-admin-express.js \
+     packages/krawler-atlas/geoservices.sh \
+     packages/krawler-atlas/fetch-polynesia.sh \
+     packages/krawler-atlas/generate-admin-express-pays.sh \
+     ./packages/krawler-atlas/
+
+#
+# Runtime stage: published krawler image matching KRAWLER_TAG.
+#
+FROM kalisio/krawler:${KRAWLER_TAG}
+LABEL maintainer="Kalisio <contact@kalisio.xyz>"
+
+ENV CRON="0 0 4 1 * *"
+
+USER root
+
+RUN apt-get update && apt-get -y install wget p7zip-full
+RUN npm install -g mapshaper
+
+COPY --from=builder --chown=node:node /app/node_modules /app/node_modules
+COPY --from=builder --chown=node:node /app/packages/krawler-atlas /app/packages/krawler-atlas
+
+RUN rm -rf /app/packages/krawler-atlas/node_modules/@kalisio/krawler \
+ && ln -s /opt/krawler /app/packages/krawler-atlas/node_modules/@kalisio/krawler
+RUN chmod +x /app/packages/krawler-atlas/geoservices.sh \
+           /app/packages/krawler-atlas/fetch-polynesia.sh \
+           /app/packages/krawler-atlas/generate-admin-express-pays.sh
+
+USER node
+
+WORKDIR /app/packages/krawler-atlas
+
+CMD krawler --cron "$CRON" --run jobfile-admin-express.js

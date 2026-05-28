@@ -1,0 +1,43 @@
+ARG KRAWLER_TAG=latest
+ARG NODE_VERSION=20
+ARG DEBIAN_VERSION=bookworm
+
+#
+# Builder stage: install the job's prod deps using pnpm.
+# @kalisio/krawler is a peer dep so it won't be installed here —
+# the runtime image already provides it.
+#
+FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
+
+WORKDIR /app
+
+RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
+
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY packages/krawler-weatherlink/package.json ./packages/krawler-weatherlink/
+
+RUN pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/krawler-weatherlink --prod
+
+COPY packages/krawler-weatherlink/jobfile-stations.js \
+     packages/krawler-weatherlink/weatherlink-signature.js \
+     ./packages/krawler-weatherlink/
+
+#
+# Runtime stage: published krawler image matching KRAWLER_TAG.
+#
+FROM kalisio/krawler:${KRAWLER_TAG}
+LABEL maintainer="Kalisio <contact@kalisio.xyz>"
+
+ENV CRON="0 0 0 * * *"
+
+COPY --from=builder --chown=node:node /app/node_modules /app/node_modules
+COPY --from=builder --chown=node:node /app/packages/krawler-weatherlink /app/packages/krawler-weatherlink
+
+USER root
+RUN rm -rf /app/packages/krawler-weatherlink/node_modules/@kalisio/krawler \
+ && ln -s /opt/krawler /app/packages/krawler-weatherlink/node_modules/@kalisio/krawler
+USER node
+
+WORKDIR /app/packages/krawler-weatherlink
+
+CMD krawler --cron "$CRON" --run jobfile-stations.js
