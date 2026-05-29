@@ -1,22 +1,24 @@
 import _ from 'lodash'
 import makeDebug from 'debug'
+import { CookieJar } from 'tough-cookie'
 
 const debug = makeDebug('krawler:hooks:auth')
 
-// Apply a tough-cookie-compatible CookieJar (if provided) to fetch headers and persist Set-Cookie back to it.
-// Feature-detects getCookieString/setCookie so non-jar truthy values (e.g. `jar: true`, legacy compat) are tolerated.
+// Detect anything that looks like a legacy `request.jar()` shortcut or unusable value.
+// A real tough-cookie jar exposes async getCookieString/setCookie.
+function isUsableJar (jar) {
+  return jar && typeof jar.getCookieString === 'function' && typeof jar.setCookie === 'function'
+}
+
+// Apply a tough-cookie CookieJar to fetch headers and persist Set-Cookie back to it.
 async function fetchWithJar (url, init, jar) {
   const headers = { ...(init.headers || {}) }
-  if (jar && typeof jar.getCookieString === 'function') {
-    const cookieString = await jar.getCookieString(url)
-    if (cookieString) headers.cookie = cookieString
-  }
+  const cookieString = await jar.getCookieString(url)
+  if (cookieString) headers.cookie = cookieString
   const response = await fetch(url, { ...init, headers })
-  if (jar && typeof jar.setCookie === 'function') {
-    const setCookies = response.headers.getSetCookie ? response.headers.getSetCookie() : []
-    for (const c of setCookies) {
-      await jar.setCookie(c, url)
-    }
+  const setCookies = response.headers.getSetCookie ? response.headers.getSetCookie() : []
+  for (const c of setCookies) {
+    await jar.setCookie(c, url)
   }
   return response
 }
@@ -34,12 +36,17 @@ export function basicAuth (options = {}) {
       const { user, password, url, form } = auth
       // Post auth information as form data ?
       if (form) {
-        // Set as well if we use cookie to store the session
+        // Form auth typically returns a Set-Cookie session that subsequent task requests must replay.
+        // If the caller didn't pass a real tough-cookie jar (incl. the legacy `jar: true` shortcut from
+        // the request.jar() era), create one transparently so cookies persist across the auth → data hop.
+        const jar = isUsableJar(options.jar) ? options.jar : new CookieJar()
         await fetchWithJar(url, {
           method: 'POST',
           body: new URLSearchParams(form)
-        }, options.jar)
-        _.set(requestOptions, 'jar', options.jar)
+        }, jar)
+        // got accepts a tough-cookie jar via `cookieJar`; the http task maps requestOptions.jar onto it.
+        _.set(requestOptions, 'jar', jar)
+        options.jar = jar
       } else { // Default method is to directly set basic auth as header
         if (!requestOptions.headers) requestOptions.headers = {}
         // Defaults to Basic Auth

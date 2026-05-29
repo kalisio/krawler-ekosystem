@@ -79,9 +79,15 @@ describe('krawler:hooks:main', () => {
 
     nock('https://www.portal.com')
       .post('/login', 'user=toto&password=titi')
-      .reply(200, 'OK')
+      .reply(200, 'OK', { 'Set-Cookie': 'sessionid=abc123; Path=/' })
     await pluginHooks.basicAuth({ jar: true })(authHook)
-    expect(authHook.data.options.jar).toBe(true)
+    // The legacy `jar: true` shortcut must be upgraded to a real tough-cookie jar
+    // so that the Set-Cookie from /login is captured and replayed on the data request.
+    const jar = authHook.data.options.jar
+    expect(typeof jar.getCookieString).toBe('function')
+    expect(typeof jar.setCookie).toBe('function')
+    const cookieString = await jar.getCookieString('https://www.portal.com/data')
+    expect(cookieString).toContain('sessionid=abc123')
   })
 
   it('manages OAuth token on request header', async () => {

@@ -322,9 +322,10 @@ export function templateTask (task, taskTemplate) {
   // Indeed, to avoid any problem, it should only be raw JS objects
   // and these special objects should not be templated
   const taskOptions = taskTemplate.options || {}
-  // Omit some special objects like MongoDB client from templating
-  // to avoid any problem as it should only be raw JS object
-  const nonTemplateProperties = [taskOptions.clientPath || 'client']
+  // Omit some special objects like MongoDB client or cookie jar from templating:
+  // templateObject() uses _.mapKeys/_.mapValues which strip the prototype, breaking
+  // class instances (got would lose CookieJar.setCookie/getCookieString and throw).
+  const nonTemplateProperties = [taskOptions.clientPath || 'client', 'jar']
   const taskTemplateOptions = _.omit(taskOptions, nonTemplateProperties)
   const taskNonTemplateOptions = _.pick(taskOptions, nonTemplateProperties)
   const options = templateObject(task, taskTemplateOptions)
