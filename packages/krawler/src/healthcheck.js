@@ -1,6 +1,4 @@
-import request from 'request'
 import path, { dirname } from 'path'
-import utils from 'util'
 
 import fs from 'fs-extra'
 import _ from 'lodash'
@@ -68,8 +66,8 @@ export async function publishToSlack (slackWebhook, data, compilers, posttext = 
     const message = compilers.message(data)
     const link = compilers.link(data)
     const text = link ? `<${link}|${message}${posttext}>` : `${message}${posttext}`
-    await utils.promisify(request.post)({
-      url: slackWebhook,
+    await fetch(slackWebhook, {
+      method: 'POST',
       body: JSON.stringify({
         attachments: [
           {
@@ -106,10 +104,14 @@ export async function healthcheck (options) {
     if (options.debug) {
       logger.info(`Requesting healthcheck endpoint ${endpoint}`)
     }
-    const response = await utils.promisify(request.get)(endpoint)
-    const data = JSON.parse(response.body)
+    const response = await fetch(endpoint)
+    // krawler healthcheck endpoint returns either 200 or 500
+    if (response.status !== 200 && response.status !== 500) {
+      throw new Error('Healthcheck rejected with unexpected HTTP code ' + response.status)
+    }
+    const data = await response.json()
     if (options.debug) {
-      logger.info(`Current healthcheck status from service ${response.statusCode}`)
+      logger.info(`Current healthcheck status from service ${response.status}`)
       logger.info('Current healthcheck output read from service', data)
       logger.info('Previous healthcheck output read from log', previousHealthcheck)
     }

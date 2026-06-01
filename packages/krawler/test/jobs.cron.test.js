@@ -1,5 +1,4 @@
 import path, { dirname } from 'path'
-import request from 'request'
 import utils from 'util'
 import moment from 'moment'
 import { cli } from '../src/index.js'
@@ -56,10 +55,9 @@ describe('krawler:jobs:cron', () => {
     await utils.promisify(setTimeout)((6 + remainingSecondsForNextRun) * 1000)
     // Check for error with healthcheck
     {
-      const response = await utils.promisify(request.get)('http://localhost:3030/healthcheck')
-      const healthcheck = JSON.parse(response.body)
-      // console.log(healthcheck)
-      expect(response.statusCode).toBe(500)
+      const response = await fetch('http://localhost:3030/healthcheck')
+      const healthcheck = await response.json()
+      expect(response.status).toBe(500)
       expect(healthcheck.isRunning).toBe(true)
       expect(healthcheck.duration).toBeUndefined()
       expect(healthcheck.nbSkippedJobs).toBeGreaterThanOrEqual(1)
@@ -73,10 +71,9 @@ describe('krawler:jobs:cron', () => {
     await utils.promisify(setTimeout)(5000)
     // Now it should have finished
     {
-      const response = await utils.promisify(request.get)('http://localhost:3030/healthcheck')
-      const healthcheck = JSON.parse(response.body)
-      // console.log(healthcheck)
-      expect(response.statusCode).toBe(200)
+      const response = await fetch('http://localhost:3030/healthcheck')
+      const healthcheck = await response.json()
+      expect(response.status).toBe(200)
       expect(healthcheck.isRunning).toBe(false)
       expect(healthcheck.duration).toBeTruthy()
       expect(healthcheck.nbSkippedJobs).toBe(0)

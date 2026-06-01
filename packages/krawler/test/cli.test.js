@@ -1,7 +1,6 @@
 import path, { dirname } from 'path'
 import _ from 'lodash'
 import moment from 'moment'
-import request from 'request'
 import utils from 'util'
 import fs from 'fs-extra'
 import mongodb from 'mongodb'
@@ -66,9 +65,10 @@ describe('krawler:cli', () => {
       fs.removeSync(path.join(outputPath, 'RJTT-30-18000-2-1.tif.csv'))
       appServer = await cli(jobfile, { mode: 'setup', api: true, apiPrefix: '/api', port: 3030, messageTemplate: process.env.MESSAGE_TEMPLATE, debug: true, slackWebhook: process.env.SLACK_WEBHOOK_URL })
       // Submit a job to be run
-      const response = await utils.promisify(request.post)({
-        url: 'http://localhost:3030/api/jobs',
-        body: {
+      const response = await fetch('http://localhost:3030/api/jobs', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
           id: 'job',
           store: 'job-store',
           tasks: [{
@@ -78,10 +78,9 @@ describe('krawler:cli', () => {
               store: 'task-store'
             }
           }]
-        },
-        json: true
+        })
       })
-      const tasks = response.body
+      const tasks = await response.json()
       await appServer.close()
       expect(tasks.length).toBe(1)
       // Check intermediate products have been erased and final product are here
@@ -134,10 +133,9 @@ describe('krawler:cli', () => {
     // Only run as we already setup the app
     await cli(jobfile, { mode: 'runJob', port: 3030, cron: '*/10 * * * * *', run: true, messageTemplate: process.env.MESSAGE_TEMPLATE, debug: false, slackWebhook: process.env.SLACK_WEBHOOK_URL })
     expect(runCount).toBe(1) // First run
-    const response = await utils.promisify(request.get)('http://localhost:3030/healthcheck')
-    // console.log(response.body)
-    expect(response.statusCode).toBe(200)
-    const healthcheck = JSON.parse(response.body)
+    const response = await fetch('http://localhost:3030/healthcheck')
+    expect(response.status).toBe(200)
+    const healthcheck = await response.json()
     // console.log(healthcheck)
     const { error } = await runCommand('node ' + path.join(__dirname, '..', 'healthcheck.js'))
     expect(error).toBeNull()
@@ -162,10 +160,9 @@ describe('krawler:cli', () => {
     await utils.promisify(setTimeout)((1 + remainingSecondsForNextRun) * 1000)
     try {
       expect(runCount).toBeGreaterThanOrEqual(2) // 2 runs
-      const response = await utils.promisify(request.get)('http://localhost:3030/healthcheck')
-      // console.log(response.body)
-      expect(response.statusCode).toBe(500)
-      const healthcheck = JSON.parse(response.body)
+      const response = await fetch('http://localhost:3030/healthcheck')
+      expect(response.status).toBe(500)
+      const healthcheck = await response.json()
       // console.log(healthcheck)
       const { error } = await runCommand('node ' + path.join(__dirname, '..', 'healthcheck.js'))
       expect(error).toBeTruthy()

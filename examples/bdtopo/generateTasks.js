@@ -1,4 +1,3 @@
-import request from 'request'
 import * as turf from '@turf/turf'
 import _ from 'lodash'
 import { hooks } from '@kalisio/krawler'
@@ -6,16 +5,16 @@ import { hooks } from '@kalisio/krawler'
 const WFS_URL = 'https://data.geopf.fr/wfs/ows'
 
 // GET request for short WFS queries (no large CQL_FILTER payload).
-function wfsGet (params) {
-  return new Promise((resolve, reject) => {
-    request({ url: WFS_URL, qs: params, json: true }, (err, res, body) => {
-      if (err) return reject(err)
-      if (res.statusCode !== 200) {
-        return reject(new Error(`WFS error (${res.statusCode}): ${JSON.stringify(body).substring(0, 500)}`))
-      }
-      resolve(body)
-    })
-  })
+async function wfsGet (params) {
+  const searchParams = new URLSearchParams(params)
+  const response = await fetch(`${WFS_URL}?${searchParams.toString()}`)
+  const body = response.headers.get('content-type')?.includes('json')
+    ? await response.json()
+    : await response.text()
+  if (!response.ok) {
+    throw new Error(`WFS error (${response.status}): ${JSON.stringify(body).substring(0, 500)}`)
+  }
+  return body
 }
 
 // Fetch Admin Express commune features matching an array of SIREN codes.

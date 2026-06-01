@@ -1,9 +1,27 @@
 import _ from 'lodash'
-import utils from 'util'
-import request from 'request'
 import makeDebug from 'debug'
+import { CookieJar } from 'tough-cookie'
 
 const debug = makeDebug('krawler:hooks:auth')
+
+// Detect anything that looks like a legacy `request.jar()` shortcut or unusable value.
+// A real tough-cookie jar exposes async getCookieString/setCookie.
+function isUsableJar (jar) {
+  return jar && typeof jar.getCookieString === 'function' && typeof jar.setCookie === 'function'
+}
+
+// Apply a tough-cookie CookieJar to fetch headers and persist Set-Cookie back to it.
+async function fetchWithJar (url, init, jar) {
+  const headers = { ...(init.headers || {}) }
+  const cookieString = await jar.getCookieString(url)
+  if (cookieString) headers.cookie = cookieString
+  const response = await fetch(url, { ...init, headers })
+  const setCookies = response.headers.getSetCookie ? response.headers.getSetCookie() : []
+  for (const c of setCookies) {
+    await jar.setCookie(c, url)
+  }
+  return response
+}
 
 // Add headers for basic/proxy auth
 export function basicAuth (options = {}) {
@@ -18,9 +36,17 @@ export function basicAuth (options = {}) {
       const { user, password, url, form } = auth
       // Post auth information as form data ?
       if (form) {
-        // Set as well if we use cookie to store the session
-        await utils.promisify(request.post)({ url, form, jar: options.jar })
-        _.set(requestOptions, 'jar', options.jar)
+        // Form auth typically returns a Set-Cookie session that subsequent task requests must replay.
+        // If the caller didn't pass a real tough-cookie jar (incl. the legacy `jar: true` shortcut from
+        // the request.jar() era), create one transparently so cookies persist across the auth → data hop.
+        const jar = isUsableJar(options.jar) ? options.jar : new CookieJar()
+        await fetchWithJar(url, {
+          method: 'POST',
+          body: new URLSearchParams(form)
+        }, jar)
+        // got accepts a tough-cookie jar via `cookieJar`; the http task maps requestOptions.jar onto it.
+        _.set(requestOptions, 'jar', jar)
+        options.jar = jar
       } else { // Default method is to directly set basic auth as header
         if (!requestOptions.headers) requestOptions.headers = {}
         // Defaults to Basic Auth
@@ -49,18 +75,21 @@ export function OAuth (options = {}) {
       let response
       if (!requestOptions.headers) requestOptions.headers = {}
       if (method === 'client_secret_basic') {
-        response = await utils.promisify(request.post)({
-          url,
+        response = await fetch(url, {
+          method: 'POST',
           headers: { Authorization: 'Basic ' + Buffer.from(client_id + ':' + client_secret).toString('base64') },
           body: JSON.stringify(_.omit(oauth, ['client_id', 'client_secret', 'method', 'url']))
         })
       } else if (method === 'client_secret_post') {
-        response = await utils.promisify(request.post)({
-          url,
+        response = await fetch(url, {
+          method: 'POST',
           body: JSON.stringify(_.omit(oauth, ['method', 'url']))
         })
       }
-      const { access_token, token_type } = JSON.parse(response.body)
+      if (!response.ok) {
+        throw new Error('OAuth rejected with HTTP code ' + response.status)
+      }
+      const { access_token, token_type } = await response.json()
       // Defaults to Bearer Auth
       const type = options.type || 'Authorization'
       requestOptions.headers[type] = `${token_type} ${access_token}`
