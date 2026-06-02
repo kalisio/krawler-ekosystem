@@ -43,7 +43,7 @@ done
 . "$WORKSPACE_DIR/development/workspaces/jobs/jobs.sh" krawler-ekosystem
 
 # Required by krawler tests
-docker pull v4tech/imagemagick
+docker pull minidocks/imagemagick
 
 ## Run tests
 ##

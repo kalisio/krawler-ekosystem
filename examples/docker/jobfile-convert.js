@@ -23,7 +23,7 @@ export default {
         },
         create: {
           hook: 'createDockerContainer',
-          Image: 'v4tech/imagemagick',
+          Image: 'minidocks/imagemagick',
           Cmd: ['/bin/sh'],
           AttachStdout: true,
           AttachStderr: true,
