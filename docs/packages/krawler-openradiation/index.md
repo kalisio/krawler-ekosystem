@@ -30,23 +30,4 @@ The job is executed according a specific cron expression. By default, every hour
 
 We personally use [Kargo](https://kalisio.github.io/kargo/) to deploy the service.
 
-## Installation
-
-Install with your preferred package manager:
-
-::: code-group
-
-```bash [pnpm]
-pnpm add @kalisio/krawler-openradiation
-```
-
-```bash [npm]
-npm install @kalisio/krawler-openradiation
-```
-
-```bash [yarn]
-yarn add @kalisio/krawler-openradiation
-```
-
-:::
 

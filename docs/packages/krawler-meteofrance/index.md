@@ -96,23 +96,4 @@ Files are retrieved in **GRIB2** format.
 
 We personally use [Kargo](https://kalisio.github.io/kargo/) to deploy the service.
 
-## Installation
-
-Install with your preferred package manager:
-
-::: code-group
-
-```bash [pnpm]
-pnpm add @kalisio/krawler-meteofrance
-```
-
-```bash [npm]
-npm install @kalisio/krawler-meteofrance
-```
-
-```bash [yarn]
-yarn add @kalisio/krawler-meteofrance
-```
-
-:::
 

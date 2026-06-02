@@ -27,24 +27,3 @@ To get support from **Vigicrues**, use the following contact address: <vigicrues
 ## Deployment
 
 We personally use [Kargo](https://kalisio.github.io/kargo/) to deploy the service.
-
-## Installation
-
-Install with your preferred package manager:
-
-::: code-group
-
-```bash [pnpm]
-pnpm add @kalisio/krawler-vigicrues
-```
-
-```bash [npm]
-npm install @kalisio/krawler-vigicrues
-```
-
-```bash [yarn]
-yarn add @kalisio/krawler-vigicrues
-```
-
-:::
-
