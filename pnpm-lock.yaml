@@ -506,6 +506,21 @@ importers:
         specifier: 'catalog:'
         version: 3.19.0
 
+  packages/krawler-kollectivite:
+    dependencies:
+      '@kalisio/krawler':
+        specifier: workspace:*
+        version: link:../krawler
+      '@turf/centroid':
+        specifier: ^7.3.4
+        version: 7.3.5
+      debug:
+        specifier: ^4.4.1
+        version: 4.4.3
+      lodash:
+        specifier: 'catalog:'
+        version: 4.18.1
+
   packages/krawler-meteofrance:
     dependencies:
       '@kalisio/krawler':

@@ -1,0 +1,45 @@
+{
+  "name": "@kalisio/krawler-kollectivite",
+  "description": "A Krawler based job to download data from the Kollectivite API.",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "keywords": [
+    "krawler",
+    "kargo",
+    "kalisio"
+  ],
+  "author": {
+    "name": "Kalisio",
+    "email": "contact@kalisio.com",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kalisio/krawler-ekosystem.git",
+    "directory": "packages/krawler-kollectivite"
+  },
+  "bugs": {
+    "url": "https://github.com/kalisio/krawler-ekosystem/issues"
+  },
+  "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/master/packages/krawler-kollectivite",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build:bdtopo": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-latest} -t krawler-kollectivite:bdtopo-${TAG:-latest} -f dockerfile.bdtopo ../..",
+    "build:georisque": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-latest} -t krawler-kollectivite:georisque-${TAG:-latest} -f dockerfile.georisque ../..",
+    "build:landcover": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-latest} -t krawler-kollectivite:landcover-${TAG:-latest} -f dockerfile.landcover ../..",
+    "build:osm": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-latest} -t krawler-kollectivite:osm-${TAG:-latest} -f dockerfile.osm ../.."
+  },
+  "dependencies": {
+    "@turf/centroid": "^7.3.4",
+    "debug": "^4.4.1",
+    "lodash": "catalog:"
+  },
+  "peerDependencies": {
+    "@kalisio/krawler": "workspace:*"
+  }
+}
