@@ -82,7 +82,10 @@ export function connectMongo (options = {}) {
     } else {
       debug('Connecting to MongoDB for ' + item.id)
       const url = template(item, _.get(options, 'url', _.snakeCase(item.id)))
-      const client = await MongoClient.connect(url, _.omit(options, ['hook', 'url', 'dbName', 'clientPath']))
+      // Wrap the MongoClient instead of mutating it: on the v4+ driver `MongoClient.db` is a
+      // method, so the previous `client.db = client.db(dbName)` clobbered that method with the
+      // resolved Db object. Keep the raw client under `connection` and expose the Db under `db`.
+      const client = { connection: await MongoClient.connect(url, _.omit(options, ['hook', 'url', 'dbName', 'clientPath'])) }
       let dbName = options.dbName
       if (!dbName) {
         // Extract database name.  Need to remove the connections options if any
@@ -91,7 +94,7 @@ export function connectMongo (options = {}) {
         if (indexOfOptions === -1) dbName = url.substring(indexOfDBName)
         else dbName = url.substring(indexOfDBName, indexOfOptions)
       }
-      client.db = client.db(dbName)
+      client.db = client.connection.db(dbName)
       _.set(item, options.clientPath || 'client', client)
       debug('Connected to MongoDB for ' + item.id)
     }
@@ -108,7 +111,7 @@ export function disconnectMongo (options = {}) {
       debug('Already disconnected from MongoDB for ' + item.id)
     } else {
       debug('Disconnecting from MongoDB for ' + item.id)
-      await client.close()
+      await client.connection.close()
       _.unset(item, options.clientPath || 'client')
       debug('Disconnected from MongoDB for ' + item.id)
     }
