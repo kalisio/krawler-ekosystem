@@ -84,7 +84,7 @@ _list_variants() {
         HAS_VARIANTS=true
         echo "${DF##*/dockerfile.}"
     done
-    if [[ "$HAS_VARIANTS" == false ]]; then
+    if [[ "$HAS_VARIANTS" == false ]] && [[ -f "$PKG_DIR/dockerfile" ]]; then
         echo ""
     fi
 }

@@ -28,12 +28,6 @@
   "engines": {
     "node": ">=20"
   },
-  "scripts": {
-    "build:bdtopo": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-latest} -t krawler-kollectivite:bdtopo-${TAG:-latest} -f dockerfile.bdtopo ../..",
-    "build:georisque": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-latest} -t krawler-kollectivite:georisque-${TAG:-latest} -f dockerfile.georisque ../..",
-    "build:landcover": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-latest} -t krawler-kollectivite:landcover-${TAG:-latest} -f dockerfile.landcover ../..",
-    "build:osm": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-latest} -t krawler-kollectivite:osm-${TAG:-latest} -f dockerfile.osm ../.."
-  },
   "dependencies": {
     "@turf/centroid": "^7.3.4",
     "debug": "^4.4.1",
