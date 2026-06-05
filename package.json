@@ -90,6 +90,9 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "gdal-async"
-    ]
+    ],
+    "overrides": {
+      "@xmldom/xmldom@<0.8.4": ">=0.8.13"
+    }
   }
 }
