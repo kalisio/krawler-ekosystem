@@ -27,6 +27,9 @@ catalogs:
     '@feathersjs/memory':
       specifier: ~5.0.44
       version: 5.0.44
+    '@feathersjs/mongodb':
+      specifier: ~5.0.44
+      version: 5.0.45
     '@feathersjs/socketio':
       specifier: ~5.0.44
       version: 5.0.44
@@ -69,9 +72,6 @@ catalogs:
     debug:
       specifier: ~4.4.3
       version: 4.4.3
-    feathers-mongodb:
-      specifier: ^6.0.0
-      version: 6.4.1
     fs-extra:
       specifier: ~8.1.0
       version: 8.1.0
@@ -115,8 +115,8 @@ catalogs:
       specifier: ~0.6.0
       version: 0.6.2
     mongodb:
-      specifier: ~7.2.0
-      version: 7.2.0
+      specifier: ~6.20.0
+      version: 6.20.0
     nock:
       specifier: ~14.0.13
       version: 14.0.13
@@ -377,7 +377,7 @@ importers:
         version: 2.30.1
       mongodb:
         specifier: 'catalog:'
-        version: 7.2.0(socks@2.8.7)
+        version: 6.20.0(socks@2.8.7)
       mubsub-es:
         specifier: ^2.0.0
         version: 2.1.0(socks@2.8.7)
@@ -433,12 +433,12 @@ importers:
       '@feathersjs/memory':
         specifier: 'catalog:'
         version: 5.0.44
+      '@feathersjs/mongodb':
+        specifier: 'catalog:'
+        version: 5.0.45(mongodb@6.20.0(socks@2.8.7))
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 4.1.5(vitest@4.1.5)
-      feathers-mongodb:
-        specifier: 'catalog:'
-        version: 6.4.1
       nock:
         specifier: 'catalog:'
         version: 14.0.13
@@ -1161,12 +1161,12 @@ packages:
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@feathersjs/adapter-commons@4.5.19':
-    resolution: {integrity: sha512-fxMiC4KsfqoZ2wrxFBWBAEcwalbvGSH7x99obKJvlZHXPJxi1TGIc8VHev1pL3ZJgGG23mjcWEUUD8jFMvnTXg==}
-    engines: {node: '>= 10'}
-
   '@feathersjs/adapter-commons@5.0.44':
     resolution: {integrity: sha512-m9rho8bJnNw8wJEuwQkUMiWf9N8qeWxUB/4yDD2lEwKIlP7/DKxwrWveN11T5veO4T452Z+5/uv5chBWijYG5w==}
+    engines: {node: '>= 12'}
+
+  '@feathersjs/adapter-commons@5.0.45':
+    resolution: {integrity: sha512-5GZluJHbBDrbScbEPUvZbayND4ONlRyy9OQGVTACzpdETrp4iTf0zxntpkHlrHXpqd0MUvEAd81BgkZx5OaHVg==}
     engines: {node: '>= 12'}
 
   '@feathersjs/authentication-client@5.0.44':
@@ -1181,32 +1181,32 @@ packages:
     resolution: {integrity: sha512-AUldeV8FGJuokfHcjca+QlyHp3F8BimrhyyDiXgKfbVd0RfqnXt1LcX6D1fOW89q5aG6bL2bES0yyBGe8U++EQ==}
     engines: {node: '>= 12'}
 
-  '@feathersjs/commons@4.5.19':
-    resolution: {integrity: sha512-ZbwJ74jqGHOzKTPvp88ACDgR6xHxyvpToc8dnf8/EDIjM5hUA4QiSg6SA5tZMRMyjp5x8sfKmpn9xNqPuN2r1A==}
-    engines: {node: '>= 10'}
-
   '@feathersjs/commons@5.0.44':
     resolution: {integrity: sha512-PnxCyKqzWLAqv1LSazDsOXNf520KQOlqUasZ/9YRz4lYRPJ0pzzfZXvzmjBFOsNPaohzKmyySS8578E9vlTQrA==}
     engines: {node: '>= 12'}
 
-  '@feathersjs/errors@4.5.19':
-    resolution: {integrity: sha512-9a2oMr+8ed8CHCjDuPrbfck373h1qUUppbzy9wV3HW2xq3RWhEYNwhbnsX7V4CZ1PxooWsRteq9bsIc/7f8fSg==}
-    engines: {node: '>= 10'}
+  '@feathersjs/commons@5.0.45':
+    resolution: {integrity: sha512-dCe9Kfi+T6wRvhXLii1PJWaRAvqiJRMmBFsNzrrOi/wacph14NijUK63H8u/iy8Ni3gYIRaEYyBnKTfTbxbiRQ==}
+    engines: {node: '>= 12'}
 
   '@feathersjs/errors@5.0.44':
     resolution: {integrity: sha512-QcxrUvEFHGBT47VyH02rlhw51M+G0yam3fpDnko1HlkM6C62notLwE2lirEDz34JWITwkn/lwV527h1HwHpOuQ==}
+    engines: {node: '>= 12'}
+
+  '@feathersjs/errors@5.0.45':
+    resolution: {integrity: sha512-BwMYJ62FMcB9yNyPW5ghr49k44Xv8tM+4lz2Sv9q2Gcf9Br2ZYBNOTH+2OAWVcdaCm/xAYdd/RWgUzzCIVRspg==}
     engines: {node: '>= 12'}
 
   '@feathersjs/express@5.0.44':
     resolution: {integrity: sha512-mnSUxOjQnuDzQJD6jlmTtsZimxB7IoJMHyXe0T+nnYOhBIWnuX//6oznncgUUXIGxjhcpswA/2BPoeLFDnZFzQ==}
     engines: {node: '>= 12'}
 
-  '@feathersjs/feathers@4.5.19':
-    resolution: {integrity: sha512-kFCx3vME2S260q3S4wnK6xXCylLmgWGg1SuzNQItRL+ekowU49h/7coXn9/rKlvA3upsdJrZ2S+WlMRsqL+ueg==}
-    engines: {node: '>= 10'}
-
   '@feathersjs/feathers@5.0.44':
     resolution: {integrity: sha512-qxZ9ZQQBIfyIdQKUIFUXZ2EegcUWpIwG4BOBpO7RZXu7nlv9SNMttrTbVWEfUzc72jhKtJuRW8/FHdrsb1446g==}
+    engines: {node: '>= 12'}
+
+  '@feathersjs/feathers@5.0.45':
+    resolution: {integrity: sha512-0NLBzf67grpx1uX8+t09ctklhgmh4T9D1q/kkdPdR21qYhPcvI+6wrJHJo/CfnQNEJ6mlVVV2NqdDDC/omC+Bg==}
     engines: {node: '>= 12'}
 
   '@feathersjs/hooks@0.9.0':
@@ -1216,6 +1216,12 @@ packages:
   '@feathersjs/memory@5.0.44':
     resolution: {integrity: sha512-JH41YzQSA5KIOU2nKBUjs3hVpCE8lnaYl39Wantpixq2xhE3qh2A1bWQlC0KRo7BWO/tnn4zOCEBlodDSP4o2A==}
     engines: {node: '>= 12'}
+
+  '@feathersjs/mongodb@5.0.45':
+    resolution: {integrity: sha512-4zeDvyFP/Dtno/mNt1KYeVJZ1JKml4TN8T65jY2VLo1b9RX+UZcY0l7d/CJtJgAp5SRwnrp6932BnrgCNSTFSg==}
+    engines: {node: '>= 14'}
+    peerDependencies:
+      mongodb: ^6.19.0
 
   '@feathersjs/rest-client@5.0.44':
     resolution: {integrity: sha512-3YhMFYjY3sL7IzBz3MATdnA+4hCFTpYEVZB7Fnio5V7ZM7ZvN1vEf4dg1Y/d91oNSzDt0trxQyIU+IbGAzkWOA==}
@@ -2268,9 +2274,6 @@ packages:
   '@types/whatwg-url@11.0.5':
     resolution: {integrity: sha512-coYR071JRaHa+xoEvvYqvnIHaVqaYrLPbsufM9BF63HkwI5Lgmy2QR8Q5K/lYDYo5AK82wOvSOS0UsLTpTG7uQ==}
 
-  '@types/whatwg-url@13.0.0':
-    resolution: {integrity: sha512-N8WXpbE6Wgri7KUSvrmQcqrMllKZ9uxkYWMt+mCSGwNc0Hsw9VQTW7ApqI4XNrx6/SaM2QQJCzMPDEXE058s+Q==}
-
   '@types/ws@8.18.1':
     resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
@@ -2693,10 +2696,6 @@ packages:
   bson@6.10.4:
     resolution: {integrity: sha512-WIsKqkSC0ABoBJuT1LEX+2HEvNmNKKgnTAyd0fL8qzK4SH2i9NXg+t08YtdZp/V9IZ33cxe3iV4yM0qg8lMQng==}
     engines: {node: '>=16.20.1'}
-
-  bson@7.2.0:
-    resolution: {integrity: sha512-YCEo7KjMlbNlyHhz7zAZNDpIpQbd+wOEHJYezv0nMYTn4x31eIUM2yomNNubclAt63dObUzKHWsBLJ9QcZNSnQ==}
-    engines: {node: '>=20.19.0'}
 
   buffer-alloc-unsafe@1.1.0:
     resolution: {integrity: sha512-TEM2iMIEQdJ2yjPJoSIsldnleVaAk1oW3DBVUykyOLsEsFmEc9kn+SFFPz+gl54KQNxlDnAwCXosOS9Okx2xAg==}
@@ -3760,11 +3759,6 @@ packages:
     resolution: {integrity: sha512-XQKhbo4d4TuXyco+tbHmKn5wo8QhdSNslJ/+zckNYfUzLmrN8L3uB4Utf0/ivcgwWxJtS1kVhEETBN4TDxuWFg==}
     engines: {node: '>= 4.0'}
     deprecated: Feathers v3 is out and this module has been integrated into Feathers core. See https://docs.feathersjs.com/migrating.html for more information.
-
-  feathers-mongodb@6.4.1:
-    resolution: {integrity: sha512-EZssrp/EIeMxQ3qzNOdlXbUoTXOKvwCMsuYZ5JuPsahRjQluxPEY2WIKmBAzFi4/Jgfl+JhQQLxceRTjZlsynw==}
-    engines: {node: '>= 8'}
-    deprecated: This module has been moved to @feathersjs/mongodb (see https://feathersjs.com/api/databases/mongodb.html)
 
   fecha@4.2.3:
     resolution: {integrity: sha512-OP2IUU6HeYKJi3i0z4A19kHMQoLVs4Hc+DPqqxI2h/DPZHTm/vjsfC6P0b4jCMy14XizLBqvndQ+UilD7707Jw==}
@@ -4840,12 +4834,8 @@ packages:
   mongodb-connection-string-url@3.0.2:
     resolution: {integrity: sha512-rMO7CGo/9BFwyZABcKAWL8UJwH/Kc2x0g72uhDWzG48URRax5TCIcJ7Rc3RZqffZzO/Gwff/jyKwCU9TN8gehA==}
 
-  mongodb-connection-string-url@7.0.1:
-    resolution: {integrity: sha512-h0AZ9A7IDVwwHyMxmdMXKy+9oNlF0zFoahHiX3vQ8e3KFcSP3VmsmfvtRSuLPxmyv2vjIDxqty8smTgie/SNRQ==}
-    engines: {node: '>=20.19.0'}
-
-  mongodb@6.21.0:
-    resolution: {integrity: sha512-URyb/VXMjJ4da46OeSXg+puO39XH9DeQpWCslifrRn9JWugy0D+DvvBvkm2WxmHe61O/H19JM66p1z7RHVkZ6A==}
+  mongodb@6.20.0:
+    resolution: {integrity: sha512-Tl6MEIU3K4Rq3TSHd+sZQqRBoGlFsOgNrH5ltAcFBV62Re3Fd+FcaVf8uSEQFOJ51SDowDVttBTONMfoYWrWlQ==}
     engines: {node: '>=16.20.1'}
     peerDependencies:
       '@aws-sdk/credential-providers': ^3.188.0
@@ -4855,33 +4845,6 @@ packages:
       mongodb-client-encryption: '>=6.0.0 <7'
       snappy: ^7.3.2
       socks: ^2.7.1
-    peerDependenciesMeta:
-      '@aws-sdk/credential-providers':
-        optional: true
-      '@mongodb-js/zstd':
-        optional: true
-      gcp-metadata:
-        optional: true
-      kerberos:
-        optional: true
-      mongodb-client-encryption:
-        optional: true
-      snappy:
-        optional: true
-      socks:
-        optional: true
-
-  mongodb@7.2.0:
-    resolution: {integrity: sha512-F/2+BMZtLVhY30ioZp0dAmZ+IRZMBqI+nrv6t5+9/1AIwCa8sMRC3jBf81lpxMhnZgqq8CoUD503Z1oZWq1/sw==}
-    engines: {node: '>=20.19.0'}
-    peerDependencies:
-      '@aws-sdk/credential-providers': ^3.806.0
-      '@mongodb-js/zstd': ^7.0.0
-      gcp-metadata: ^7.0.1
-      kerberos: ^7.0.0
-      mongodb-client-encryption: '>=7.0.0 <7.1.0'
-      snappy: ^7.3.2
-      socks: ^2.8.6
     peerDependenciesMeta:
       '@aws-sdk/credential-providers':
         optional: true
@@ -6273,9 +6236,6 @@ packages:
   uberproto@1.2.0:
     resolution: {integrity: sha512-pGtPAQmLwh+R9w81WVHzui1FfedpQWQpiaIIfPCwhtsBez4q6DYbJFfyXPVHPUTNFnedAvNEnkoFiLuhXIR94w==}
 
-  uberproto@2.0.6:
-    resolution: {integrity: sha512-68H97HffZoFaa3HFtpstahWorN9dSp5uTU6jo3GjIQ6JkJBR3hC2Nx/e/HFOoYHdUyT/Z1MRWfxN1EiQJZUyCQ==}
-
   uglify-js@2.8.29:
     resolution: {integrity: sha512-qLq/4y2pjcU3vhlhseXGGJ7VbFO4pBANu0kwl8VCa9KEI0V8VfZIx2Fy3w01iSTA/pGwKZSmu/+I4etLNDdt5w==}
     engines: {node: '>=0.8.0'}
@@ -7293,19 +7253,17 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@feathersjs/adapter-commons@4.5.19':
-    dependencies:
-      '@feathersjs/commons': 4.5.19
-      '@feathersjs/errors': 4.5.19
-      '@feathersjs/feathers': 4.5.19
-    transitivePeerDependencies:
-      - supports-color
-
   '@feathersjs/adapter-commons@5.0.44':
     dependencies:
       '@feathersjs/commons': 5.0.44
       '@feathersjs/errors': 5.0.44
       '@feathersjs/feathers': 5.0.44
+
+  '@feathersjs/adapter-commons@5.0.45':
+    dependencies:
+      '@feathersjs/commons': 5.0.45
+      '@feathersjs/errors': 5.0.45
+      '@feathersjs/feathers': 5.0.45
 
   '@feathersjs/authentication-client@5.0.44(typescript@6.0.3)':
     dependencies:
@@ -7342,17 +7300,13 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@feathersjs/commons@4.5.19': {}
-
   '@feathersjs/commons@5.0.44': {}
 
-  '@feathersjs/errors@4.5.19':
-    dependencies:
-      debug: 4.4.3
-    transitivePeerDependencies:
-      - supports-color
+  '@feathersjs/commons@5.0.45': {}
 
   '@feathersjs/errors@5.0.44': {}
+
+  '@feathersjs/errors@5.0.45': {}
 
   '@feathersjs/express@5.0.44(typescript@6.0.3)':
     dependencies:
@@ -7372,18 +7326,15 @@ snapshots:
       - supports-color
       - typescript
 
-  '@feathersjs/feathers@4.5.19':
-    dependencies:
-      '@feathersjs/commons': 4.5.19
-      debug: 4.4.3
-      events: 3.3.0
-      uberproto: 2.0.6
-    transitivePeerDependencies:
-      - supports-color
-
   '@feathersjs/feathers@5.0.44':
     dependencies:
       '@feathersjs/commons': 5.0.44
+      '@feathersjs/hooks': 0.9.0
+      events: 3.3.0
+
+  '@feathersjs/feathers@5.0.45':
+    dependencies:
+      '@feathersjs/commons': 5.0.45
       '@feathersjs/hooks': 0.9.0
       events: 3.3.0
 
@@ -7394,6 +7345,14 @@ snapshots:
       '@feathersjs/adapter-commons': 5.0.44
       '@feathersjs/errors': 5.0.44
       sift: 17.1.3
+
+  '@feathersjs/mongodb@5.0.45(mongodb@6.20.0(socks@2.8.7))':
+    dependencies:
+      '@feathersjs/adapter-commons': 5.0.45
+      '@feathersjs/commons': 5.0.45
+      '@feathersjs/errors': 5.0.45
+      '@feathersjs/feathers': 5.0.45
+      mongodb: 6.20.0(socks@2.8.7)
 
   '@feathersjs/rest-client@5.0.44':
     dependencies:
@@ -8928,10 +8887,6 @@ snapshots:
     dependencies:
       '@types/webidl-conversions': 7.0.3
 
-  '@types/whatwg-url@13.0.0':
-    dependencies:
-      '@types/webidl-conversions': 7.0.3
-
   '@types/ws@8.18.1':
     dependencies:
       '@types/node': 25.6.0
@@ -9433,8 +9388,6 @@ snapshots:
       fill-range: 7.1.1
 
   bson@6.10.4: {}
-
-  bson@7.2.0: {}
 
   buffer-alloc-unsafe@1.1.0: {}
 
@@ -10718,14 +10671,6 @@ snapshots:
     dependencies:
       feathers-commons: 0.8.7
       uberproto: 1.2.0
-
-  feathers-mongodb@6.4.1:
-    dependencies:
-      '@feathersjs/adapter-commons': 4.5.19
-      '@feathersjs/commons': 4.5.19
-      '@feathersjs/errors': 4.5.19
-    transitivePeerDependencies:
-      - supports-color
 
   fecha@4.2.3: {}
 
@@ -12015,24 +11960,11 @@ snapshots:
       '@types/whatwg-url': 11.0.5
       whatwg-url: 14.2.0
 
-  mongodb-connection-string-url@7.0.1:
-    dependencies:
-      '@types/whatwg-url': 13.0.0
-      whatwg-url: 14.2.0
-
-  mongodb@6.21.0(socks@2.8.7):
+  mongodb@6.20.0(socks@2.8.7):
     dependencies:
       '@mongodb-js/saslprep': 1.4.8
       bson: 6.10.4
       mongodb-connection-string-url: 3.0.2
-    optionalDependencies:
-      socks: 2.8.7
-
-  mongodb@7.2.0(socks@2.8.7):
-    dependencies:
-      '@mongodb-js/saslprep': 1.4.8
-      bson: 7.2.0
-      mongodb-connection-string-url: 7.0.1
     optionalDependencies:
       socks: 2.8.7
 
@@ -12046,7 +11978,7 @@ snapshots:
 
   mubsub-es@2.1.0(socks@2.8.7):
     dependencies:
-      mongodb: 6.21.0(socks@2.8.7)
+      mongodb: 6.20.0(socks@2.8.7)
     transitivePeerDependencies:
       - '@aws-sdk/credential-providers'
       - '@mongodb-js/zstd'
@@ -13636,8 +13568,6 @@ snapshots:
 
   uberproto@1.2.0: {}
 
-  uberproto@2.0.6: {}
-
   uglify-js@2.8.29:
     dependencies:
       source-map: 0.5.7
@@ -14001,7 +13931,7 @@ snapshots:
 
   winston-mongodb@7.0.1(socks@2.8.7)(winston@3.19.0):
     dependencies:
-      mongodb: 6.21.0(socks@2.8.7)
+      mongodb: 6.20.0(socks@2.8.7)
       winston: 3.19.0
       winston-transport: 4.9.0
     transitivePeerDependencies:
