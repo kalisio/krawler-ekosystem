@@ -108,13 +108,13 @@
   "devDependencies": {
     "@feathersjs/authentication": "catalog:",
     "@feathersjs/memory": "catalog:",
+    "@feathersjs/mongodb": "catalog:",
     "@vitest/coverage-v8": "catalog:",
-    "feathers-mongodb": "catalog:",
     "nock": "catalog:",
     "standard": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
     "winston-daily-rotate-file": "catalog:",
-    "winston-mongodb": "^5.0.7"
+    "winston-mongodb": "^7.0.1"
   }
 }

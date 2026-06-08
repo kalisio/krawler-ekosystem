@@ -8,7 +8,7 @@ import { AuthenticationService, JWTStrategy, authenticate } from '@feathersjs/au
 import errors from '@feathersjs/errors'
 import socketio from '@feathersjs/socketio'
 import { MemoryService } from '@feathersjs/memory'
-import { Service } from 'feathers-mongodb'
+import { MongoDBService } from '@feathersjs/mongodb'
 import { hooks as pluginHooks } from '../src/index.js'
 import { fileURLToPath } from 'url'
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
@@ -20,7 +20,7 @@ class CustomMemoryService extends MemoryService {
   }
 }
 
-class CustomMongoDBService extends Service {
+class CustomMongoDBService extends MongoDBService {
   // Add custom method
   custom (data, params) {
     return Object.assign(data, { customMethodProperty: 'My custom value' })
@@ -60,9 +60,9 @@ function createTests (servicePath, feathersHook, options = {}) {
       expect(error.result.insertedIds).toBeTruthy()
       // See hooks.mongo.test.js for context on mongodb v6 BulkWriteResult shape.
       expect(error.result.insertedCount).toBe(1)
-      // feathers-mongodb may rewrap the bulk error; identify it by the mongodb
-      // duplicate-key error code rather than the (unstable) name.
-      expect(error.code).toBe(11000)
+      // @feathersjs/mongodb wraps the bulk error in a Feathers GeneralError (error.code === 500),
+      // so identify the duplicate-key failure via the mongodb code carried on each write error.
+      expect(error.writeErrors[0].code).toBe(11000)
     }
     const service = feathersHook.data.client.service(servicePath)
     const results = await service.find({ query: {} })

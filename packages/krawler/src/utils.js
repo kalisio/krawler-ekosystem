@@ -442,6 +442,16 @@ export function getChunks (hook, options) {
 // Convert a set of errors into one to be raised,
 // useful eg for operations by chunk to merge errors coming from multiple chunks
 export function mergeErrors (errors) {
+  // @feathersjs/mongodb wraps the underlying mongodb error: the original BulkWriteError
+  // fields (writeErrors/result) end up nested under `error.data`. Lift them back to the
+  // top level so the bulk-merge logic below can see them (community feathers-mongodb used
+  // to expose them directly, the official adapter does not).
+  errors.forEach((wrapped) => {
+    if (wrapped.data?.writeErrors && wrapped.data?.result) {
+      wrapped.writeErrors = wrapped.data.writeErrors
+      wrapped.result = wrapped.data.result
+    }
+  })
   // Use first error as base
   const error = errors[0]
   // Check for bulk write errors to merge results
