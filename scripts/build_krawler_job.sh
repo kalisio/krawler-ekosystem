@@ -53,15 +53,16 @@ use_node "$NODE_VER"
 load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
 load_value_files "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value"
 
-# When building outside of a release (no git tag on the current commit), the
-# job image rebases on the floating kalisio/krawler:latest (the last released
-# Krawler), not on kalisio/krawler:dev (bleeding edge from master) — so a
-# broken Krawler master does not silently break every <job>:dev. The version
-# pinned in the job's package.json is reserved for tag builds. The job itself
-# is published as <job>:dev to signal "built from master".
-# Both overrides only apply when not pre-set (allow manual dev override).
+# While we have both the old krawler repository and the new krawler monorepo
+# the rule is the following:
+# - krawler builds from master branch produce 'dev' tag
+# - jobs built from master branch produce 'dev' tag using 'dev' krawler as base
+# - krawler and jobs built from tags use version from their respective package.json
+# This is done to prevent breaking 'latest' krawler from old repo that is used by many other jobs
+# and to prevent breaking 'latest' for jobs inside the monorepo while we need to test them.
+# Once we settle on the monorepo we'll go back to using 'latest' tags for krawler and jobs.
 if [ -z "$(get_git_tag "$ROOT_DIR")" ]; then
-    : "${KRAWLER_TAG:=latest}"
+    : "${KRAWLER_TAG:=dev}"
     : "${JOB_DEFAULT_TAG:=dev}"
     export KRAWLER_TAG JOB_DEFAULT_TAG
 fi
