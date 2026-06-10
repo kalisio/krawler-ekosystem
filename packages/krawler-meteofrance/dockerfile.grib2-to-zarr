@@ -24,11 +24,10 @@ ENV CRON="0 21 * * *"
 
 COPY --from=builder --chown=node:node /app/node_modules /app/node_modules
 COPY --from=builder --chown=node:node /app/packages/krawler-meteofrance /app/packages/krawler-meteofrance
-COPY --from=conversion-tool /app/dist/conversion_tool /app/packages/krawler-meteofrance/conversion_tool
+COPY --from=conversion-tool --chown=node:node /app/dist/conversion_tool /app/packages/krawler-meteofrance/conversion_tool
 
 RUN rm -rf /app/packages/krawler-meteofrance/node_modules/@kalisio/krawler \
- && ln -s /app/packages/krawler /app/packages/krawler-meteofrance/node_modules/@kalisio/krawler \
- && chown node:node /app/packages/krawler-meteofrance/conversion_tool
+ && ln -s /app/packages/krawler /app/packages/krawler-meteofrance/node_modules/@kalisio/krawler
 
 WORKDIR /app/packages/krawler-meteofrance
 
