@@ -26,11 +26,9 @@ COPY --from=builder --chown=node:node /app/node_modules /app/node_modules
 COPY --from=builder --chown=node:node /app/packages/krawler-meteofrance /app/packages/krawler-meteofrance
 COPY --from=conversion-tool /app/dist/conversion_tool /app/packages/krawler-meteofrance/conversion_tool
 
-USER root
 RUN rm -rf /app/packages/krawler-meteofrance/node_modules/@kalisio/krawler \
- && ln -s /opt/krawler /app/packages/krawler-meteofrance/node_modules/@kalisio/krawler \
+ && ln -s /app/packages/krawler /app/packages/krawler-meteofrance/node_modules/@kalisio/krawler
  && chown node:node /app/packages/krawler-meteofrance/conversion_tool
-USER node
 
 WORKDIR /app/packages/krawler-meteofrance
 
