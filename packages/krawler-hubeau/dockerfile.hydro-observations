@@ -28,4 +28,4 @@ RUN rm -fR /app/packages/krawler-hubeau/node_modules/@kalisio/krawler && \
 
 WORKDIR /app/packages/krawler-hubeau
 
-CMD krawler --cron "$CRON" --run jobfile-hydro-observations.js
+CMD ["sh", "-c", "krawler --cron \"$CRON\" --run jobfile-hydro-observations.js"]
