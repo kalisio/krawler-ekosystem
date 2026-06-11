@@ -23,6 +23,8 @@ ENV CRON="0 15 * * * *"
 
 COPY --from=builder --chown=node:node /app/node_modules /app/node_modules
 COPY --from=builder --chown=node:node /app/packages/krawler-hubeau /app/packages/krawler-hubeau
+RUN rm -fR /app/packages/krawler-hubeau/node_modules/@kalisio/krawler && \
+  ln -s /krawler/packages/krawler /app/packages/krawler-hubeau/node_modules/@kalisio/krawler
 
 WORKDIR /app/packages/krawler-hubeau
 
