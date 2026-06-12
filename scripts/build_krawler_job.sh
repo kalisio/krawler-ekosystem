@@ -9,6 +9,9 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 
 . "$THIS_DIR/kash/kash.sh"
 
+slack_report() {
+    slack_ci_report "$ROOT_DIR" "$CI_STEP_NAME" "$KASH_EXIT_CODE" "$SLACK_WEBHOOK_JOBS"
+}
 ## Parse options
 ##
 
@@ -34,7 +37,7 @@ while getopts "j:v:n:pr:" option; do
         r) # report outcome to slack
             CI_STEP_NAME=$OPTARG
             load_env_files "$WORKSPACE_DIR/development/common/SLACK_WEBHOOK_JOBS.enc.env"
-            trap 'slack_ci_report "$ROOT_DIR" "$CI_STEP_NAME" "$?" "$SLACK_WEBHOOK_JOBS"' EXIT
+            add_function_to_trap slack_report
             ;;
         *)
             ;;
@@ -51,7 +54,9 @@ JOB_DIR="$ROOT_DIR/packages/$JOB_PACKAGE"
 use_node "$NODE_VER"
 
 load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
-load_value_files "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value"
+# load_value_files "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value"
+KALISIO_DOCKERHUB_PASSWORD=$(decrypt_file "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value")
+
 
 # While we have both the old krawler repository and the new krawler monorepo
 # the rule is the following:
