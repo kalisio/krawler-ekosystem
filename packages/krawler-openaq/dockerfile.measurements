@@ -25,7 +25,7 @@ COPY --from=builder --chown=node:node /app/node_modules /app/node_modules
 COPY --from=builder --chown=node:node /app/packages/krawler-openaq /app/packages/krawler-openaq
 
 RUN rm -rf /app/packages/krawler-openaq/node_modules/@kalisio/krawler && \
-  ln -s /krawler/packages/krawler /app/packages/krawler-hubeau/node_modules/@kalisio/krawler
+  ln -s /krawler/packages/krawler /app/packages/krawler-openaq/node_modules/@kalisio/krawler
 
 WORKDIR /app/packages/krawler-openaq
 
