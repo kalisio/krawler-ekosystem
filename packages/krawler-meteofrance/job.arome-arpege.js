@@ -7,12 +7,12 @@ import path from 'path'
 // Job configuration
 const outputDir = process.env.OUTPUT_DIR || './output'
 const workersLimit = process.env.WORKERS_LIMIT ? Number(process.env.WORKERS_LIMIT) : 2
-const dataSource = process.env.METEOFRANCE_DATA_SOURCE || 'meteofrance'
+const dataSource = process.env.DATA_SOURCE || 'meteofrance'
 const meteofranceAromeUrl = 'https://public-api.meteofrance.fr/previnum/DPPaquetAROME/v1/productARO'
 const meteofranceArpegeUrl = 'https://public-api.meteofrance.fr/previnum/DPPaquetARPEGE/v1/productARP'
 const dataGouvUrl = 'https://object.files.data.gouv.fr/meteofrance-pnt/pnt'
-const meteofranceAromeToken = process.env.METEOFRANCE_AROME_TOKEN
-const meteofranceArpegeToken = process.env.METEOFRANCE_ARPEGE_TOKEN
+const meteofranceAromeToken = process.env.AROME_TOKEN
+const meteofranceArpegeToken = process.env.ARPEGE_TOKEN
 // Don't go back in time older than 1 day
 const oldestRunIntervalMs = (process.env.OLDEST_RUN_INTERVAL_MS ? Number(process.env.OLDEST_RUN_INTERVAL_MS) : 24 * 3600 * 1000)
 
@@ -125,7 +125,7 @@ export default (options) => {
             function: (item) => {
               const { defaultRunTimes, defaultPackages, defaultForecastTimes } = options
               const runTimes = getEnvArray('RUN_TIMES', defaultRunTimes)
-              const packages = getEnvArray('METEOFRANCE_PACKAGES', defaultPackages)
+              const packages = getEnvArray('PACKAGES', defaultPackages)
               const forecastTimes = getEnvArray('FORECAST_TIMES', defaultForecastTimes)
               const referencetimes = getReferenceTimes(runTimes)
 

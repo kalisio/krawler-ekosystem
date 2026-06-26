@@ -2,7 +2,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import winston from 'winston'
 
-const TOKEN = process.env.METEOFRANCE_PAQUETOBS_TOKEN
+const TOKEN = process.env.PAQUETOBS_TOKEN
 const FREQUENCY = process.env.FREQUENCY || 'horaire'
 const LATENCY = +process.env.LATENCY || 0
 const TTL = +process.env.TTL || (7 * 24 * 60 * 60) // duration in seconds
