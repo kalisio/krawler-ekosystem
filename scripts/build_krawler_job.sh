@@ -55,7 +55,9 @@ use_node "$NODE_VER"
 
 load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
 # load_value_files "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value"
-KALISIO_DOCKERHUB_PASSWORD=$(decrypt_file "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value")
+KALISIO_DOCKERHUB_PASSWORD=$(mktemp)
+decrypt_file "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value" \
+             "$KALISIO_DOCKERHUB_PASSWORD" > /dev/null
 
 
 # While we have both the old krawler repository and the new krawler monorepo
