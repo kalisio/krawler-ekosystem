@@ -2,6 +2,9 @@ ARG KRAWLER_TAG=latest
 ARG NODE_VERSION=20
 ARG DEBIAN_VERSION=bookworm
 
+# Get conversion tool for generating Zarr
+FROM kalisio/kazarr-conversion-tool:latest AS conversion-tool
+
 FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
 
 WORKDIR /app
@@ -15,18 +18,19 @@ RUN pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/krawler-me
 
 COPY packages/krawler-meteofrance/job.arome-arpege.js ./packages/krawler-meteofrance/
 COPY packages/krawler-meteofrance/jobfile.arome-france-high.js ./packages/krawler-meteofrance/
+COPY packages/krawler-meteofrance/jobfile.grib2-to-zarr.js packages/krawler-meteofrance/templates.json ./packages/krawler-meteofrance/
 
 FROM kalisio/krawler:${KRAWLER_TAG}
 LABEL maintainer="Kalisio <contact@kalisio.xyz>"
 
-ENV CRON="0 * * * * *"
-
 COPY --from=builder --chown=node:node /app/node_modules /app/node_modules
 COPY --from=builder --chown=node:node /app/packages/krawler-meteofrance /app/packages/krawler-meteofrance
+COPY --from=conversion-tool --chown=node:node /app/dist/conversion_tool /app/packages/krawler-meteofrance/conversion_tool
 
 RUN rm -rf /app/packages/krawler-meteofrance/node_modules/@kalisio/krawler \
  && ln -s /krawler/packages/krawler /app/packages/krawler-meteofrance/node_modules/@kalisio/krawler
 
 WORKDIR /app/packages/krawler-meteofrance
 
-CMD ["sh", "-c", "krawler --cron \"$CRON\" --run jobfile.arome-france-high.js"]
+# Download the GRIB then convert it to Zarr
+CMD ["sh", "-c", "krawler --run jobfile.arome-france-high.js && krawler --run jobfile.grib2-to-zarr.js"]
