@@ -26,8 +26,10 @@
   },
   "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler-rte",
   "scripts": {
-    "build:generation": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-rte:generation-${TAG:-latest} -f dockerfile.generation ../..",
-    "build:units": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-rte:units-${TAG:-latest} -f dockerfile.units ../.."
+    "build:generation": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-rte:generation-${IMAGE_TAG:-dev} -f dockerfile.generation ../..",
+    "build:units": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-rte:units-${IMAGE_TAG:-dev} -f dockerfile.units ../..",
+    "release": "git tag \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git tag @kalisio/krawler-rte@0.0.0",
+    "postrelease": "git push origin \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git push origin @kalisio/krawler-rte@0.0.0"
   },
   "krawler": {
     "version": "2.8.2"

@@ -17,6 +17,12 @@ slack_report() {
     slack_ci_report "$ROOT_DIR" "$CI_STEP_NAME" "$KASH_EXIT_CODE" "$SLACK_WEBHOOK_JOBS"
 }
 
+## Monorepo configuration
+##
+
+DEV_TAG="dev"
+MAIN_BRANCH="master"
+
 ## Parse options
 ##
 
@@ -67,10 +73,22 @@ load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
 
 # Remove trailing @ in module name
 IMAGE_NAME="$KALISIO_DOCKERHUB_URL/${APP:1}"
-if [[ -z "$GIT_TAG" ]]; then
-    KRAWLER_TAG="dev"
-else
+
+# Resolve the short tag from the git context, same 4 cases as build_package.sh
+# (get_git_* helpers rely on kash's $CI_ID, so this works on GitHub and GitLab):
+#   tag           -> <version>
+#   custom branch -> <dev>-<custom>
+#   master/manual -> <dev>
+if [ -n "$GIT_TAG" ]; then
     KRAWLER_TAG="$VERSION"
+else
+    KRAWLER_TAG="$DEV_TAG"
+    GIT_BRANCH=$(get_git_branch "$ROOT_DIR")
+    if [ -n "$GIT_BRANCH" ] && [ "$GIT_BRANCH" != "$MAIN_BRANCH" ]; then
+        CUSTOM=$(get_custom_from_git_ref "$GIT_BRANCH")
+        [ -z "$CUSTOM" ] && CUSTOM="${GIT_BRANCH//\//-}"
+        KRAWLER_TAG="$DEV_TAG-$CUSTOM"
+    fi
 fi
 IMAGE_TAG="$KRAWLER_TAG-node$NODE_VER-$DEBIAN_VER"
 

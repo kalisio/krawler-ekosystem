@@ -20,13 +20,13 @@ on:
         default: false
         required: false
         type: boolean
-      build_jobs:
-        description: "Build jobs"
+      build_package:
+        description: "Build packages (jobs)"
         default: false
         required: false
         type: boolean
-      build_jobs_input:
-        description: "Jobs to build, space-separated <package>[:<variant>]. Leave empty for auto-detection."
+      build_package_input:
+        description: "Packages to build, space-separated package names (all variants built). Leave empty for auto-detection."
         required: false
         default: ""
       build_docs:
@@ -57,6 +57,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           submodules: true
       - name: Init runner
         run: bash ./scripts/init_runner.sh ${{ github.job }}
@@ -67,6 +68,7 @@ jobs:
       - name: Run tests
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
         run: bash ./scripts/run_tests.sh -s -r ${{ github.job }}
 
   additional_tests:
@@ -95,6 +97,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           submodules: true
       - name: Init runner
         run: bash ./scripts/init_runner.sh ${{ github.job }}
@@ -116,7 +119,8 @@ jobs:
     name: Build krawler
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.build_krawler ||
-      github.event_name == 'push' && github.ref_type == 'branch' && !contains(github.event.head_commit.message, 'skip krawler')
+      github.event_name == 'push' && github.ref_type == 'branch' && !contains(github.event.head_commit.message, 'skip krawler') ||
+      github.event_name == 'push' && github.ref_type == 'tag' && contains(github.ref_name, '/krawler@')
       }}
     runs-on: ubuntu-22.04
     steps:
@@ -135,44 +139,19 @@ jobs:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: bash ./scripts/build_krawler.sh -n ${{ matrix.node }} -d ${{ matrix.debian }} -p -r ${{ github.job }}
 
-  detect_jobs:
-    name: Detect jobs
+  build_package:
+    name: Build package
     if: ${{
-      github.event_name == 'workflow_dispatch' && inputs.build_jobs ||
-      github.event_name == 'push' && github.ref_type == 'branch' && !contains(github.event.head_commit.message, 'skip jobs')
+      github.event_name == 'workflow_dispatch' && inputs.build_package ||
+      github.event_name == 'push' && github.ref_type == 'branch' && !contains(github.event.head_commit.message, 'skip jobs') ||
+      github.event_name == 'push' && github.ref_type == 'tag' && contains(github.ref_name, '/krawler-')
       }}
     runs-on: ubuntu-22.04
-    outputs:
-      matrix:   ${{ steps.compute.outputs.matrix }}
-      has_jobs: ${{ steps.compute.outputs.has_jobs }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: true
-      - name: Detect jobs
-        id: compute
-        env:
-          GITHUB_EVENT_NAME:   ${{ github.event_name }}
-          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
-          GITHUB_EVENT_AFTER:  ${{ github.event.after }}
-          INPUT_JOBS:          ${{ github.event.inputs.build_jobs_input }}
-        run: bash ./scripts/detect_jobs.sh
-
-  build_jobs:
-    needs: detect_jobs
-    if: needs.detect_jobs.outputs.has_jobs == 'true'
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJSON(needs.detect_jobs.outputs.matrix) }}
-    name: Build job (${{ matrix.package }}${{ matrix.variant && format(' / {0}', matrix.variant) || '' }})
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
           submodules: true
       - name: Init runner
         run: bash ./scripts/init_runner.sh ${{ github.job }}
@@ -180,10 +159,12 @@ jobs:
         env:
           KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
         run: bash ./scripts/setup_workspace.sh
-      - name: Build job
+      - name: Build package
         env:
-          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        run: bash ./scripts/build_krawler_job.sh -j ${{ matrix.package }} ${{ matrix.variant && format('-v {0}', matrix.variant) || '' }} -p -r "${{ github.job }} ${{ matrix.package }}"
+          SOPS_AGE_KEY:        ${{ secrets.SOPS_AGE_KEY }}
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+          INPUT_PACKAGES:      ${{ github.event.inputs.build_package_input }}
+        run: bash ./scripts/build_package.sh -p -r ${{ github.job }}
 
   build_docs:
     name: Build doc
@@ -208,74 +189,3 @@ jobs:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: bash ./scripts/build_docs.sh -p -r ${{ github.job }}
 
-  detect_release:
-    name: Detect release
-    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
-    runs-on: ubuntu-22.04
-    outputs:
-      target:   ${{ steps.compute.outputs.target }}
-      package:  ${{ steps.compute.outputs.package }}
-      version:  ${{ steps.compute.outputs.version }}
-      matrix:   ${{ steps.compute.outputs.matrix }}
-      has_jobs: ${{ steps.compute.outputs.has_jobs }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Detect release
-        id: compute
-        env:
-          GITHUB_REF_NAME: ${{ github.ref_name }}
-        run: bash ./scripts/detect_release.sh
-
-  release_krawler:
-    needs: detect_release
-    if: needs.detect_release.outputs.target == 'krawler'
-    strategy:
-      fail-fast: false
-      matrix:
-        node: [ 20 ]
-        debian: [ 'bookworm' ]
-    name: Release krawler (${{ needs.detect_release.outputs.version }})
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Init runner
-        run: bash ./scripts/init_runner.sh build_krawler
-      - name: Setup workspace
-        env:
-          KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
-        run: bash ./scripts/setup_workspace.sh
-      - name: Build & publish krawler
-        env:
-          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        run: bash ./scripts/build_krawler.sh -n ${{ matrix.node }} -d ${{ matrix.debian }} -p -r ${{ github.job }}
-
-  release_jobs:
-    needs: detect_release
-    if: needs.detect_release.outputs.has_jobs == 'true'
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJSON(needs.detect_release.outputs.matrix) }}
-    name: Release job (${{ matrix.package }}${{ matrix.variant && format(' / {0}', matrix.variant) || '' }})
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Init runner
-        run: bash ./scripts/init_runner.sh build_jobs
-      - name: Setup workspace
-        env:
-          KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
-        run: bash ./scripts/setup_workspace.sh
-      - name: Build & publish job
-        env:
-          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        run: bash ./scripts/build_krawler_job.sh -j ${{ matrix.package }} ${{ matrix.variant && format('-v {0}', matrix.variant) || '' }} -p -r "${{ github.job }} ${{ matrix.package }}"

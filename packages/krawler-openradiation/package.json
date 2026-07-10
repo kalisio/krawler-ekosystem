@@ -27,7 +27,9 @@
   },
   "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler-openradiation",
   "scripts": {
-    "build": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-openradiation:${TAG:-latest} -f dockerfile ../.."
+    "build": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-openradiation:${IMAGE_TAG:-dev} -f dockerfile ../..",
+    "release": "git tag \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git tag @kalisio/krawler-openradiation@0.0.0",
+    "postrelease": "git push origin \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git push origin @kalisio/krawler-openradiation@0.0.0"
   },
   "krawler": {
     "version": "2.8.2"

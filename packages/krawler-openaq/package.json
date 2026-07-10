@@ -26,8 +26,10 @@
   },
   "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler-openaq",
   "scripts": {
-    "build:locations": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-openaq:locations-${TAG:-latest} -f dockerfile.locations ../..",
-    "build:measurements": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-openaq:measurements-${TAG:-latest} -f dockerfile.measurements ../.."
+    "build:locations": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-openaq:locations-${IMAGE_TAG:-dev} -f dockerfile.locations ../..",
+    "build:measurements": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-openaq:measurements-${IMAGE_TAG:-dev} -f dockerfile.measurements ../..",
+    "release": "git tag \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git tag @kalisio/krawler-openaq@0.0.0",
+    "postrelease": "git push origin \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git push origin @kalisio/krawler-openaq@0.0.0"
   },
   "krawler": {
     "version": "2.8.2"

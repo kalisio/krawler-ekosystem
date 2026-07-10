@@ -27,13 +27,16 @@
   },
   "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler-meteofrance",
   "scripts": {
-    "build:arome-france": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-meteofrance:arome-france-${TAG:-latest} -f dockerfile.arome-france ../..",
-    "build:arome-france-high": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-meteofrance:arome-france-high-${TAG:-latest} -f dockerfile.arome-france-high ../..",
-    "build:arpege-europe": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-meteofrance:arpege-europe-${TAG:-latest} -f dockerfile.arpege-europe ../..",
-    "build:arpege-world": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-meteofrance:arpege-world-${TAG:-latest} -f dockerfile.arpege-world ../..",
-    "build:grib2-to-zarr": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-meteofrance:grib2-to-zarr-${TAG:-latest} -f dockerfile.grib2-to-zarr ../..",
-    "build:paquetobs-observations": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-meteofrance:paquetobs-observations-${TAG:-latest} -f dockerfile.paquetobs-observations ../..",
-    "build:paquetobs-stations": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t krawler-meteofrance:paquetobs-stations-${TAG:-latest} -f dockerfile.paquetobs-stations ../.."
+    "build:arome-france": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-meteofrance:arome-france-${IMAGE_TAG:-dev} -f dockerfile.arome-france ../..",
+    "build:arome-france-high": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-meteofrance:arome-france-high-${IMAGE_TAG:-dev} -f dockerfile.arome-france-high ../..",
+    "build:arpege-europe": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-meteofrance:arpege-europe-${IMAGE_TAG:-dev} -f dockerfile.arpege-europe ../..",
+    "build:arpege-world": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-meteofrance:arpege-world-${IMAGE_TAG:-dev} -f dockerfile.arpege-world ../..",
+    "build:grib2-to-zarr": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-meteofrance:grib2-to-zarr-${IMAGE_TAG:-dev} -f dockerfile.grib2-to-zarr ../..",
+    "build:paquetobs-observations-1h": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-meteofrance:paquetobs-observations-1h-${IMAGE_TAG:-dev} -f dockerfile.paquetobs-observations-1h ../..",
+    "build:paquetobs-observations-6m": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-meteofrance:paquetobs-observations-6m-${IMAGE_TAG:-dev} -f dockerfile.paquetobs-observations-6m ../..",
+    "build:paquetobs-stations": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-meteofrance:paquetobs-stations-${IMAGE_TAG:-dev} -f dockerfile.paquetobs-stations ../..",
+    "release": "git tag \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git tag @kalisio/krawler-meteofrance@0.0.0",
+    "postrelease": "git push origin \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git push origin @kalisio/krawler-meteofrance@0.0.0"
   },
   "krawler": {
     "version": "2.8.2"

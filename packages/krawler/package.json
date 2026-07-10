@@ -24,7 +24,7 @@
   "scripts": {
     "build": "vite build",
     "lint": "standard --fix",
-    "test": "vitest run --coverage"
+    "test": "bash -c 'source ../../../development/workspaces/jobs/jobs.sh krawler && vitest run --coverage'"
   },
   "keywords": [
     "feathers",
