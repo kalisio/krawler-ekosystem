@@ -4,8 +4,8 @@ import winston from 'winston'
 import { hooks } from '@kalisio/krawler'
 
 const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/openradiation'
-const TTL = +process.env.TTL || (7 * 24 * 60 * 60)  // duration in seconds
-const KEY = process.env.OPENRADIATION_KEY
+const TTL = +process.env.TTL || (7 * 24 * 60 * 60) // duration in seconds
+const KEY = process.env.KEY
 const COLLECTION = process.env.COLLECTION || 'openradiation'
 // For testing purpose we can set a fixed date, take care that empty string might be interpreted wrongly
 const DATE_OF_CREATION = (process.env.DATE_OF_CREATION ? process.env.DATE_OF_CREATION : undefined)
@@ -13,13 +13,13 @@ const DATE_OF_CREATION = (process.env.DATE_OF_CREATION ? process.env.DATE_OF_CRE
 const baseUrl = 'https://request.openradiation.net/measurements'
 
 // Create a custom hook to generate tasks
-let generateTask = (options) => {
+const generateTask = (options) => {
   return (hook) => {
     // For testing purpose we can set a fixed date
     const now = moment.utc(DATE_OF_CREATION)
     const formattedDateOfCreation = now.format('YYYY-M-D')
     console.log('Querying the api with the following dateOfCreation: ' + formattedDateOfCreation)
-    let task = {
+    const task = {
       options: {
         url: baseUrl + '?apiKey=' + KEY + '&dateOfCreation=' + formattedDateOfCreation + '&response=complete'
       }
