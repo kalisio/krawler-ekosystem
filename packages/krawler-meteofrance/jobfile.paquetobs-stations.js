@@ -43,7 +43,8 @@ export default {
         },
         apply: {
           function: (item) => {
-            let stations = item.data
+            const stations = item.data
+            // filter by departments
             let departmentStations = []
             const departmentIds = _.map(DEPARTMENTS, department => {
               const prefix = department.trim().padStart(2, '0')
@@ -54,6 +55,7 @@ export default {
                 departmentIds.some(prefix => (station.stationId).startsWith(prefix))
               )
             }
+            // filter by stations
             let specificStations = []
             const stationIds = _.map(STATIONS, station => station.trim())
             if (!_.isEmpty(stationIds)) {
@@ -107,6 +109,7 @@ export default {
         },
         connectMongo: {
           url: DB_URL,
+          // Required so that client is forwarded from job to tasks
           clientPath: 'taskTemplate.client'
         },
         createMongoCollection: {

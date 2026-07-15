@@ -1,19 +1,69 @@
 import _ from 'lodash'
 import winston from 'winston'
+import { hooks } from '@kalisio/krawler'
 import fs from 'fs'
 import path from 'path'
 
+// Convert an environment variable string to an array
 function getEnvArray (key) {
   if (_.isUndefined(process.env[key]) || _.isEmpty(process.env[key])) return []
+  // Transform comma-separated string into array
   return process.env[key].split(',').map(value => value.trim())
 }
 
+// Job configuration
 const outputDir = process.env.OUTPUT_DIR || './output'
 const workersLimit = process.env.WORKERS_LIMIT ? Number(process.env.WORKERS_LIMIT) : 1
 const template = process.env.TEMPLATE || 'arpege-isobaric'
 const s3DatasetsRoot = process.env.S3_DATASETS_ROOT || 'meteofrance/isobaric/'
+const s3StorageClass = process.env.S3_STORAGE_CLASS || 'STANDARD'
 const packages = getEnvArray('PACKAGES')
 const forecastTimes = getEnvArray('FORECAST_TIMES')
+
+// Register generateTasks hook
+const generateTasks = () => {
+  return function (hook) {
+    const directoryEntries = fs.readdirSync(outputDir, { withFileTypes: true })
+    // Build expected filenames
+    const expectedFiles = []
+    for (const pkg of packages) {
+      for (const forecastTime of forecastTimes) {
+        expectedFiles.push(`${pkg}-${forecastTime}.grib2`)
+      }
+    }
+    const tasks = []
+    // Ensure S3 path does not end with a slash for consistent path generation
+    const cleanS3Path = s3DatasetsRoot.replace(/\/+$/, '')
+    // Regex to capture parts of the folder name for path generation
+    const folderNameCaptureRegex = /^([^-]+)[^_]+_([^_]+)_(\d{4})-(\d{2})-(\d{2})T([^/]+)$/
+    for (const entry of directoryEntries) {
+      const folderName = entry.name
+      const folderFullPath = path.join(outputDir, folderName)
+      // Get zarr dataset target S3 path based on folder name
+      const newPath = folderName.replace(folderNameCaptureRegex, '$1/$2/$3/$4/$5/$6')
+      const targetFolder = `s3://${cleanS3Path}/${newPath}.zarr`
+      // Read all files in the current folder
+      const filesInFolder = fs.readdirSync(folderFullPath)
+      // Check for GRIB2 files and DONE.txt
+      const gribFiles = filesInFolder.filter(file => file.endsWith('.grib2'))
+      const hasGrib2 = gribFiles.length > 0
+      const hasDoneFile = filesInFolder.includes('DONE.txt')
+      if (!hasGrib2 || hasDoneFile) continue
+      // If folder has GRIB2 files but no DONE.txt, create a task
+      const task = { id: folderFullPath, targetFolder, done: false }
+      // Check if folder contains all expected GRIB2 files and no extra files
+      const hasAllExpected = expectedFiles.every(file => gribFiles.includes(file))
+      const hasNoExtraFiles = gribFiles.every(file => expectedFiles.includes(file))
+      // Mark folder as completed if all files are present
+      if (gribFiles.length === expectedFiles.length && hasAllExpected && hasNoExtraFiles) task.done = true
+      tasks.push(task)
+    }
+    // Attach the generated tasks to the hook
+    hook.data.tasks = tasks
+    return hook
+  }
+}
+hooks.registerHook('generateTasks', generateTasks)
 
 export default {
   id: 'grib2-to-zarr',
@@ -38,16 +88,18 @@ export default {
           command: [
             './conversion_tool new-dataset',
             '--templates-path ./templates.json',
-            `-t ${template}`,
-            '--data-mapping cells',
-            "-c '{\"version\": 2}'",
-            `-o <%= targetFolder %>`,
+                        `-t ${template}`,
+                        '--data-mapping cells',
+                        "-c '{\"version\": 2}'",
+            `--s3-storage-class ${s3StorageClass}`,
+            '-o <%= targetFolder %>',
             '<%= id %>'
           ].join(' '),
           stdout: true,
           stderr: true
         },
         apply: {
+          // Mark folder as completed if all files are present
           function: (item) => {
             const { id, logger, done } = item
             if (!logger || !id) return
@@ -75,38 +127,7 @@ export default {
             level: 'verbose'
           }
         },
-        generateTasks: {
-          hook: 'apply',
-          function: (item) => {
-            const directoryEntries = fs.readdirSync(outputDir, { withFileTypes: true })
-            const expectedFiles = []
-            for (const pkg of packages) {
-              for (const forecastTime of forecastTimes) {
-                expectedFiles.push(`${pkg}-${forecastTime}.grib2`)
-              }
-            }
-            const tasks = []
-            const cleanS3Path = s3DatasetsRoot.replace(/\/+$/, '')
-            const folderNameCaptureRegex = /^([^-]+)[^_]+_([^_]+)_(\d{4})-(\d{2})-(\d{2})T([^/]+)$/
-            for (const entry of directoryEntries) {
-              const folderName = entry.name
-              const folderFullPath = path.join(outputDir, folderName)
-              const newPath = folderName.replace(folderNameCaptureRegex, '$1/$2/$3/$4/$5/$6')
-              const targetFolder = `s3://${cleanS3Path}/${newPath}.zarr`
-              const filesInFolder = fs.readdirSync(folderFullPath)
-              const gribFiles = filesInFolder.filter(file => file.endsWith('.grib2'))
-              const hasGrib2 = gribFiles.length > 0
-              const hasDoneFile = filesInFolder.includes('DONE.txt')
-              if (!hasGrib2 || hasDoneFile) continue
-              const task = { id: folderFullPath, targetFolder, done: false }
-              const hasAllExpected = expectedFiles.every(file => gribFiles.includes(file))
-              const hasNoExtraFiles = gribFiles.every(file => expectedFiles.includes(file))
-              if (gribFiles.length === expectedFiles.length && hasAllExpected && hasNoExtraFiles) task.done = true
-              tasks.push(task)
-            }
-            item.tasks = tasks
-          }
-        }
+        generateTasks: {}
       },
       after: {
         removeStores: ['fs'],
