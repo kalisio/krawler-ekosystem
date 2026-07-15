@@ -17,6 +17,7 @@ slack_report() {
 ##
 
 PACKAGE_PREFIX="krawler-"
+IMAGE_PREFIX="k-"
 DOCKER_NAMESPACE="kalisio"
 DEV_TAG="dev"
 MAIN_BRANCH="master"
@@ -94,6 +95,6 @@ end_group "Building images ..."
 decrypt_stdout "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value" | docker login --username "$KALISIO_DOCKERHUB_USERNAME" --password-stdin "$KALISIO_DOCKERHUB_URL"
 
 publish_job_images \
-    "$ROOT_DIR" "$PACKAGE_PREFIX" "$KALISIO_DOCKERHUB_URL" "$DOCKER_NAMESPACE" "$IMAGE_TAG"
+    "$ROOT_DIR" "$PACKAGE_PREFIX" "$KALISIO_DOCKERHUB_URL" "$DOCKER_NAMESPACE" "$IMAGE_TAG" "$IMAGE_PREFIX"
 
 docker logout "$KALISIO_DOCKERHUB_URL"

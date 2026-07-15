@@ -28,9 +28,9 @@
   },
   "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler-atlas",
   "scripts": {
-    "build:admin-express": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-atlas:admin-express-${IMAGE_TAG:-dev} -f dockerfile.admin-express ../..",
-    "build:bdpr": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-atlas:bdpr-${IMAGE_TAG:-dev} -f dockerfile.bdpr ../..",
-    "build:osm-boundaries": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-atlas:osm-boundaries-${IMAGE_TAG:-dev} -f dockerfile.osm-boundaries ../..",
+    "build:admin-express": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/k-atlas:admin-express-${IMAGE_TAG:-dev} -f dockerfile.admin-express ../..",
+    "build:bdpr": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/k-atlas:bdpr-${IMAGE_TAG:-dev} -f dockerfile.bdpr ../..",
+    "build:osm-boundaries": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/k-atlas:osm-boundaries-${IMAGE_TAG:-dev} -f dockerfile.osm-boundaries ../..",
     "release": "git tag \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git tag @kalisio/krawler-atlas@0.0.0",
     "postrelease": "git push origin \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git push origin @kalisio/krawler-atlas@0.0.0",
     "lint": "standard --fix"
