@@ -32,7 +32,8 @@
     "build:piezo-observations": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-hubeau:piezo-observations-${IMAGE_TAG:-dev} -f dockerfile.piezo-observations ../..",
     "build:piezo-stations": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/krawler-hubeau:piezo-stations-${IMAGE_TAG:-dev} -f dockerfile.piezo-stations ../..",
     "release": "git tag \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git tag @kalisio/krawler-hubeau@0.0.0",
-    "postrelease": "git push origin \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git push origin @kalisio/krawler-hubeau@0.0.0"
+    "postrelease": "git push origin \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git push origin @kalisio/krawler-hubeau@0.0.0",
+    "lint": "standard --fix"
   },
   "krawler": {
     "version": "2.8.2"

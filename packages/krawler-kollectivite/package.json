@@ -25,6 +25,9 @@
     "url": "https://github.com/kalisio/krawler-ekosystem/issues"
   },
   "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/master/packages/krawler-kollectivite",
+  "scripts": {
+    "lint": "standard --fix"
+  }
   "engines": {
     "node": ">=20"
   },
