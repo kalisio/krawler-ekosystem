@@ -137,7 +137,8 @@ resolve_build_filter_and_tag() {
 
     if [ -n "$INPUT" ]; then
         local PKG
-        for PKG in $INPUT; do
+        # Accept comma- and/or space-separated package lists.
+        for PKG in ${INPUT//,/ }; do
             if [ ! -d "$ROOT/packages/$PKG" ]; then
                 echo "-> Error: package '$PKG' not found" >&2
                 return 1
