@@ -1,0 +1,48 @@
+{
+  "name": "@kalisio/krawler-firms",
+  "description": "A Krawler based service to download data from the Fire Information for Resource Management System (FIRMS)",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "keywords": [
+    "krawler",
+    "kargo",
+    "kalisio"
+  ],
+  "author": {
+    "name": "Kalisio",
+    "email": "contact@kalisio.com",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kalisio/krawler-ekosystem.git",
+    "directory": "packages/krawler-firms"
+  },
+  "bugs": {
+    "url": "https://github.com/kalisio/krawler-ekosystem/issues"
+  },
+  "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/master/packages/krawler-firms",
+  "scripts": {
+    "build": "DOCKER_BUILDKIT=1 docker build --build-arg KRAWLER_TAG=${KRAWLER_TAG:-$(node -p \"require('./package.json').krawler.version\")} -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/k-firms:${IMAGE_TAG:-dev} -f dockerfile ../..",
+    "release": "git tag \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git tag @kalisio/krawler-firms@0.0.0",
+    "postrelease": "git push origin \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git push origin @kalisio/krawler-firms@0.0.0",
+    "lint": "standard --fix"
+  },
+  "krawler": {
+    "version": "2.8.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "lodash": "catalog:",
+    "moment": "catalog:",
+    "winston": "catalog:"
+  },
+  "peerDependencies": {
+    "@kalisio/krawler": "workspace:*"
+  }
+}
