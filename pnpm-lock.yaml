@@ -494,6 +494,15 @@ importers:
         specifier: 'catalog:'
         version: 3.19.0
 
+  packages/krawler-centipede:
+    dependencies:
+      '@kalisio/krawler':
+        specifier: workspace:*
+        version: link:../krawler
+      lodash:
+        specifier: 'catalog:'
+        version: 4.18.1
+
   packages/krawler-firms:
     dependencies:
       '@kalisio/krawler':
