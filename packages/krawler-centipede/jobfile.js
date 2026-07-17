@@ -14,7 +14,7 @@ export default {
     id: 'basesrtk',
     type: 'wfs',
     options: {
-      url: 'https://centipede.fr/index.php/lizmap/service/?repository=cent&project=centipede&VERSION=1.3.0&SERVICE=WFS&REQUEST=GetFeature&typeName=basesrtk&outputformat=geojson'
+      url: 'https://map.centipede-rtk.org/index.php/lizmap/service/?repository=cent&project=centipede&VERSION=1.3.0&SERVICE=WFS&REQUEST=GetFeature&typeName=basesrtk&outputformat=geojson'
     }
   }],
   hooks: {
