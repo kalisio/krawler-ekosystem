@@ -13,8 +13,17 @@ export default {
   tasks: [{
     id: 'basesrtk',
     type: 'wfs',
+    // Centipede data is at the following URL, that's WFS + some custom parameters
+    // https://map.centipede-rtk.org/index.php/lizmap/service/?repository=cent&project=centipede&VERSION=1.3.0&SERVICE=WFS&REQUEST=GetFeature&typeName=basesrtk&outputformat=geojson
     options: {
-      url: 'https://map.centipede-rtk.org/index.php/lizmap/service/?repository=cent&project=centipede&VERSION=1.3.0&SERVICE=WFS&REQUEST=GetFeature&typeName=basesrtk&outputformat=geojson'
+      url: 'https://map.centipede-rtk.org/index.php/lizmap/service',
+      // Custom centipede parameters
+      repository: 'cent',
+      project: 'centipede',
+      // WFS parameters
+      version: '1.3.0',
+      typename: 'basesrtk',
+      outputformat: 'geojson'
     }
   }],
   hooks: {
