@@ -32,6 +32,30 @@ describe('krawler:hooks:xml', () => {
       })
   }, 5000)
 
+  it('supports XML ISO-8859-1 encoding', () => {
+    const hook = { type: 'after', data: { id: 'iso-8859-1.xml' }, result: { id: 'iso-8859-1.xml' }, params: { store: inputStore } }
+    return pluginHooks.readXML()(hook)
+      .then(hook => {
+        expect(hook.result.data.str).toEqual('Station village de Gréville')
+      })
+  }, 5000)
+
+  it('needs an XML declaration to properly decode text', () => {
+    const hook = { type: 'after', data: { id: 'iso-8859-1.no-decl.xml' }, result: { id: 'iso-8859-1.no-decl.xml' }, params: { store: inputStore } }
+    return pluginHooks.readXML()(hook)
+      .then(hook => {
+        expect(hook.result.data.str).toEqual('Station village de Gr�ville') // iso-8859-1 data interpreted as utf8
+      })
+  }, 5000)
+
+  it('does not support every XML encoding', () => {
+    const hook = { type: 'after', data: { id: 'iso-8859-2.xml' }, result: { id: 'iso-8859-2.xml' }, params: { store: inputStore } }
+    return pluginHooks.readXML()(hook)
+      .then(hook => {
+        expect(hook.result.data.str).toEqual('g�l�') // iso-8859-2 data interpreted as utf8
+      })
+  }, 5000)
+
   it('converts JSON to XML', () => {
     // Switch to output store
     xmlHook.params.store = outputStore
