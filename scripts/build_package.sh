@@ -19,7 +19,6 @@ slack_report() {
 PACKAGE_PREFIX="krawler-"
 IMAGE_PREFIX="k-"
 DOCKER_NAMESPACE="kalisio"
-DEV_TAG="dev"
 MAIN_BRANCH="master"
 EXTRA_FULL_REBUILD_PATHS=()
 
@@ -54,7 +53,7 @@ begin_group "Determining what to build ..."
 
 GIT_TAG=$(get_git_tag "$ROOT_DIR")
 FILTER_AND_TAG=$(resolve_build_filter_and_tag \
-    "$ROOT_DIR" "$PACKAGE_PREFIX" "$DEV_TAG" "${INPUT_PACKAGES:-}" \
+    "$ROOT_DIR" "$PACKAGE_PREFIX" "latest" "${INPUT_PACKAGES:-}" \
     "$GIT_TAG" "$(get_git_branch "$ROOT_DIR")" "$MAIN_BRANCH" \
     "${EXTRA_FULL_REBUILD_PATHS[@]}")
 FILTER=${FILTER_AND_TAG%%$'\n'*}
@@ -80,7 +79,7 @@ export IMAGE_TAG="$SHORT_TAG"
 # Non-release builds base the jobs on the freshly-built 'dev' krawler core; on a
 # release tag KRAWLER_TAG is left unset so each job uses its own krawler.version.
 if [ -z "$GIT_TAG" ]; then
-    export KRAWLER_TAG="$DEV_TAG"
+    export KRAWLER_TAG="dev"
 fi
 
 pnpm $FILTER --workspace-concurrency=1 run "/^build/"
