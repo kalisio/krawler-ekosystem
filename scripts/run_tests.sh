@@ -53,9 +53,7 @@ done
 # Required by krawler tests
 docker pull minidocks/imagemagick
 
-if [ "$RUN_SONAR" = true ]; then
-    . "$WORKSPACE_DIR/development/workspaces/jobs/jobs.sh" krawler-ekosystem
-fi
+. "$WORKSPACE_DIR/development/workspaces/jobs/jobs.sh" krawler-ekosystem
 
 ## Determine which packages need to be run test
 ##
