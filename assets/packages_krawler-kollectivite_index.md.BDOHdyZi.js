@@ -1,0 +1,37 @@
+import{_ as s,o as n,c as e,aF as o}from"./chunks/framework.CNkxH4QO.js";const q=JSON.parse('{"title":"krawler-kollectivite","description":"","frontmatter":{},"headers":[],"relativePath":"packages/krawler-kollectivite/index.md","filePath":"packages/krawler-kollectivite/index.md"}'),t={name:"packages/krawler-kollectivite/index.md"};function l(p,a,i,u,r,c){return n(),e("div",null,[...a[0]||(a[0]=[o(`<h1 id="krawler-kollectivite" tabindex="-1">krawler-kollectivite <a class="header-anchor" href="#krawler-kollectivite" aria-label="Permalink to &quot;krawler-kollectivite&quot;">​</a></h1><p>A collections of of <a href="https://kalisio.github.io/krawler/" target="_blank" rel="noreferrer">Krawler</a> based jobs to get data from public API and OSM in france. From INSEE code and/or SIREN codes of intercommunity. Will output files in output, in a format that you can import as a layer in Kano.</p><h2 id="uses" tabindex="-1">Uses <a class="header-anchor" href="#uses" aria-label="Permalink to &quot;Uses&quot;">​</a></h2><h3 id="exemple-of-codes" tabindex="-1">exemple of codes <a class="header-anchor" href="#exemple-of-codes" aria-label="Permalink to &quot;exemple of codes&quot;">​</a></h3><p>INSEE codes:</p><ul><li>31555: Toulouse</li><li>30007: Alès</li><li>33063: Bordeaux</li><li>33243: Libourne</li></ul><p>SIREN codes of interco:</p><ul><li>244701355: Communauté de communes des Coteaux et Landes de Gascogne</li><li>200096956: Agen</li><li>200033081: Toulouse</li></ul><p>Set the values like : export INSEE_CODES=31555,30007 export SIREN_CODES=200096956,244701355</p><h2 id="installation" tabindex="-1">installation <a class="header-anchor" href="#installation" aria-label="Permalink to &quot;installation&quot;">​</a></h2><ol><li>Krawler must be installed and available in the PATH</li><li>Install the project dependencies with <code>pnpm install</code> from the monorepo root</li><li>Run the job with <code>NODE_ENV=development krawler &lt;jobfile&gt;</code> from this package directory</li></ol><h2 id="jobs" tabindex="-1">jobs <a class="header-anchor" href="#jobs" aria-label="Permalink to &quot;jobs&quot;">​</a></h2><h3 id="georisque" tabindex="-1">georisque <a class="header-anchor" href="#georisque" aria-label="Permalink to &quot;georisque&quot;">​</a></h3><p>Use the georisques.gouv.fr/api api.</p><p>output to output/georisque_output:</p><ul><li>icpe.json</li><li>seveso.json</li></ul><h3 id="landcover" tabindex="-1">Landcover <a class="header-anchor" href="#landcover" aria-label="Permalink to &quot;Landcover&quot;">​</a></h3><p>Get land area data from geoplateforme LANDCOVER.</p><p>uses Overpass to get the bounds of an area.</p><p>Uses CLC_CODES</p><ul><li>111 code for &quot;Urban fabric&quot; in Corine Land Cover 2018</li><li>112 code for &quot;Industrial or commercial units&quot;</li><li>121 code for &quot;Arable land&quot;</li></ul><p>output to output/landcover_output: Will have a file per code, like landcover-111.json, landcover-112.json ... landcover-313.json</p><h3 id="osm" tabindex="-1">Osm <a class="header-anchor" href="#osm" aria-label="Permalink to &quot;Osm&quot;">​</a></h3><p>Use an instance of overpass to get data.</p><p>the task to get from OSM are defined in osm-tasks.js. Like here for town hall:</p><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>export default {</span></span>
+<span class="line"><span>    &quot;Mairie&quot;: {</span></span>
+<span class="line"><span>        &quot;nwrs&quot;: [[{</span></span>
+<span class="line"><span>            &quot;amenity&quot;: &quot;townhall&quot;</span></span>
+<span class="line"><span>        }]],</span></span>
+<span class="line"><span>        &quot;out&quot;: &quot;center&quot;,</span></span>
+<span class="line"><span>        &quot;properties&quot;: {</span></span>
+<span class="line"><span>            &quot;leaflet&quot;: {</span></span>
+<span class="line"><span>                &quot;style&quot;: {</span></span>
+<span class="line"><span>                    &quot;point&quot;: {</span></span>
+<span class="line"><span>                        &quot;shape&quot;: &quot;circle&quot;,</span></span>
+<span class="line"><span>                        &quot;color&quot;: &quot;#cc99ff&quot;,</span></span>
+<span class="line"><span>                        &quot;opacity&quot;: 1,</span></span>
+<span class="line"><span>                        &quot;stroke&quot;: null,</span></span>
+<span class="line"><span>                        &quot;size&quot;: 40,</span></span>
+<span class="line"><span>                        &quot;icon&quot;: {</span></span>
+<span class="line"><span>                            &quot;classes&quot;: &quot;las la-landmark&quot;,</span></span>
+<span class="line"><span>                            &quot;size&quot;: 28,</span></span>
+<span class="line"><span>                            &quot;color&quot;: &quot;#000000&quot;,</span></span>
+<span class="line"><span>                            &quot;opacity&quot;: 1</span></span>
+<span class="line"><span>                        }</span></span>
+<span class="line"><span>                    }</span></span>
+<span class="line"><span>                },</span></span>
+<span class="line"><span>                &quot;cluster&quot;: {</span></span>
+<span class="line"><span>                    &quot;disableClusteringAtZoom&quot;: 3</span></span>
+<span class="line"><span>                },</span></span>
+<span class="line"><span>                &quot;infobox&quot;: {</span></span>
+<span class="line"><span>                    &quot;pick&quot;: [</span></span>
+<span class="line"><span>                        &quot;id&quot;</span></span>
+<span class="line"><span>                    ]</span></span>
+<span class="line"><span>                },</span></span>
+<span class="line"><span>                &quot;popup&quot;: false,</span></span>
+<span class="line"><span>                &quot;tooltip&quot;: false</span></span>
+<span class="line"><span>            }</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    },</span></span>
+<span class="line"><span>}</span></span></code></pre></div><p>This will output to output/osm_output: The exemple task will output a json to <code>output/osm_output/Mairie.json</code></p>`,27)])])}const h=s(t,[["render",l]]);export{q as __pageData,h as default};
