@@ -14,7 +14,7 @@ import common from 'feathers-hooks-common'
 import distribution from '@kalisio/feathers-distributed'
 import mubsub from 'mubsub-es'
 import program from 'commander'
-import cron from 'cron'
+import { CronJob } from 'cron'
 import makeDebug from 'debug'
 import * as hooks from './hooks/index.js'
 import { stores, tasks, jobs } from './services/index.js'
@@ -22,7 +22,6 @@ import { healthcheck, Healthcheck } from './healthcheck.js'
 import logger from './logger.js'
 import plugin from './plugin.js'
 
-const { CronJob } = cron
 const { disallow } = common
 const { rest } = express
 const debug = makeDebug('krawler:cli')

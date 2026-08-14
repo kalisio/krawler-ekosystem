@@ -69,7 +69,7 @@
     "commander": "^2.11.0",
     "compression": "catalog:",
     "cors": "catalog:",
-    "cron": "^1.3.0",
+    "cron": "catalog:",
     "cross-spawn": "^7.0.3",
     "debug": "catalog:",
     "dockerode": "^2.5.5",
