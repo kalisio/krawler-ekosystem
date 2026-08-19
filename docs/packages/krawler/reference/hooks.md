@@ -154,6 +154,33 @@ Generate a CSV file from a set of input CSV files, hook options are the followin
 
 The input hook result is expected to be an array of tasks which output will be read back from the store.
 
+## data.gouv.fr
+
+[source](https://github.com/kalisio/krawler-ekosystem/blob/master/packages/krawler/src/hooks/hooks.datagouv.js)
+
+### uploadDatagouvResource(options)
+
+Upload a file as a resource of a dataset. When `resource` is provided the file of the target resource is replaced, otherwise a new resource is created on the dataset. Hook options are the following:
+* **apiUrl**: base URL of the udata API, defaults to `DATAGOUV_API_URL` then `https://www.data.gouv.fr/api/1`
+* **apiKey**: the API key used for authentication (sent as `X-API-KEY`), defaults to `DATAGOUV_API_KEY`, **required**
+* **dataset**: the target dataset id or slug, defaults to `DATAGOUV_DATASET`, **required**
+* **resource**: the target resource id; when omitted a new resource is created
+* **key**: key of the file to upload read back from the store, see [common options](./hooks.md#common-options)
+* **store**/**storePath**: see description in [common options](./hooks.md#common-options)
+* **file**: as an alternative to `key`/`store`, an absolute filesystem path to the file to upload
+* **fileName**: the file name sent to data.gouv.fr, defaults to the base name of `key`/`file`
+* **contentType**: the MIME type of the uploaded file, optional
+* **metadata**: an optional object of resource fields (e.g. `title`, `description`, `format`) applied on the created/replaced resource after upload
+* **dataPath**: property path where the API response (the created/updated resource) is stored on the item, defaults to `datagouv`
+
+### deleteDatagouvResource(options)
+
+Delete a resource from a dataset, hook options are the following:
+* **apiUrl**: base URL of the udata API, defaults to `DATAGOUV_API_URL` then `https://www.data.gouv.fr/api/1`
+* **apiKey**: the API key used for authentication, defaults to `DATAGOUV_API_KEY`, **required**
+* **dataset**: the target dataset id or slug, defaults to `DATAGOUV_DATASET`, **required**
+* **resource**: the target resource id, **required**
+
 ## Docker
 
 [source](https://github.com/kalisio/krawler-ekosystem/blob/master/packages/krawler/src/hooks/hooks.docker.js)
