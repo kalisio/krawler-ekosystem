@@ -108,14 +108,14 @@
   },
   "metaCatalog": {
     "version": "0.10.0",
-    "syncedAt": "2026-08-14T10:13:24.180Z"
+    "syncedAt": "2026-08-20T08:53:01.073Z"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
       "gdal-async"
     ],
     "overrides": {
-      "@xmldom/xmldom@<0.8.4": ">=0.8.13"
+      "@xmldom/xmldom@<0.8.4": ">=0.8.13 <0.9"
     }
   }
 }
