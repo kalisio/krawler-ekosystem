@@ -67,10 +67,8 @@ Available common job options are the following:
 * **faultTolerant**: will catch erroneous tasks so that the job will continue anyway; the hook chain will be stopped on the faulty tasks however
 * **timeout**: will stop the job and flag it as erroneous after the given timeout (ms); it will wait until currently processed tasks have run however
 
-Available job types are the following:
-* `async` to run tasks in parallel by batch
-* `kue` to run tasks via the [Kue job sequencer](https://github.com/Automattic/kue); available specific options are
-  * **attemptsLimit**: the maximum number of attempts for a task before being declared as failed by Kue
+The only available job type is `async`, which runs tasks in parallel by batch. It is the default
+and does not need to be declared.
 
 ## Task templates
 

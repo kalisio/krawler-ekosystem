@@ -5,7 +5,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default {
   id: 'adsb',
-  // type: 'kue',
   store: 'memory',
   options: {
     // workersLimit: 1
