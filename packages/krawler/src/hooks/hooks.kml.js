@@ -36,7 +36,7 @@ export function readKML (options = {}) {
     const jsonPath = options.dataPath || 'result.data'
     _.unset(hook, jsonPath)
 
-    const kmlDocument = parser.parseFromString(kmlFile.toString())
+    const kmlDocument = parser.parseFromString(kmlFile.toString(), 'text/xml')
     debug(`Parsed KML document with ${kmlDocument.childNodes.length} root elements`)
 
     let json = kml(kmlDocument)

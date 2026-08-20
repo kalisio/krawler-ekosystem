@@ -1,6 +1,6 @@
 import path, { dirname } from 'path'
 import fsStore from 'fs-blob-store'
-import yaml from 'js-yaml'
+import { load as loadYaml } from 'js-yaml'
 import fs from 'fs'
 import _ from 'lodash'
 import utils from 'util'
@@ -122,7 +122,7 @@ describe('krawler:hooks:utils', () => {
   it('write template from JSON', async () => {
     const hook = await pluginHooks.writeTemplate({ templateFile: 'mapproxy-template.yaml' })(templateHook)
     let templated = fs.readFileSync(path.join(outputStore.path, 'mapproxy-templated.yaml'), 'utf8')
-    templated = yaml.safeLoad(templated)
+    templated = loadYaml(templated)
     const times = _.get(templated, 'layers[0].dimensions.time.values')
     expect(times).toBeTruthy()
     expect(times.map(time => new Date(time))).toEqual(hook.result.data.times)

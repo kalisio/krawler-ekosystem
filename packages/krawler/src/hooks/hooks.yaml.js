@@ -1,7 +1,7 @@
 import path from 'path'
 import _ from 'lodash'
 import fs from 'fs-extra'
-import yamljs from 'js-yaml'
+import { dump as dumpYaml, load as loadYaml } from 'js-yaml'
 import common from 'feathers-hooks-common'
 import makeDebug from 'debug'
 import { getStoreFromHook, addOutput, writeBufferToStore, template, templateObject, transformJsonObject } from '../utils.js'
@@ -19,7 +19,7 @@ export function writeYAML (options = {}) {
     const store = await getStoreFromHook(hook, 'writeYAML', options)
 
     debug('Creating YAML for ' + hook.data.id)
-    const yaml = yamljs.safeDump(_.get(hook, options.dataPath || 'result.data'), options)
+    const yaml = dumpYaml(_.get(hook, options.dataPath || 'result.data'), options)
     const ymlName = template(hook.data, options.key || (hook.data.id + '.yaml'))
     await writeBufferToStore(
       Buffer.from(yaml, 'utf8'),
@@ -56,7 +56,7 @@ export function readYAML (options = {}) {
     // Clear previous data if any as we append
     const jsonPath = options.dataPath || 'result.data'
     _.unset(hook, jsonPath)
-    let json = yamljs.safeLoad(yaml.toString())
+    let json = loadYaml(yaml.toString())
     if (options.objectPath) json = _.get(json, options.objectPath)
     // Allow transform after read
     if (options.transform) {
