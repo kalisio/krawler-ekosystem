@@ -1,4 +1,4 @@
-import uuid from 'uuid/v1.js'
+import { randomUUID } from 'node:crypto'
 import sift from 'sift'
 import _ from 'lodash'
 import common from 'feathers-hooks-common'
@@ -14,7 +14,7 @@ const debug = makeDebug('krawler:hooks:utils')
 // Generate UUID
 export function generateId (options = {}) {
   return callOnHookItems(options)(item => {
-    item.id = uuid()
+    item.id = randomUUID()
     debug('Generated uuid', item.id)
   })
 }

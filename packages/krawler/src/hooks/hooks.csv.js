@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import stream from 'stream'
 import Papa from 'papaparse'
-import merge from 'merge-stream'
 import common from 'feathers-hooks-common'
 import makeDebug from 'debug'
 import {
@@ -62,7 +61,11 @@ export function mergeCSV (options = {}) {
       const unparseOptions = _.get(options, 'unparse', {})
       const hasHeader = _.get(unparseOptions, 'header', true)
       let headerWritten = false
-      merge(...inputStreams)
+      // Concatenate the per-task streams in result order. merge-stream used to interleave them as
+      // data arrived, which made the row order of the merged CSV non-deterministic.
+      stream.Readable.from((async function * () {
+        for (const inputStream of inputStreams) yield * inputStream
+      })(), { objectMode: true })
         .pipe(new stream.Transform({
           writableObjectMode: true,
           transform (chunk, encoding, callback) {
