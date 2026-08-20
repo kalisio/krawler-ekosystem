@@ -51,6 +51,17 @@ describe('krawler:hooks:datagouv', () => {
     vi.unstubAllEnvs()
   })
 
+  // Runs whatever the tests outcome, ensuring no resource is left on the dataset
+  // when a test fails before the deletion one
+  afterAll(async () => {
+    for (const resource of resources) {
+      await fetch(`${datagouvApiUrl}/datasets/${datagouvDataset}/resources/${resource}/`, {
+        method: 'DELETE',
+        headers: { 'X-API-KEY': datagouvApiKey }
+      })
+    }
+  })
+
   it('exposes data.gouv.fr hooks', () => {
     expect(typeof pluginHooks.uploadDatagouvResource).toBe('function')
     expect(typeof pluginHooks.deleteDatagouvResource).toBe('function')
@@ -128,12 +139,15 @@ describe('krawler:hooks:datagouv', () => {
   }, 60000)
 
   itDatagouv('deletes the resources one by one', async () => {
-    for (const resource of resources) {
+    const deleted = [...resources]
+    for (const resource of deleted) {
       await pluginHooks.deleteDatagouvResource(Object.assign({ resource }, datagouvOptions))(datagouvHook())
       expect(info).toHaveBeenCalledWith(expect.stringContaining(`Deleted resource ${resource}`))
+      // Nothing left to clean up for this one
+      resources.shift()
     }
 
     const remaining = await getDatasetResources()
-    expect(remaining.filter(resource => resources.includes(resource.id)).length).toBe(0)
+    expect(remaining.filter(resource => deleted.includes(resource.id)).length).toBe(0)
   }, 60000)
 })
