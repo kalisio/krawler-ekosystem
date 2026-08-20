@@ -1,4 +1,7 @@
-import * as turf from '@turf/turf'
+import convex from '@turf/convex'
+import { featureCollection } from '@turf/helpers'
+import simplify from '@turf/simplify'
+import union from '@turf/union'
 import _ from 'lodash'
 import { hooks } from '@kalisio/krawler'
 
@@ -78,10 +81,10 @@ const WKT_SAFE_LENGTH = 2000
 function unionFeatures (features) {
   let result = features[0]
   for (let i = 1; i < features.length; i++) {
-    result = turf.union(result, features[i])
+    result = union(featureCollection([result, features[i]]))
   }
   for (const tolerance of [0.001, 0.005, 0.01, 0.05]) {
-    const simplified = turf.simplify(result, { tolerance, highQuality: false })
+    const simplified = simplify(result, { tolerance, highQuality: false })
     const wkt = geometryToWkt(simplified.geometry)
     if (wkt.length <= WKT_SAFE_LENGTH) {
       console.log(`Simplification tolerance ${tolerance} deg, WKT length: ${wkt.length} chars`)
@@ -89,7 +92,7 @@ function unionFeatures (features) {
     }
   }
   console.warn('Falling back to convex hull — geometry too complex at all tolerances')
-  return turf.convex(turf.featureCollection(features))
+  return convex(featureCollection(features))
 }
 
 // Decimal places kept in WKT coordinates — 5 dp ≈ 1 m, sufficient for spatial
@@ -148,8 +151,8 @@ const generateTasks = (options) => {
     const inseeCodes = communeFeatures.map(f => f.properties.code_insee)
     console.log(`Found ${communeFeatures.length} communes:`, inseeCodes.join(', '))
 
-    const union = unionFeatures(communeFeatures)
-    const wkt = geometryToWkt(union.geometry)
+    const unionFeature = unionFeatures(communeFeatures)
+    const wkt = geometryToWkt(unionFeature.geometry)
     const cqlFilter = `INTERSECTS(geometrie,SRID=4326;${wkt})`
 
     const totalCount = await fetchFeatureCount(typeNames, cqlFilter)

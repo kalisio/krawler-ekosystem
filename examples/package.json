@@ -46,9 +46,12 @@
   "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/examples",
   "dependencies": {
     "@kalisio/krawler": "workspace:*",
-    "@turf/turf": "6.2.0-alpha.3",
+    "@turf/convex": "catalog:",
+    "@turf/helpers": "catalog:",
+    "@turf/simplify": "catalog:",
+    "@turf/union": "catalog:",
     "debug": "catalog:",
-    "fs-blob-store": "^5.2.1",
+    "fs-blob-store": "catalog:",
     "fs-extra": "catalog:",
     "lodash": "catalog:",
     "sift": "catalog:"
