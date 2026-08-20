@@ -1,14 +1,22 @@
 import _ from 'lodash'
 import makeDebug from 'debug'
-import SphericalMercator from '@mapbox/sphericalmercator'
+import proj4 from 'proj4'
 import { Grid } from '../grid.js'
 import { templateObject, transformJsonObject } from '../utils.js'
 
 const debug = makeDebug('krawler:hooks:grid')
 
-const sphericalMercator = new SphericalMercator({
-  size: 256
-})
+// Spherical Mercator (EPSG:3857, alias 900913) bounds. proj4 returns null at the poles, where the
+// projection diverges, so latitudes are clamped to the usable range first and the projected values
+// to the extent — reproducing what @mapbox/sphericalmercator used to do.
+const MERCATOR_MAX_EXTENT = 20037508.342789244
+const MERCATOR_MAX_LATITUDE = 85.051128779806604
+
+function toSphericalMercator ([longitude, latitude]) {
+  const clampedLatitude = Math.min(Math.max(latitude, -MERCATOR_MAX_LATITUDE), MERCATOR_MAX_LATITUDE)
+  return proj4('EPSG:4326', 'EPSG:3857', [longitude, clampedLatitude])
+    .map(value => Math.min(Math.max(value, -MERCATOR_MAX_EXTENT), MERCATOR_MAX_EXTENT))
+}
 
 // Generate grid spec from location/width/resolution spec
 export function generateGrid (options = {}) {
@@ -74,7 +82,7 @@ function maybeProjectToSphericalMercator (bbox, data, version) {
   // NOTE: only EPSG:900913 / EPSG:3857 are currently handled
   const crs = (version >= 113 ? _.get(data, 'taskTemplate.options.crs') : _.get(data, 'taskTemplate.options.srs'))
   if (crs === 'EPSG:900913' || crs === 'EPSG:3857') {
-    return sphericalMercator.convert(bbox, '900913')
+    return [...toSphericalMercator(bbox.slice(0, 2)), ...toSphericalMercator(bbox.slice(2, 4))]
   }
   return bbox
 }
