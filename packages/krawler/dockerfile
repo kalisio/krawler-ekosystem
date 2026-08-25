@@ -9,13 +9,16 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
 WORKDIR /app
 
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY scripts/prepare.mjs ./scripts/prepare.mjs
 COPY packages/krawler/package.json ./packages/krawler/
 COPY packages/krawler/src ./packages/krawler/src/
 COPY packages/krawler/healthcheck.js ./packages/krawler/
 
 # corepack will install pnpm version that's specified in package.json packageManager
 # use --ignore-scripts otherwise 'prepare' script will run after install, trying to setup husky
-RUN corepack enable && pnpm install --prod --ignore-scripts --frozen-lockfile --filter @kalisio/krawler
+# SKIP_HUSKY is an adhoc env var used in the 'prepare' monorepo script. Using --ignore-scripts is
+# not ok since it'll prevent dependencies legitimate scripts.
+RUN corepack enable && SKIP_HUSKY=1 pnpm install --prod --frozen-lockfile --filter @kalisio/krawler
 
 
 #
