@@ -8,14 +8,12 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@10.34.2 --activate
-
 # Bring in workspace manifests first to leverage layer caching
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json vite.base-config.js ./
 COPY packages/krawler/package.json ./packages/krawler/
 
 # Install all workspace deps (needs dev deps to run `vite build`)
-RUN pnpm install --frozen-lockfile --filter @kalisio/krawler...
+RUN corepack enable && pnpm install --frozen-lockfile --filter @kalisio/krawler...
 
 # Copy source and build
 COPY packages/krawler/vite.config.js ./packages/krawler/
@@ -34,8 +32,6 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION}-slim
 LABEL maintainer="Kalisio <contact@kalisio.xyz>"
 
 WORKDIR /krawler
-
-RUN corepack enable && corepack prepare pnpm@10.34.2 --activate
 
 COPY --from=builder --chown=node:node /app/pnpm-workspace.yaml /app/pnpm-lock.yaml /app/package.json ./
 COPY --from=builder --chown=node:node /app/node_modules ./node_modules
