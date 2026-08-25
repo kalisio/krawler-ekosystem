@@ -11,14 +11,12 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
-
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY packages/krawler-openradiation/package.json ./packages/krawler-openradiation/
-
-RUN pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/krawler-openradiation --prod
-
 COPY packages/krawler-openradiation/jobfile.js ./packages/krawler-openradiation/
+
+RUN corepack enable && pnpm install --prod --ignore-scripts --frozen-lockfile --filter @kalisio/krawler-openradiation
+
 
 #
 # Runtime stage: published krawler image matching KRAWLER_TAG.
@@ -30,8 +28,7 @@ ENV CRON="0 * * * * *"
 
 # Preserve the workspace layout so the symlinks under
 # packages/<job>/node_modules/* (pointing to ../../../node_modules/.pnpm/...) resolve.
-COPY --from=builder --chown=node:node /app/node_modules /app/node_modules
-COPY --from=builder --chown=node:node /app/packages/krawler-openradiation /app/packages/krawler-openradiation
+COPY --from=builder --chown=node:node /app /app/
 
 # Replace the workspace-resolved @kalisio/krawler with the framework provided
 # by the krawler base image, so the KRAWLER_TAG actually drives the runtime.

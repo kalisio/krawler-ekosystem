@@ -9,22 +9,19 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
-
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY packages/krawler-meteofrance/package.json ./packages/krawler-meteofrance/
-
-RUN pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/krawler-meteofrance --prod
-
 COPY packages/krawler-meteofrance/job.arome-arpege.js ./packages/krawler-meteofrance/
 COPY packages/krawler-meteofrance/jobfile.arome-france.js ./packages/krawler-meteofrance/
 COPY packages/krawler-meteofrance/jobfile.grib2-to-zarr.js packages/krawler-meteofrance/templates.json ./packages/krawler-meteofrance/
 
+RUN corepack enable && pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/krawler-meteofrance --prod
+
+
 FROM kalisio/krawler:${KRAWLER_TAG}
 LABEL maintainer="Kalisio <contact@kalisio.xyz>"
 
-COPY --from=builder --chown=node:node /app/node_modules /app/node_modules
-COPY --from=builder --chown=node:node /app/packages/krawler-meteofrance /app/packages/krawler-meteofrance
+COPY --from=builder --chown=node:node /app /app/
 COPY --from=conversion-tool --chown=node:node /app/dist/kazarr /app/packages/krawler-meteofrance/kazarr
 
 RUN rm -rf /app/packages/krawler-meteofrance/node_modules/@kalisio/krawler \

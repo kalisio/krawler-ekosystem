@@ -6,14 +6,12 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
-
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY packages/krawler-meteofrance/package.json ./packages/krawler-meteofrance/
-
-RUN pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/krawler-meteofrance --prod
-
 COPY packages/krawler-meteofrance/jobfile.paquetobs-observations.js ./packages/krawler-meteofrance/
+
+RUN corepack enable && pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/krawler-meteofrance --prod
+
 
 FROM kalisio/krawler:${KRAWLER_TAG}
 LABEL maintainer="Kalisio <contact@kalisio.xyz>"
@@ -21,8 +19,7 @@ LABEL maintainer="Kalisio <contact@kalisio.xyz>"
 ENV CRON="0 * * * *"
 ENV FREQUENCY=horaire
 
-COPY --from=builder --chown=node:node /app/node_modules /app/node_modules
-COPY --from=builder --chown=node:node /app/packages/krawler-meteofrance /app/packages/krawler-meteofrance
+COPY --from=builder --chown=node:node /app /app/
 
 RUN rm -rf /app/packages/krawler-meteofrance/node_modules/@kalisio/krawler \
  && ln -s /krawler/packages/krawler /app/packages/krawler-meteofrance/node_modules/@kalisio/krawler

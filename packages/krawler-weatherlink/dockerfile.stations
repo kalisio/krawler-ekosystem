@@ -11,16 +11,14 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
-
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY packages/krawler-weatherlink/package.json ./packages/krawler-weatherlink/
-
-RUN pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/krawler-weatherlink --prod
-
 COPY packages/krawler-weatherlink/jobfile-stations.js \
      packages/krawler-weatherlink/weatherlink-signature.js \
      ./packages/krawler-weatherlink/
+
+RUN corepack enable && pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/krawler-weatherlink --prod
+
 
 #
 # Runtime stage: published krawler image matching KRAWLER_TAG.
@@ -30,8 +28,7 @@ LABEL maintainer="Kalisio <contact@kalisio.xyz>"
 
 ENV CRON="0 0 0 * * *"
 
-COPY --from=builder --chown=node:node /app/node_modules /app/node_modules
-COPY --from=builder --chown=node:node /app/packages/krawler-weatherlink /app/packages/krawler-weatherlink
+COPY --from=builder --chown=node:node /app /app/
 
 RUN rm -rf /app/packages/krawler-weatherlink/node_modules/@kalisio/krawler \
  && ln -s /krawler/packages/krawler /app/packages/krawler-weatherlink/node_modules/@kalisio/krawler

@@ -8,22 +8,15 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
 
 WORKDIR /app
 
-# Bring in workspace manifests first to leverage layer caching
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json vite.base-config.js ./
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY packages/krawler/package.json ./packages/krawler/
-
-# Install all workspace deps (needs dev deps to run `vite build`)
-RUN corepack enable && pnpm install --frozen-lockfile --filter @kalisio/krawler...
-
-# Copy source and build
-COPY packages/krawler/vite.config.js ./packages/krawler/
 COPY packages/krawler/src ./packages/krawler/src/
 COPY packages/krawler/healthcheck.js ./packages/krawler/
 
-RUN pnpm --filter @kalisio/krawler build
+# corepack will install pnpm version that's specified in package.json packageManager
+# use --ignore-scripts otherwise 'prepare' script will run after install, trying to setup husky
+RUN corepack enable && pnpm install --prod --ignore-scripts --frozen-lockfile --filter @kalisio/krawler
 
-# Prune to production-only deps
-RUN pnpm install --frozen-lockfile --filter @kalisio/krawler --prod
 
 #
 # Runtime stage: slim image with prod deps, built artifacts and the krawler bin
@@ -33,9 +26,7 @@ LABEL maintainer="Kalisio <contact@kalisio.xyz>"
 
 WORKDIR /krawler
 
-COPY --from=builder --chown=node:node /app/pnpm-workspace.yaml /app/pnpm-lock.yaml /app/package.json ./
-COPY --from=builder --chown=node:node /app/node_modules ./node_modules
-COPY --from=builder --chown=node:node /app/packages/krawler ./packages/krawler
+COPY --from=builder --chown=node:node /app ./
 
 # Expose the `krawler` bin globally.
 RUN corepack enable && cd packages/krawler && PNPM_HOME=/usr/local/bin pnpm link --global

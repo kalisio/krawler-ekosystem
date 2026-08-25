@@ -6,23 +6,19 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
-
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY packages/krawler-awc/package.json ./packages/krawler-awc/
+COPY packages/krawler-awc/jobfile.stations.js ./packages/krawler-awc/
 
-RUN pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/krawler-awc --prod
+RUN corepack enable && pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/krawler-awc --prod
 
-COPY packages/krawler-awc/jobfile.stations.js \
-     ./packages/krawler-awc/
 
 FROM kalisio/krawler:${KRAWLER_TAG}
 LABEL maintainer="Kalisio <contact@kalisio.xyz>"
 
 ENV CRON="0 0 0 * * *"
 
-COPY --from=builder --chown=node:node /app/node_modules /app/node_modules
-COPY --from=builder --chown=node:node /app/packages/krawler-awc /app/packages/krawler-awc
+COPY --from=builder --chown=node:node /app /app/
 
 RUN rm -fR /app/packages/krawler-awc/node_modules/@kalisio/krawler && \
   ln -s /krawler/packages/krawler /app/packages/krawler-awc/node_modules/@kalisio/krawler

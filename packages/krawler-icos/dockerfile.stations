@@ -11,14 +11,12 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
-
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY packages/krawler-icos/package.json ./packages/krawler-icos/
-
-RUN pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/krawler-icos --prod
-
 COPY packages/krawler-icos/jobfile-stations.js ./packages/krawler-icos/
+
+RUN corepack enable && pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/krawler-icos --prod
+
 
 #
 # Runtime stage: published krawler image matching KRAWLER_TAG.
@@ -28,8 +26,7 @@ LABEL maintainer="Kalisio <contact@kalisio.xyz>"
 
 ENV CRON="0 0 0 * * *"
 
-COPY --from=builder --chown=node:node /app/node_modules /app/node_modules
-COPY --from=builder --chown=node:node /app/packages/krawler-icos /app/packages/krawler-icos
+COPY --from=builder --chown=node:node /app /app/
 
 RUN rm -rf /app/packages/krawler-icos/node_modules/@kalisio/krawler \
  && ln -s /krawler/packages/krawler /app/packages/krawler-icos/node_modules/@kalisio/krawler
