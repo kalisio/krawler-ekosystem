@@ -3,25 +3,19 @@ import _ from 'lodash'
 import fs from 'fs-extra'
 import readline from 'readline'
 import common from 'feathers-hooks-common'
-import { reproject } from 'reproject'
 import proj4 from 'proj4'
 import osmtogeojson from 'osmtogeojson'
 import makeDebug from 'debug'
+import { isLikeGeoJson, reprojectGeoJson as reproject } from '@kalisio/common-geospatial'
 import { getStoreFromHook, template, transformJsonObject } from '../utils.js'
 import epsg from '../epsg.js'
 import { writeJson, readJson } from './hooks.json.js'
 const { getItems } = common
 
 const debug = makeDebug('krawler:hooks:geojson')
-// Generate projection dictionary
+const DEFAULT_CRS = 'EPSG:4326'
+// Register the EPSG catalog on the proj4 singleton shared with @kalisio/common-geospatial
 epsg(proj4)
-// proj4 >= 2.20 auto-parses defs at registration time, so values may already be
-// parsed objects; a few legacy defs (from epsg.js) are empty strings and would
-// throw if passed to proj4.Proj(), so we skip them.
-const crss = _.mapValues(
-  _.omitBy(proj4.defs, def => typeof def === 'string' && def.trim() === ''),
-  def => proj4.Proj(def)
-)
 
 // Convenient name but similar to writeJson
 export function writeGeoJson (options = {}) {
@@ -150,10 +144,12 @@ export function reprojectGeoJson (options = {}) {
 
     debug('Reproject GeoJSON for ' + hook.result.id)
 
-    let geojson = _.get(hook, options.dataPath || 'result.data', {}) || {}
-    // Reproject
-    geojson = reproject(geojson, options.from || 'EPSG:4326', options.to || 'EPSG:4326', crss)
-    // Then update JSON in place in memory
-    _.set(hook, options.dataPath || 'result.data', geojson)
+    const geojson = _.get(hook, options.dataPath || 'result.data', {}) || {}
+    if (!isLikeGeoJson(geojson)) {
+      throw new Error('The \'reprojectGeoJson\' hook requires a GeoJSON object to reproject.')
+    }
+    geojson.crs = { type: 'name', properties: { name: options.from || DEFAULT_CRS } }
+    // Reproject, then update JSON in place in memory
+    _.set(hook, options.dataPath || 'result.data', reproject(geojson, options.to || DEFAULT_CRS))
   }
 }
