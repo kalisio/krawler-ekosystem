@@ -1,9 +1,4 @@
-/**
- * @returns {Boolean} true if the specified value is not null and not undefined.
- */
-function isValue (x) {
-  return x !== null && x !== undefined
-}
+import { is } from '@kalisio/common-core/predicates'
 
 /**
  * @returns {Number} returns remainder of floored division, i.e., floor(a / n). Useful for consistent modulo
@@ -15,6 +10,8 @@ function floorMod (a, n) {
 
 /**
  * @returns {Number} the value x clamped to the range [low, high].
+ * NOTE: kept local rather than math.clamp() from @kalisio/common-core, which allocates
+ * an assertion array on every call -- interpolate() runs it in the nested loops of resample().
  */
 function clamp (x, min, max) {
   return Math.max(min, Math.min(x, max))
@@ -125,7 +122,7 @@ export class Grid {
     const g11 = this.getValue(ci, cj)
 
     // All four points found, so interpolate the value
-    if (isValue(g00) && isValue(g10) && isValue(g01) && isValue(g11)) {
+    if (is.defined(g00) && is.defined(g10) && is.defined(g01) && is.defined(g11)) {
       return this.bilinearInterpolate(i - fi, j - fj, g00, g10, g01, g11)
     } else {
       return undefined
