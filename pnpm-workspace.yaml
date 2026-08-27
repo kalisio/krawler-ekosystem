@@ -2,6 +2,9 @@ packages:
   - packages/**
   - examples
   - docs/
+onlyBuiltDependencies:
+  - "vitepress-theme-kalisio@https://codeload.github.com/kalisio/vitepress-theme-kalisio/tar.gz/a4f9731485a6d227ee0451e0fcd76ddd867f80b2"
+  - "gdal-async"
 catalog:
   "@automerge/automerge-repo": ~2.4.0
   "@automerge/automerge-repo-network-websocket": ~2.4.0

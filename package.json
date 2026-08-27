@@ -111,10 +111,6 @@
     "syncedAt": "2026-08-25T09:40:01.153Z"
   },
   "pnpm": {
-    "onlyBuiltDependencies": [
-      "gdal-async",
-      "vitepress-theme-kalisio"
-    ],
     "overrides": {
       "@xmldom/xmldom@<0.8.4": ">=0.8.13 <0.9"
     }
