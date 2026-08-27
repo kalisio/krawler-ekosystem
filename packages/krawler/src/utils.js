@@ -5,6 +5,7 @@ import * as math from 'mathjs'
 import common from 'feathers-hooks-common'
 import makeDebug from 'debug'
 import { Duplex } from 'stream'
+import { object as commonObject } from '@kalisio/common-core/utilities'
 
 const { getItems, replaceItems } = common
 
@@ -482,17 +483,5 @@ export function mergeErrors (errors) {
 
 // Transform nested object to dot notation
 export function dotify (object) {
-  const dotifiedObject = {}
-  function recurse (object, current) {
-    _.forOwn(object, (value, key) => {
-      const newKey = (current ? current + '.' + key : key)
-      if (value && typeof value === 'object' && !_.isEmpty(value)) {
-        recurse(value, newKey) // it's a nested object, so do it again
-      } else {
-        dotifiedObject[newKey] = value // it's not an object or {}, so set the property
-      }
-    })
-  }
-  recurse(object)
-  return dotifiedObject
+  return commonObject.dotify(object)
 }
