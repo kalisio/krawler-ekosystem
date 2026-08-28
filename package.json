@@ -4,7 +4,7 @@
   "type": "module",
   "packageManager": "pnpm@10.34.5",
   "scripts": {
-    "build": "pnpm -r build",
+    "build": "pnpm -r --filter './packages/*' build",
     "build:krawler-atlas": "pnpm --filter @kalisio/krawler-atlas build",
     "build:krawler-awc": "pnpm --filter @kalisio/krawler-awc build",
     "build:krawler-centipede": "pnpm --filter @kalisio/krawler-centipede build",
@@ -19,11 +19,10 @@
     "build:krawler-weatherlink": "pnpm --filter @kalisio/krawler-weatherlink build",
     "build:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation build",
     "build:krawler-vigicrues": "pnpm --filter @kalisio/krawler-vigicrues build",
-    "changeset": "changeset",
-    "changeset:publish": "pnpm build && changeset publish",
-    "changeset:status": "changeset status",
-    "changeset:version": "changeset version",
+    "prebump": "changeset",
+    "bump": "changeset version",
     "clear": "pnpm -r exec rimraf node_modules dist coverage",
+    "docs:prepare": "pnpm --filter './examples/*' build",
     "docs:build": "pnpm --filter docs run build",
     "docs:dev": "pnpm --filter docs run dev",
     "inspect": "pnpm knip",
@@ -43,9 +42,10 @@
     "lint:krawler-openradiation": "pnpm --filter @kalisio/krawler-openradiation lint",
     "lint:krawler-vigicrues": "pnpm --filter @kalisio/krawler-vigicrues lint",
     "lint:unused": "pnpm knip",
-    "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
+    "prerelease": "pnpm build",
     "prepare": "node scripts/prepare.mjs",
-    "pretest": "mkdir -p coverage",
+    "release": "changeset publish",
+    "postrelease": "git push --follow-tags",
     "release:krawler-atlas": "pnpm --filter @kalisio/krawler-atlas release",
     "release:krawler-awc": "pnpm --filter @kalisio/krawler-awc release",
     "release:krawler-centipede": "pnpm --filter @kalisio/krawler-centipede release",
@@ -59,7 +59,9 @@
     "release:krawler-teleray": "pnpm --filter @kalisio/krawler-teleray release",
     "release:krawler-vigicrues": "pnpm --filter @kalisio/krawler-vigicrues release",
     "release:krawler-weatherlink": "pnpm --filter @kalisio/krawler-weatherlink release",
+    "pretest": "mkdir -p coverage",
     "test": "pnpm -r test",
+    "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
     "test:krawler-atlas": "pnpm --filter @kalisio/krawler-atlas test",
     "test:krawler-awc": "pnpm --filter @kalisio/krawler-awc test",
     "test:krawler-centipede": "pnpm --filter @kalisio/krawler-centipede test",
@@ -79,8 +81,10 @@
     "kalisio"
   ],
   "author": {
-    "name": "KALISIO <contact@kalisio.com>",
-    "url": "https://github.com/kalisio"
+    "name": "KALISIO",
+    "email": "contact@kalisio.com",
+    "url": "https://github.com/kalisio",
+    "logo": "https://kalisio.github.io/kalisioscope/kalisio/kalisio-logo-light.svg"
   },
   "contributors": [],
   "license": "MIT",
@@ -106,13 +110,18 @@
     "vite-bundle-visualizer": "catalog:",
     "vitest": "catalog:"
   },
-  "metaCatalog": {
-    "version": "0.10.0",
-    "syncedAt": "2026-08-27T13:04:18.876Z"
-  },
   "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "gdal-async",
+      "vue-demi"
+    ],
     "overrides": {
       "@xmldom/xmldom@<0.8.4": ">=0.8.13 <0.9"
     }
+  },
+  "metaCatalog": {
+    "version": "0.10.0",
+    "syncedAt": "2026-08-28T14:30:36.913Z"
   }
 }

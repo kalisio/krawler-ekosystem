@@ -2,9 +2,6 @@ packages:
   - packages/**
   - examples
   - docs/
-onlyBuiltDependencies:
-  - vitepress-theme-kalisio@https://codeload.github.com/kalisio/vitepress-theme-kalisio/tar.gz/a4f9731485a6d227ee0451e0fcd76ddd867f80b2
-  - gdal-async
 catalog:
   "@automerge/automerge-repo": ~2.4.0
   "@automerge/automerge-repo-network-websocket": ~2.4.0
@@ -48,14 +45,15 @@ catalog:
   "@kalisio/feathers-webpush": ~1.0.1
   "@kalisio/geo-pixel-stream": https://github.com/kalisio/geo-pixel-stream#gdal-async
   "@kalisio/kdk": ~2.7.0
+  "@kalisio/vitepress-theme": ~2.1.0
   "@logtape/logtape": ~0.7.0
   "@mapbox/mbtiles": ~0.12.1
   "@mapbox/vtquery": ~0.6.0
   "@modelcontextprotocol/sdk": ~1.29.0
-  "@pdfme/common": ~6.1.2
-  "@pdfme/generator": ~6.1.2
-  "@pdfme/schemas": ~6.1.2
-  "@pdfme/ui": ~6.1.2
+  "@pdfme/common": ~5.2.0
+  "@pdfme/generator": ~5.2.0
+  "@pdfme/schemas": ~5.2.0
+  "@pdfme/ui": ~5.2.0
   "@quasar/app-vite": ~2.5.1
   "@quasar/extras": ~1.17.0
   "@quasar/quasar-app-extension-testing-unit-vitest": ~1.2.4
