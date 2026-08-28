@@ -123,6 +123,9 @@ catalogs:
     envsub:
       specifier: ~4.1.0
       version: 4.1.0
+    feathers-hooks-common:
+      specifier: ~8.2.1
+      version: 8.2.1
     fs-blob-store:
       specifier: ~5.2.1
       version: 5.2.1
@@ -454,8 +457,8 @@ importers:
         specifier: 'catalog:'
         version: 4.1.0
       feathers-hooks-common:
-        specifier: ^3.0.0
-        version: 3.10.0
+        specifier: 'catalog:'
+        version: 8.2.1(@feathersjs/feathers@5.0.44)
       fs-blob-store:
         specifier: 'catalog:'
         version: 5.2.1
@@ -2737,9 +2740,6 @@ packages:
       ajv:
         optional: true
 
-  ajv@5.5.2:
-    resolution: {integrity: sha512-Ajr4IcMXq/2QmMkEmSvxqfLN5zGmJ92gHXAeOXq1OekoH2rfDNsgdDoL2f7QaRCy7G/E6TpxBVdRuNraMztGHw==}
-
   ajv@6.14.0:
     resolution: {integrity: sha512-IWrosm/yrn43eiKqkfkHis7QioDleaXQHdDVPKg0FSwwd/DuvyX79TZnFOnYpB7dcsFAMmtFztZuXPDvSePkFw==}
 
@@ -3059,10 +3059,6 @@ packages:
   cluster-key-slot@1.1.2:
     resolution: {integrity: sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA==}
     engines: {node: '>=0.10.0'}
-
-  co@4.6.0:
-    resolution: {integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==}
-    engines: {iojs: '>= 1.0.0', node: '>= 0.12.0'}
 
   color-convert@2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
@@ -3838,9 +3834,6 @@ packages:
   extendable-error@0.1.7:
     resolution: {integrity: sha512-UOiS2in6/Q0FK0R0q6UY9vYpQ21mr/Qn1KOnte7vsACuNJf514WvCCUHSRCPcgjPT2bAhNIJdlE6bVap1GKmeg==}
 
-  fast-deep-equal@1.1.0:
-    resolution: {integrity: sha512-fueX787WZKCV0Is4/T2cyAdM4+x1S3MXXOAhavE1ys/W42SHAPacLTQhucja22QBYrfGw50M2sRiXPtTGv9Ymw==}
-
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
 
@@ -3876,24 +3869,11 @@ packages:
       picomatch:
         optional: true
 
-  feathers-commons@0.8.7:
-    resolution: {integrity: sha512-2stoPmcYRnk9TyMcR5oxCSEl2KzTdu2UGTw/5Bowq/pOHaehQdqaKxZuVIdrO3IolVru4Lii2nL08QF8JhuY5g==}
-    engines: {node: '>= 4'}
-    deprecated: Feathers v3 is out and this module has moved to @feathersjs/commons. See https://docs.feathersjs.com/migrating.html for more information.
-
-  feathers-errors@2.9.2:
-    resolution: {integrity: sha512-qwIX97bNW7+1tWVG073+omUA0rCYKJtTtwuzTrrvfrtdr8J8Dk1Fy4iaV9Fa6/YBD5AZu0lsplPE0iu4u/d4GQ==}
-    engines: {node: '>= 4'}
-    deprecated: Feathers v3 is out and has moved to @feathersjs/errors. See https://docs.feathersjs.com/migrating.html for more information.
-
-  feathers-hooks-common@3.10.0:
-    resolution: {integrity: sha512-xuyTH69e0bs9r7ntQJiayBy8uC47mbGXeAsO7nkMXLGn+nYhjuw6z/ekQywnY+DeqvRWAgmy+LC4SzieIjIUiw==}
-    engines: {node: '>= 4.6.1'}
-
-  feathers-hooks@2.1.2:
-    resolution: {integrity: sha512-XQKhbo4d4TuXyco+tbHmKn5wo8QhdSNslJ/+zckNYfUzLmrN8L3uB4Utf0/ivcgwWxJtS1kVhEETBN4TDxuWFg==}
-    engines: {node: '>= 4.0'}
-    deprecated: Feathers v3 is out and this module has been integrated into Feathers core. See https://docs.feathersjs.com/migrating.html for more information.
+  feathers-hooks-common@8.2.1:
+    resolution: {integrity: sha512-t3gLAaTY5ufnAoKczLCNXJddq/L9ORrvxAlfuU2Azgoi0b6X3t0Y91l1JCJAvixzxxwLJmgdnKpFX32+CvEn0A==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      '@feathersjs/feathers': ^5.0.0
 
   fecha@4.2.3:
     resolution: {integrity: sha512-OP2IUU6HeYKJi3i0z4A19kHMQoLVs4Hc+DPqqxI2h/DPZHTm/vjsfC6P0b4jCMy14XizLBqvndQ+UilD7707Jw==}
@@ -4088,6 +4068,10 @@ packages:
 
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
+
+  graphql@16.14.2:
+    resolution: {integrity: sha512-Chq1s4CY7jmh8gO2qvLIJyfCDIN+EHLFW/9iShnp1z8FjBQMoodWP1kDC36VAMXXIvAjj4ARa7ntfAV2BrjsbA==}
+    engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
   handlebars@4.7.9:
     resolution: {integrity: sha512-4E71E0rpOaQuJR2A3xDZ+GM1HyWYv1clR58tC8emQNeQe3RH7MAzSbat+V0wG78LQBo6m6bzSG/L4pBuCsgnUQ==}
@@ -4462,9 +4446,6 @@ packages:
   json-schema-to-ts@3.1.1:
     resolution: {integrity: sha512-+DWg8jCJG2TEnpy7kOm/7/AxaYoaRbjVB4LFZLySZlWn8exGs3A4OLJR966cVvU26N7X9TWxl+Jsw7dzAqKT6g==}
     engines: {node: '>=16'}
-
-  json-schema-traverse@0.3.1:
-    resolution: {integrity: sha512-4JD/Ivzg7PoW8NzdrBSr3UFwC9mHgvI7Z6z3QGBsSHgKaRTUDmyZAAKJo2UbG1kUVfS9WS8bi36N49U1xw43DA==}
 
   json-schema-traverse@0.4.1:
     resolution: {integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==}
@@ -4944,6 +4925,10 @@ packages:
 
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
+
+  neotraverse@0.6.18:
+    resolution: {integrity: sha512-Z4SmBUweYa09+o6pG+eASabEpP6QkQ70yHj351pQoEXIs8uHbaU2DWVmzBANKgflPa47A50PtB2+NgRpQvr7vA==}
+    engines: {node: '>= 10'}
 
   nock@14.0.13:
     resolution: {integrity: sha512-SCPsQmGVNY8h1rfS3aU0MzOGYY+wKIFukHEsoSIwPRCYocZkya7MFIlWIEYPWQZj+Gaksg6EyUaY255ZDqpQuA==}
@@ -5939,10 +5924,6 @@ packages:
     resolution: {integrity: sha512-hdF5ZgjTqgAntKkklYw0R03MG2x/bSzTtkxmIRw/sTNV8YXsCJ1tfLAX23lhxhHJlEf3CRCOCGGWw3vI3GaSPw==}
     engines: {node: '>=18'}
 
-  traverse@0.6.11:
-    resolution: {integrity: sha512-vxXDZg8/+p3gblxB6BhhG5yWVn1kGRlaL8O78UDXc3wRnPizB5g83dcvWV1jpDMIPnjZjOFuxlMmE82XJ4407w==}
-    engines: {node: '>= 0.4'}
-
   trim-lines@3.0.1:
     resolution: {integrity: sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==}
 
@@ -6007,10 +5988,6 @@ packages:
     resolution: {integrity: sha512-VwaXim9Gp1bngi/q3do8hgttYn2uC3MoT/gfuMWylnj1IeZBUAyPddHZlo1K05BDoj8DYPpMdiHqH1dDYdJf2A==}
     engines: {node: '>= 18'}
 
-  typedarray.prototype.slice@1.0.5:
-    resolution: {integrity: sha512-q7QNVDGTdl702bVFiI5eY4l/HkgCM6at9KhcFbgUAzezHFbOVy4+0O/lCjsABEQwbZPravVfBIiBVGo89yzHFg==}
-    engines: {node: '>= 0.4'}
-
   typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
@@ -6018,9 +5995,6 @@ packages:
     resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
     hasBin: true
-
-  uberproto@1.2.0:
-    resolution: {integrity: sha512-pGtPAQmLwh+R9w81WVHzui1FfedpQWQpiaIIfPCwhtsBez4q6DYbJFfyXPVHPUTNFnedAvNEnkoFiLuhXIR94w==}
 
   uglify-js@3.19.3:
     resolution: {integrity: sha512-v3Xu+yuwBXisp6QYTcH4UbH+xYJXqnq2m/LtQVWKWzYc1iehYnLixoQDN9FH6/j9/oybfd6W9Ghwkl8+UMKTKQ==}
@@ -6221,7 +6195,7 @@ packages:
       vitepress: ^1.0.0 || ^1.0.0-alpha
 
   vitepress-theme-kalisio@https://codeload.github.com/kalisio/vitepress-theme-kalisio/tar.gz/a4f9731485a6d227ee0451e0fcd76ddd867f80b2:
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/kalisio/vitepress-theme-kalisio/tar.gz/a4f9731485a6d227ee0451e0fcd76ddd867f80b2}
+    resolution: {gitHosted: true, integrity: sha512-uUS66OLZ5jeArqSHRwujkwB160EO82RrMef9X5n+BWupBiOiJqwLvpQdH+hiTjGMD8U2HsIAZi53ycF6S1qA9A==, tarball: https://codeload.github.com/kalisio/vitepress-theme-kalisio/tar.gz/a4f9731485a6d227ee0451e0fcd76ddd867f80b2}
     version: 1.0.0
     engines: {node: '>=20'}
     peerDependencies:
@@ -8831,13 +8805,6 @@ snapshots:
     optionalDependencies:
       ajv: 8.18.0
 
-  ajv@5.5.2:
-    dependencies:
-      co: 4.6.0
-      fast-deep-equal: 1.1.0
-      fast-json-stable-stringify: 2.1.0
-      json-schema-traverse: 0.3.1
-
   ajv@6.14.0:
     dependencies:
       fast-deep-equal: 3.1.3
@@ -9198,8 +9165,6 @@ snapshots:
   clsx@2.1.1: {}
 
   cluster-key-slot@1.1.2: {}
-
-  co@4.6.0: {}
 
   color-convert@2.0.1:
     dependencies:
@@ -10210,8 +10175,6 @@ snapshots:
 
   extendable-error@0.1.7: {}
 
-  fast-deep-equal@1.1.0: {}
-
   fast-deep-equal@3.1.3: {}
 
   fast-glob@3.3.3:
@@ -10244,28 +10207,17 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.4
 
-  feathers-commons@0.8.7: {}
-
-  feathers-errors@2.9.2:
+  feathers-hooks-common@8.2.1(@feathersjs/feathers@5.0.44):
     dependencies:
-      debug: 3.2.7
+      '@feathersjs/errors': 5.0.45
+      '@feathersjs/feathers': 5.0.44
+      ajv: 6.14.0
+      debug: 4.4.3
+      graphql: 16.14.2
+      lodash: 4.18.1
+      neotraverse: 0.6.18
     transitivePeerDependencies:
       - supports-color
-
-  feathers-hooks-common@3.10.0:
-    dependencies:
-      ajv: 5.5.2
-      debug: 3.2.7
-      feathers-errors: 2.9.2
-      feathers-hooks: 2.1.2
-      traverse: 0.6.11
-    transitivePeerDependencies:
-      - supports-color
-
-  feathers-hooks@2.1.2:
-    dependencies:
-      feathers-commons: 0.8.7
-      uberproto: 1.2.0
 
   fecha@4.2.3: {}
 
@@ -10505,6 +10457,8 @@ snapshots:
   graceful-fs@4.2.11: {}
 
   graphemer@1.4.0: {}
+
+  graphql@16.14.2: {}
 
   handlebars@4.7.9:
     dependencies:
@@ -10883,8 +10837,6 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.29.2
       ts-algebra: 2.0.0
-
-  json-schema-traverse@0.3.1: {}
 
   json-schema-traverse@0.4.1: {}
 
@@ -11466,6 +11418,8 @@ snapshots:
   negotiator@0.6.4: {}
 
   neo-async@2.6.2: {}
+
+  neotraverse@0.6.18: {}
 
   nock@14.0.13:
     dependencies:
@@ -12653,12 +12607,6 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  traverse@0.6.11:
-    dependencies:
-      gopd: 1.2.0
-      typedarray.prototype.slice: 1.0.5
-      which-typed-array: 1.1.20
-
   trim-lines@3.0.1: {}
 
   triple-beam@1.4.1: {}
@@ -12730,22 +12678,9 @@ snapshots:
 
   typed-function@4.2.2: {}
 
-  typedarray.prototype.slice@1.0.5:
-    dependencies:
-      call-bind: 1.0.9
-      define-properties: 1.2.1
-      es-abstract: 1.24.2
-      es-errors: 1.3.0
-      get-proto: 1.0.1
-      math-intrinsics: 1.1.0
-      typed-array-buffer: 1.0.3
-      typed-array-byte-offset: 1.0.4
-
   typedarray@0.0.6: {}
 
   typescript@6.0.3: {}
-
-  uberproto@1.2.0: {}
 
   uglify-js@3.19.3:
     optional: true

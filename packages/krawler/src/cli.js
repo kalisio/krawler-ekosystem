@@ -10,7 +10,7 @@ import helmet from 'helmet'
 import feathers from '@feathersjs/feathers'
 import express from '@feathersjs/express'
 import socketio from '@feathersjs/socketio'
-import common from 'feathers-hooks-common'
+import { disallow } from 'feathers-hooks-common'
 import distribution from '@kalisio/feathers-distributed'
 import mubsub from 'mubsub-es'
 import program from 'commander'
@@ -22,7 +22,6 @@ import { healthcheck, Healthcheck } from './healthcheck.js'
 import logger from './logger.js'
 import plugin from './plugin.js'
 
-const { disallow } = common
 const { rest } = express
 const debug = makeDebug('krawler:cli')
 const __dirname = path.dirname(fileURLToPath(import.meta.url))

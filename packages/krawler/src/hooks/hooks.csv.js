@@ -1,13 +1,12 @@
 import _ from 'lodash'
 import stream from 'stream'
 import Papa from 'papaparse'
-import common from 'feathers-hooks-common'
+import { getItems } from 'feathers-hooks-common'
 import makeDebug from 'debug'
 import {
   getStoreFromHook, addOutput, writeBufferToStore, template, templateObject, transformJsonObject
 } from '../utils.js'
 
-const { getItems } = common
 const debug = makeDebug('krawler:hooks:csv')
 
 // Generate a CSV from specific hook result values

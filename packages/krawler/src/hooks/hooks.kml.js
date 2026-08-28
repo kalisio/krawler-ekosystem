@@ -3,11 +3,10 @@ import path from 'path'
 import fs from 'fs-extra'
 import { DOMParser } from '@xmldom/xmldom'
 import { kml } from '@tmcw/togeojson'
-import common from 'feathers-hooks-common'
+import { getItems } from 'feathers-hooks-common'
 import makeDebug from 'debug'
 import { getStoreFromHook, transformJsonObject } from '../utils.js'
 
-const { getItems } = common
 const debug = makeDebug('krawler:hooks:kml')
 const parser = new DOMParser()
 

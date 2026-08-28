@@ -2,7 +2,7 @@ import path from 'path'
 import _ from 'lodash'
 import fs from 'fs-extra'
 import readline from 'readline'
-import common from 'feathers-hooks-common'
+import { getItems } from 'feathers-hooks-common'
 import proj4 from 'proj4'
 import osmtogeojson from 'osmtogeojson'
 import makeDebug from 'debug'
@@ -10,7 +10,6 @@ import { isLikeGeoJson, reprojectGeoJson as reproject } from '@kalisio/common-ge
 import { getStoreFromHook, template, transformJsonObject } from '../utils.js'
 import epsg from '../epsg.js'
 import { writeJson, readJson } from './hooks.json.js'
-const { getItems } = common
 
 const debug = makeDebug('krawler:hooks:geojson')
 const DEFAULT_CRS = 'EPSG:4326'

@@ -1,11 +1,10 @@
 import path from 'path'
 import _ from 'lodash'
 import fs from 'fs-extra'
-import common from 'feathers-hooks-common'
+import { getItems } from 'feathers-hooks-common'
 import makeDebug from 'debug'
 import { getStoreFromHook, addOutput, writeBufferToStore, template, transformJsonObject } from '../utils.js'
 
-const { getItems } = common
 const debug = makeDebug('krawler:hooks:json')
 
 // Generate a JSON from specific hook result values

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import sift from 'sift'
-import common from 'feathers-hooks-common'
+import { getItems, when } from 'feathers-hooks-common'
 import makeDebug from 'debug'
 import { templateQueryObject } from '../utils.js'
 import logger from '../logger.js'
@@ -34,7 +34,6 @@ export * from './hooks.xml.js'
 export * from './hooks.yaml.js'
 
 const debug = makeDebug('krawler:hooks')
-const { getItems, when } = common
 // Custom hooks
 const hooks = {}
 

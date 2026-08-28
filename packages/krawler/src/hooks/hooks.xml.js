@@ -2,11 +2,10 @@ import _ from 'lodash'
 import path from 'path'
 import fs from 'fs-extra'
 import xml2js from 'xml2js'
-import common from 'feathers-hooks-common'
+import { getItems } from 'feathers-hooks-common'
 import makeDebug from 'debug'
 import { getStoreFromHook, addOutput, writeBufferToStore, template } from '../utils.js'
 
-const { getItems } = common
 const debug = makeDebug('krawler:hooks:xml')
 
 function getXmlDeclarationEncoding (buffer) {

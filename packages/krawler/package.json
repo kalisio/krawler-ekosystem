@@ -77,7 +77,7 @@
     "debug": "catalog:",
     "dockerode": "catalog:",
     "envsub": "catalog:",
-    "feathers-hooks-common": "^3.0.0",
+    "feathers-hooks-common": "catalog:",
     "fs-blob-store": "catalog:",
     "fs-extra": "catalog:",
     "gdal-async": "catalog:",

@@ -1,14 +1,13 @@
 import { randomUUID } from 'node:crypto'
 import sift from 'sift'
 import _ from 'lodash'
-import common from 'feathers-hooks-common'
+import { getItems } from 'feathers-hooks-common'
 import makeDebug from 'debug'
 import boxen from 'boxen'
 import { Healthcheck } from '../healthcheck.js'
 import { callOnHookItems, addOutput, templateObject, template as templateOptions, templateQueryObject, transformJsonObject } from '../utils.js'
 import logger from '../logger.js'
 
-const { getItems } = common
 const debug = makeDebug('krawler:hooks:utils')
 
 // Generate UUID
