@@ -1,11 +1,11 @@
 import _ from 'lodash'
-import sift from 'sift'
 import moment from 'moment'
 import * as math from 'mathjs'
 import { getItems, replaceItems } from 'feathers-hooks-common'
 import makeDebug from 'debug'
 import { Duplex } from 'stream'
 import { object as commonObject } from '@kalisio/common-core/utilities'
+import { transform } from '@kalisio/common-core/operators'
 
 const debug = makeDebug('krawler:utils')
 math.createUnit('knot', { definition: '0.514444 m/s', aliases: ['knots', 'kt', 'kts'] }, { override: true })
@@ -14,120 +14,22 @@ Object.getPrototypeOf(moment()).toBSON = function () {
   return this.toDate()
 }
 
-function convertDateValue (value, units) {
-  let date
-  if (units.asDate === 'utc') {
-    date = (units.from ? moment.utc(value, units.from) : moment.utc(value))
-  } else {
-    date = (units.from ? moment(value, units.from) : moment(value))
-  }
-  // Reformat as a string when target format is given, else convert to JS Date
-  return units.to ? date.format(units.to) : date.toDate()
-}
-
-function convertUnitValue (value, units) {
-  if (units.asDate) return convertDateValue(value, units)
-  if (units.asString) {
-    if (_.isNumber(units.asString)) return value.toString(units.asString)
-    return value.toString()
-  }
-  if (units.asNumber) {
-    // Remove all spaces — large numbers are sometimes written with space separators ('120 000')
-    if (typeof value === 'string') value = value.replace(/ /g, '')
-    return _.toNumber(value)
-  }
-  return math.unit(value, units.from).toNumber(units.to)
-}
-
-function applyCaseTransform (value, asCase) {
-  if (!asCase || typeof value !== 'string') return value
-  return _[asCase] ? _[asCase](value) : value[asCase]()
-}
-
-function applyUnitMapping (json, unitMapping) {
-  _.forOwn(unitMapping, (units, path) => {
-    _.forEach(json, object => {
-      if (_.has(object, path)) {
-        let value = _.get(object, path)
-        value = convertUnitValue(value, units)
-        value = applyCaseTransform(value, units.asCase)
-        _.set(object, path, value)
-      } else if (_.has(units, 'empty')) {
-        _.set(object, path, units.empty)
-      }
-    })
-  })
-}
-
-function applyPathMapping (json, mapping) {
-  _.forOwn(mapping, (output, inputPath) => {
-    const isMappingObject = (typeof output === 'object')
-    const outputPath = (isMappingObject ? output.path : output)
-    const deleteInputPath = (isMappingObject ? _.get(output, 'delete', true) : true)
-    _.forEach(json, object => {
-      if (!_.has(object, inputPath)) return
-      let value = _.get(object, inputPath)
-      if (isMappingObject && output.values) value = output.values[value]
-      _.set(object, outputPath, value)
-    })
-    if (deleteInputPath) {
-      _.forEach(json, object => _.unset(object, inputPath))
-    }
-  })
-}
-
-function applyPickOmitMerge (json, options) {
-  for (let i = 0; i < json.length; i++) {
-    let object = json[i]
-    if (options.pick) object = _.pick(object, options.pick)
-    if (options.omit) object = _.omit(object, options.omit)
-    if (options.merge) object = _.merge(object, options.merge)
-    json[i] = object
-  }
-}
-
-function reshapeInputJson (json, options) {
-  if (options.toArray) json = _.toArray(json)
-  if (options.toObjects) {
-    json = json.map(array => array.reduce((object, value, index) => {
-      const propertyName = options.toObjects[index]
-      object[propertyName] = value
-      return object
-    }, {}))
-  }
-  return json
-}
-
 export function transformJsonObject (json, options) {
   let rootJson = json
-  if (options.transformPath || options.inputPath) {
-    json = _.get(json, options.transformPath || options.inputPath)
-  }
+  // transformPath/inputPath/outputPath say where to read and write the payload, not how to
+  // transform it: they are hook options, so they stay here rather than in @kalisio/common-core.
+  const inputPath = options.transformPath || options.inputPath
+  const outputPath = options.transformPath || options.outputPath
+  if (inputPath) json = _.get(json, inputPath)
   // If no input path then we only have an output path
   // meaning we will store the array in the output object
   if (rootJson === json) rootJson = {}
-  json = reshapeInputJson(json, options)
 
-  // Safety check
-  const isArray = Array.isArray(json)
-  if (!isArray) json = [json]
-  if (options.filter) json = json.filter(sift(options.filter))
-  // By default we perform transformation in place
-  if (!_.get(options, 'inPlace', true)) json = _.cloneDeep(json)
+  json = transform(json, options)
 
-  applyPathMapping(json, options.mapping)
-  applyUnitMapping(json, options.unitMapping)
-  applyPickOmitMerge(json, options)
-
-  // Transform back to object when required
-  if (!isArray) {
-    if (!options.asArray) json = (json.length > 0 ? json[0] : {})
-  } else if (options.asObject) {
-    json = (json.length > 0 ? json[0] : {})
-  }
   // Then update JSON in place in memory
-  if (options.transformPath || options.outputPath) {
-    _.set(rootJson, options.transformPath || options.outputPath, json)
+  if (outputPath) {
+    _.set(rootJson, outputPath, json)
     json = rootJson
   }
 

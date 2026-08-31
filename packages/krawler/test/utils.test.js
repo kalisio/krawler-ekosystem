@@ -39,6 +39,82 @@ describe('krawler:utils', () => {
     expect(data.states[0].speed).toBe(258.32 / 0.514444)
   })
 
+  it('transform object using input and output paths', () => {
+    const data = utils.transformJsonObject({ src: [{ a: 1 }] }, {
+      inputPath: 'src',
+      outputPath: 'dst',
+      mapping: { a: 'b' }
+    })
+    expect(data.dst).toBeTruthy()
+    expect(data.dst[0].b).toBe(1)
+    expect(data.dst[0].a).toBeUndefined()
+    expect(data.src).toBeTruthy()
+  })
+
+  it('transform object keeps mapping other objects when one lacks the path', () => {
+    const data = utils.transformJsonObject([{ a: 'x' }, { z: 9 }, { a: 'z' }], {
+      mapping: { a: 'A' }
+    })
+    expect(data.length).toBe(3)
+    expect(data[0].A).toBe('x')
+    expect(data[1].A).toBeUndefined()
+    // The object without the path must not stop the ones after it
+    expect(data[2].A).toBe('z')
+  })
+
+  it('transform object converting values to numbers', () => {
+    const data = utils.transformJsonObject([{ v: '120 000 500' }, { v: '42' }], {
+      unitMapping: { v: { asNumber: true } }
+    })
+    // Large numbers are sometimes written with space separators
+    expect(data[0].v).toBe(120000500)
+    expect(data[1].v).toBe(42)
+  })
+
+  it('transform object converting case', () => {
+    const data = utils.transformJsonObject([{ s: 'hello world' }, { s: 'abc' }], {
+      unitMapping: { s: { asString: true, asCase: 'camelCase' } }
+    })
+    expect(data[0].s).toBe('helloWorld')
+    const native = utils.transformJsonObject([{ s: 'abc' }], {
+      unitMapping: { s: { asString: true, asCase: 'toUpperCase' } }
+    })
+    expect(native[0].s).toBe('ABC')
+  })
+
+  it('transform object using default and kept values', () => {
+    const data = utils.transformJsonObject([{ z: 1 }], {
+      unitMapping: { a: { empty: 'default' } }
+    })
+    expect(data[0].a).toBe('default')
+    const kept = utils.transformJsonObject([{ a: 1 }], {
+      mapping: { a: { path: 'b', delete: false } }
+    })
+    expect(kept[0].b).toBe(1)
+    expect(kept[0].a).toBe(1)
+  })
+
+  it('transform object switching between array and object', () => {
+    const asArray = utils.transformJsonObject({ a: 1 }, { asArray: true })
+    expect(Array.isArray(asArray)).toBe(true)
+    expect(asArray.length).toBe(1)
+    const asObject = utils.transformJsonObject([{ a: 1 }, { a: 2 }], { asObject: true })
+    expect(Array.isArray(asObject)).toBe(false)
+    expect(asObject.a).toBe(1)
+    const toArray = utils.transformJsonObject({ x: { a: 1 }, y: { a: 2 } }, {
+      toArray: true, mapping: { a: 'b' }
+    })
+    expect(toArray.length).toBe(2)
+    expect(toArray[0].b).toBe(1)
+  })
+
+  it('transform object without altering the input', () => {
+    const input = [{ a: 1, n: { d: 2 } }]
+    const data = utils.transformJsonObject(input, { omit: ['n.d'], inPlace: false })
+    expect(data[0].n.d).toBeUndefined()
+    expect(input[0].n.d).toBe(2)
+  })
+
   it('template query object', () => {
     const now = moment.utc()
     const item = {
