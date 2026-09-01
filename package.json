@@ -110,16 +110,6 @@
     "vite-bundle-visualizer": "catalog:",
     "vitest": "catalog:"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "gdal-async",
-      "vue-demi"
-    ],
-    "overrides": {
-      "@xmldom/xmldom@<0.8.4": ">=0.8.13 <0.9"
-    }
-  },
   "metaCatalog": {
     "version": "0.10.0",
     "syncedAt": "2026-09-01T12:31:15.769Z"

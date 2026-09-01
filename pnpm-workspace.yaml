@@ -2,6 +2,12 @@ packages:
   - packages/**
   - examples
   - docs/
+onlyBuiltDependencies:
+  - esbuild
+  - gdal-async
+  - vue-demi
+overrides:
+  '@xmldom/xmldom@<0.8.4': '>=0.8.13 <0.9'
 catalog:
   "@automerge/automerge-repo": ~2.4.0
   "@automerge/automerge-repo-network-websocket": ~2.4.0
