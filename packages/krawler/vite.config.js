@@ -36,6 +36,7 @@ export default mergeConfig(baseConfig, defineConfig({
         'fs-blob-store',
         'fs-extra',
         'gdal-async',
+        'got',
         'heap-js',
         'helmet',
         'imapflow',
@@ -55,6 +56,7 @@ export default mergeConfig(baseConfig, defineConfig({
         'sift',
         'socket.io-client',
         'tar',
+        'tough-cookie',
         'unzipper',
         'winston',
         'xml2js'
