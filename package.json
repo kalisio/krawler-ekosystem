@@ -22,7 +22,6 @@
     "prebump": "changeset",
     "bump": "changeset version",
     "clear": "pnpm -r exec rimraf node_modules dist coverage",
-    "docs:prepare": "pnpm --filter './examples/*' build",
     "docs:build": "pnpm --filter docs run build",
     "docs:dev": "pnpm --filter docs run dev",
     "inspect": "pnpm knip",
