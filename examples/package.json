@@ -45,7 +45,6 @@
   },
   "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/examples",
   "dependencies": {
-    "@kalisio/krawler": "workspace:*",
     "@turf/convex": "catalog:",
     "@turf/helpers": "catalog:",
     "@turf/simplify": "catalog:",
