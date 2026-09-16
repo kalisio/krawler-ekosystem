@@ -1,7 +1,7 @@
 {
   "name": "@kalisio/krawler-rte",
   "description": "A Krawler based job to download generation data from the French electrical network operated by RTE.",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "type": "module",
   "private": true,
   "keywords": [
@@ -33,7 +33,7 @@
     "lint": "standard --fix"
   },
   "krawler": {
-    "version": "2.8.2"
+    "version": "2.10.0"
   },
   "dependencies": {
     "lodash": "catalog:",

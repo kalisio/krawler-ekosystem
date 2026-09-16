@@ -1,7 +1,7 @@
 {
   "name": "@kalisio/krawler-icos",
   "description": "A Krawler based job to download atmospheric data from the ICOS Carbon Portal's Data Service",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "type": "module",
   "private": true,
   "keywords": [
@@ -34,7 +34,7 @@
     "lint": "standard --fix"
   },
   "krawler": {
-    "version": "2.8.2"
+    "version": "2.10.0"
   },
   "dependencies": {
     "lodash": "catalog:",

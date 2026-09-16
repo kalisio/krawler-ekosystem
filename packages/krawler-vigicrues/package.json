@@ -1,7 +1,7 @@
 {
   "name": "@kalisio/krawler-vigicrues",
   "description": "A Krawler based job to download data from the French flood warning system Vigicrues.",
-  "version": "1.10.1",
+  "version": "1.11.0",
   "type": "module",
   "private": true,
   "keywords": [
@@ -33,7 +33,7 @@
     "lint": "standard --fix"
   },
   "krawler": {
-    "version": "2.8.2"
+    "version": "2.10.0"
   },
   "dependencies": {
     "@turf/clean-coords": "catalog:",
