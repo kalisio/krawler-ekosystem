@@ -332,9 +332,6 @@ importers:
 
   examples:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../packages/krawler
       '@turf/convex':
         specifier: 'catalog:'
         version: 7.3.5
