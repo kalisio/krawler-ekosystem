@@ -25,3 +25,4 @@ Copyright (c) 2026 [Kalisio](https://kalisio.com).
   <source media="(prefers-color-scheme: light)" srcset="https://kalisio.github.io/kalisioscope/kalisio/kalisio-logo-light.svg">
   <img alt="Kalisio" src="https://kalisio.github.io/kalisioscope/kalisio/kalisio-logo-light.svg" height="96">
 </picture>
+
