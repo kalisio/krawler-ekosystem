@@ -38,8 +38,5 @@
   },
   "dependencies": {
     "lodash": "catalog:"
-  },
-  "peerDependencies": {
-    "@kalisio/krawler": "workspace:*"
   }
 }

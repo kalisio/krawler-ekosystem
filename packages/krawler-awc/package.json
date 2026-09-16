@@ -43,8 +43,5 @@
   "dependencies": {
     "lodash": "catalog:",
     "winston": "catalog:"
-  },
-  "peerDependencies": {
-    "@kalisio/krawler": "workspace:*"
   }
 }

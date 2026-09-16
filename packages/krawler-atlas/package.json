@@ -44,8 +44,5 @@
     "@turf/flatten": "catalog:",
     "glob": "catalog:",
     "lodash": "catalog:"
-  },
-  "peerDependencies": {
-    "@kalisio/krawler": "workspace:*"
   }
 }

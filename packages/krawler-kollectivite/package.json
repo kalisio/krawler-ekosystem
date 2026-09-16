@@ -35,8 +35,5 @@
     "@turf/centroid": "catalog:",
     "debug": "catalog:",
     "lodash": "catalog:"
-  },
-  "peerDependencies": {
-    "@kalisio/krawler": "workspace:*"
   }
 }

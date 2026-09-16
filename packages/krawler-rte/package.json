@@ -40,8 +40,5 @@
     "moment": "catalog:",
     "moment-timezone": "catalog:",
     "winston": "catalog:"
-  },
-  "peerDependencies": {
-    "@kalisio/krawler": "workspace:*"
   }
 }

@@ -562,9 +562,6 @@ importers:
 
   packages/krawler-atlas:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../krawler
       '@turf/area':
         specifier: 'catalog:'
         version: 7.3.5
@@ -583,9 +580,6 @@ importers:
 
   packages/krawler-awc:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../krawler
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
@@ -595,18 +589,12 @@ importers:
 
   packages/krawler-centipede:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../krawler
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
 
   packages/krawler-firms:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../krawler
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
@@ -619,9 +607,6 @@ importers:
 
   packages/krawler-hubeau:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../krawler
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
@@ -631,9 +616,6 @@ importers:
 
   packages/krawler-icos:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../krawler
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
@@ -646,9 +628,6 @@ importers:
 
   packages/krawler-kollectivite:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../krawler
       '@turf/centroid':
         specifier: 'catalog:'
         version: 7.3.5
@@ -661,9 +640,6 @@ importers:
 
   packages/krawler-meteofrance:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../krawler
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
@@ -676,9 +652,6 @@ importers:
 
   packages/krawler-openaq:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../krawler
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
@@ -691,9 +664,6 @@ importers:
 
   packages/krawler-openradiation:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../krawler
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
@@ -706,9 +676,6 @@ importers:
 
   packages/krawler-rte:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../krawler
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
@@ -724,9 +691,6 @@ importers:
 
   packages/krawler-teleray:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../krawler
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
@@ -736,9 +700,6 @@ importers:
 
   packages/krawler-vigicrues:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../krawler
       '@turf/clean-coords':
         specifier: 'catalog:'
         version: 7.3.5
@@ -772,9 +733,6 @@ importers:
 
   packages/krawler-weatherlink:
     dependencies:
-      '@kalisio/krawler':
-        specifier: workspace:*
-        version: link:../krawler
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
