@@ -1,7 +1,7 @@
 {
   "name": "@kalisio/krawler-teleray",
   "description": "A Krawler based job to download data from the French gamma dose rate alert Teleray network.",
-  "version": "0.0.0",
+  "version": "1.5.0",
   "type": "module",
   "private": true,
   "keywords": [

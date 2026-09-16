@@ -1,7 +1,7 @@
 {
   "name": "@kalisio/krawler-hubeau",
   "description": "A Krawler based job to download data from the Hub'Eau API.",
-  "version": "0.0.0",
+  "version": "1.11.0",
   "type": "module",
   "private": true,
   "keywords": [

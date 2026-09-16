@@ -1,7 +1,7 @@
 {
   "name": "@kalisio/krawler-openaq",
   "description": "A Krawler based job to download data from OpenAQ.",
-  "version": "0.0.0",
+  "version": "1.6.0",
   "type": "module",
   "private": true,
   "keywords": [

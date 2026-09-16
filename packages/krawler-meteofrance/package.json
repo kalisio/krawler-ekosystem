@@ -1,7 +1,7 @@
 {
   "name": "@kalisio/krawler-meteofrance",
   "description": "A Krawler job designed to scrape data from the Météo-France public API",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "private": true,
   "keywords": [

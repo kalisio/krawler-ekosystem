@@ -1,7 +1,7 @@
 {
   "name": "@kalisio/krawler-vigicrues",
   "description": "A Krawler based job to download data from the French flood warning system Vigicrues.",
-  "version": "0.0.0",
+  "version": "1.10.1",
   "type": "module",
   "private": true,
   "keywords": [
