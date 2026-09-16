@@ -20,7 +20,7 @@ ENV CRON="0 */10 * * * *"
 
 COPY --from=builder --chown=node:node /app /app/
 
-RUN rm -rf /app/packages/krawler-teleray/node_modules/@kalisio/krawler \
+RUN mkdir /app/packages/krawler-teleray/node_modules/@kalisio \
  && ln -s /krawler/packages/krawler /app/packages/krawler-teleray/node_modules/@kalisio/krawler
 
 WORKDIR /app/packages/krawler-teleray

@@ -28,7 +28,7 @@ ENV CRON="0 0 * * * *"
 
 COPY --from=builder --chown=node:node /app /app/
 
-RUN rm -rf /app/packages/krawler-icos/node_modules/@kalisio/krawler \
+RUN mkdir /app/packages/krawler-icos/node_modules/@kalisio \
  && ln -s /krawler/packages/krawler /app/packages/krawler-icos/node_modules/@kalisio/krawler
 
 WORKDIR /app/packages/krawler-icos

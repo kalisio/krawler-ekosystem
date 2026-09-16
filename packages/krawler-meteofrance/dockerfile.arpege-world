@@ -24,7 +24,7 @@ LABEL maintainer="Kalisio <contact@kalisio.xyz>"
 COPY --from=builder --chown=node:node /app /app/
 COPY --from=conversion-tool --chown=node:node /app/dist/kazarr /app/packages/krawler-meteofrance/kazarr
 
-RUN rm -rf /app/packages/krawler-meteofrance/node_modules/@kalisio/krawler \
+RUN mkdir /app/packages/krawler-meteofrance/node_modules/@kalisio \
  && ln -s /krawler/packages/krawler /app/packages/krawler-meteofrance/node_modules/@kalisio/krawler
 
 WORKDIR /app/packages/krawler-meteofrance
