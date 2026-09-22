@@ -80,6 +80,7 @@ export IMAGE_TAG="$SHORT_TAG"
 # release tag KRAWLER_TAG is left unset so each job uses its own krawler.version.
 if [ -z "$GIT_TAG" ]; then
     export KRAWLER_TAG="dev"
+    export KAZARR_TAG="latest"
 fi
 
 pnpm $FILTER --workspace-concurrency=1 run "/^build/"

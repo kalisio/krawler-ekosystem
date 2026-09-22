@@ -1,8 +1,9 @@
 ARG KRAWLER_TAG=latest
+ARG KAZARR_TAG=latest
 ARG NODE_VERSION=20
 ARG DEBIAN_VERSION=bookworm
 
-FROM kalisio/kazarr-conversion-tool:latest AS conversion-tool
+FROM kalisio/kazarr-conversion-tool:${KAZARR_TAG} AS conversion-tool
 
 FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS builder
 
