@@ -7,14 +7,23 @@ onlyBuiltDependencies:
   - gdal-async
   - vue-demi
 overrides:
-  '@xmldom/xmldom@<0.8.4': '>=0.8.13 <0.9'
+  "@xmldom/xmldom@<0.8.4": ">=0.8.15 <0.9"
+  brace-expansion@1.1.14: 1.1.18
+  engine.io@6.6.6: 6.6.7
+  fast-uri@3.1.0: 3.1.6
+  form-data@4.0.5: 4.0.6
+  js-yaml@4.1.1: 4.3.2
+  postcss@8.5.10: 8.5.18
+  socket.io-parser@4.2.6: 4.2.7
+  undici@6.25.0: 6.27.0
+  ws@8.18.3: 8.21.3
 catalog:
   "@automerge/automerge-repo": ~2.4.0
   "@automerge/automerge-repo-network-websocket": ~2.4.0
   "@automerge/automerge-repo-storage-indexeddb": ~2.4.0
-  "@aws-sdk/client-s3": ~3.943.0
-  "@aws-sdk/lib-storage": ~3.943.0
-  "@aws-sdk/s3-request-presigner": ~3.943.0
+  "@aws-sdk/client-s3": ~3.981.0
+  "@aws-sdk/lib-storage": ~3.981.0
+  "@aws-sdk/s3-request-presigner": ~3.981.0
   "@bull-board/api": ~6.20.6
   "@bull-board/express": ~6.20.6
   "@bull-board/ui": ~6.20.6
@@ -22,38 +31,41 @@ catalog:
   "@casl/mongoose": ~7.1.0
   "@changesets/cli": ~2.30.0
   "@eslint/js": ~9.14.0
-  "@feathersjs/adapter-commons": ~5.0.44
-  "@feathersjs/adapter-tests": ~5.0.44
-  "@feathersjs/authentication": ~5.0.44
-  "@feathersjs/authentication-client": ~5.0.44
-  "@feathersjs/authentication-local": ~5.0.44
-  "@feathersjs/authentication-oauth": ~5.0.44
-  "@feathersjs/client": ~5.0.44
-  "@feathersjs/commons": ~5.0.44
-  "@feathersjs/configuration": ~5.0.44
-  "@feathersjs/errors": ~5.0.44
-  "@feathersjs/express": ~5.0.44
-  "@feathersjs/feathers": ~5.0.44
-  "@feathersjs/memory": ~5.0.44
-  "@feathersjs/mongodb": ~5.0.44
-  "@feathersjs/rest-client": ~5.0.44
-  "@feathersjs/schema": ~5.0.44
-  "@feathersjs/socketio": ~5.0.44
-  "@feathersjs/socketio-client": ~5.0.44
-  "@kalisio/common-core": ~0.10.0
-  "@kalisio/common-geospatial": ~0.10.0
-  "@kalisio/common-graphics": ~0.10.0
+  "@feathersjs/adapter-commons": ~5.0.50
+  "@feathersjs/adapter-tests": ~5.0.50
+  "@feathersjs/authentication": ~5.0.50
+  "@feathersjs/authentication-client": ~5.0.50
+  "@feathersjs/authentication-local": ~5.0.50
+  "@feathersjs/authentication-oauth": ~5.0.50
+  "@feathersjs/client": ~5.0.50
+  "@feathersjs/commons": ~5.0.50
+  "@feathersjs/configuration": ~5.0.50
+  "@feathersjs/errors": ~5.0.50
+  "@feathersjs/express": ~5.0.50
+  "@feathersjs/feathers": ~5.0.50
+  "@feathersjs/memory": ~5.0.50
+  "@feathersjs/mongodb": ~5.0.50
+  "@feathersjs/rest-client": ~5.0.50
+  "@feathersjs/schema": ~5.0.50
+  "@feathersjs/socketio": ~5.0.50
+  "@feathersjs/socketio-client": ~5.0.50
+  "@kalisio/common-core": ~0.12.0
+  "@kalisio/common-geospatial": ~0.12.0
+  "@kalisio/common-graphics": ~0.12.0
   "@kalisio/feathers-automerge": ~0.3.8
-  "@kalisio/feathers-distributed": ~2.4.0
-  "@kalisio/feathers-import-export": ~1.4.1
-  "@kalisio/feathers-localforage": ~1.2.0
-  "@kalisio/feathers-s3": ~1.6.0
-  "@kalisio/feathers-webpush": ~1.0.1
+  "@kalisio/feathers-distributed": ~3.0.0
+  "@kalisio/feathers-import-export": ~3.0.0
+  "@kalisio/feathers-localforage": ~3.0.0
+  "@kalisio/feathers-mongodb-management": ~3.0.0
+  "@kalisio/feathers-s3": ~3.0.0
+  "@kalisio/feathers-tasks": ~3.0.0
+  "@kalisio/feathers-webpush": ~3.0.0
   "@kalisio/geo-pixel-stream": https://github.com/kalisio/geo-pixel-stream#gdal-async
   "@kalisio/kdk": ~2.7.0
   "@kalisio/vitepress-theme": ~2.1.0
   "@logtape/logtape": ~0.7.0
   "@mapbox/mbtiles": ~0.12.1
+  "@mapbox/sphericalmercator": ~2.0.2
   "@mapbox/vtquery": ~0.6.0
   "@modelcontextprotocol/sdk": ~1.29.0
   "@pdfme/common": ~5.2.0
@@ -94,7 +106,7 @@ catalog:
   "@vue/eslint-config-prettier": " ^10.1.0"
   "@vue/test-utils": ~2.4.6
   "@weacast/core": ~2.3.1
-  "@xmldom/xmldom": ~0.9.11
+  "@xmldom/xmldom": ~0.9.12
   ajv: ~8.20.0
   ajv-formats: ~3.0.1
   ajv-i18n: ~4.2.0
@@ -128,6 +140,7 @@ catalog:
   eslint-plugin-vue: ~10.4.0
   express: ~5.2.1
   express-rate-limit: ~5.1.0
+  fast-xml-parser: ~5.11.1
   feathers-authentication-management: ~4.0.0
   feathers-hooks-common: ~8.2.1
   feathers-mailer: ~3.0.0
@@ -148,7 +161,7 @@ catalog:
   imapflow: ~1.7.1
   ioredis: ~5.10.1
   is-docker: ~2.2.1
-  js-yaml: ~5.3.0
+  js-yaml: ~5.4.1
   jsdap: ~8.1.0
   jwt-decode: ~3.1.2
   keycloak-js: ~23.0.4
