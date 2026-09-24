@@ -5,7 +5,7 @@ import { getItems, replaceItems } from 'feathers-hooks-common'
 import makeDebug from 'debug'
 import { Duplex } from 'stream'
 import { object as commonObject } from '@kalisio/common-core/utilities'
-import { transform } from '@kalisio/common-core/operators'
+import { transform } from '@kalisio/common-core/operators/transform'
 
 const debug = makeDebug('krawler:utils')
 math.createUnit('knot', { definition: '0.514444 m/s', aliases: ['knots', 'kt', 'kts'] }, { override: true })
