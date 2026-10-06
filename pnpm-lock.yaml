@@ -6,159 +6,15 @@ settings:
 
 catalogs:
   default:
-    '@aws-sdk/client-s3':
-      specifier: ~3.981.0
-      version: 3.981.0
-    '@aws-sdk/lib-storage':
-      specifier: ~3.981.0
-      version: 3.981.0
     '@changesets/cli':
       specifier: ~2.30.0
       version: 2.30.0
-    '@feathersjs/authentication':
-      specifier: ~5.0.50
-      version: 5.0.50
-    '@feathersjs/client':
-      specifier: ~5.0.50
-      version: 5.0.50
-    '@feathersjs/errors':
-      specifier: ~5.0.50
-      version: 5.0.50
-    '@feathersjs/express':
-      specifier: ~5.0.50
-      version: 5.0.50
-    '@feathersjs/feathers':
-      specifier: ~5.0.50
-      version: 5.0.50
-    '@feathersjs/memory':
-      specifier: ~5.0.50
-      version: 5.0.50
-    '@feathersjs/mongodb':
-      specifier: ~5.0.50
-      version: 5.0.50
-    '@feathersjs/socketio':
-      specifier: ~5.0.50
-      version: 5.0.50
-    '@kalisio/common-core':
-      specifier: ~0.12.0
-      version: 0.12.0
-    '@kalisio/common-geospatial':
-      specifier: ~0.12.0
-      version: 0.12.0
-    '@kalisio/feathers-distributed':
-      specifier: ~3.0.0
-      version: 3.0.0
-    '@kalisio/geo-pixel-stream':
-      specifier: https://github.com/kalisio/geo-pixel-stream#gdal-async
-      version: 1.0.0
-    '@kalisio/vitepress-theme':
-      specifier: ~2.1.0
-      version: 2.1.0
-    '@tmcw/togeojson':
-      specifier: ~7.1.2
-      version: 7.1.2
-    '@turf/area':
-      specifier: ~7.3.5
-      version: 7.3.5
-    '@turf/buffer':
-      specifier: ~7.3.5
-      version: 7.3.5
-    '@turf/center-of-mass':
-      specifier: ~7.3.5
-      version: 7.3.5
-    '@turf/centroid':
-      specifier: ~7.3.5
-      version: 7.3.5
-    '@turf/clean-coords':
-      specifier: ~7.3.5
-      version: 7.3.5
-    '@turf/convex':
-      specifier: ~7.3.5
-      version: 7.3.5
-    '@turf/envelope':
-      specifier: ~7.3.5
-      version: 7.3.5
-    '@turf/flatten':
-      specifier: ~7.3.5
-      version: 7.3.5
-    '@turf/helpers':
-      specifier: ~7.3.5
-      version: 7.3.5
-    '@turf/invariant':
-      specifier: ~7.3.5
-      version: 7.3.5
-    '@turf/meta':
-      specifier: ~7.3.5
-      version: 7.3.5
-    '@turf/simplify':
-      specifier: ~7.3.5
-      version: 7.3.5
-    '@turf/union':
-      specifier: ~7.3.5
-      version: 7.3.5
     '@vitest/coverage-v8':
       specifier: ~4.1.4
       version: 4.1.5
-    '@xmldom/xmldom':
-      specifier: ~0.9.12
-      version: 0.9.12
-    boxen:
-      specifier: ~8.0.1
-      version: 8.0.1
-    commander:
-      specifier: ~2.20.3
-      version: 2.20.3
-    compression:
-      specifier: ~1.8.1
-      version: 1.8.1
-    cors:
-      specifier: ~2.8.6
-      version: 2.8.6
-    cron:
-      specifier: ~4.4.0
-      version: 4.4.0
-    debug:
-      specifier: ~4.4.3
-      version: 4.4.3
-    dockerode:
-      specifier: ~2.5.8
-      version: 2.5.8
-    envsub:
-      specifier: ~4.1.0
-      version: 4.1.0
-    feathers-hooks-common:
-      specifier: ~8.2.1
-      version: 8.2.1
-    fs-blob-store:
-      specifier: ~5.2.1
-      version: 5.2.1
-    fs-extra:
-      specifier: ~8.1.0
-      version: 8.1.0
-    gdal-async:
-      specifier: ~3.12.3
-      version: 3.12.3
-    glob:
-      specifier: ~13.0.1
-      version: 13.0.6
-    got:
-      specifier: ~15.1.0
-      version: 15.1.0
-    heap-js:
-      specifier: ~2.7.1
-      version: 2.7.1
-    helmet:
-      specifier: ~8.3.0
-      version: 8.3.0
     husky:
       specifier: ~9.1.7
       version: 9.1.7
-    imapflow:
-      specifier: ~1.7.1
-      version: 1.7.1
-    js-yaml:
-      specifier: ~5.4.1
-      version: 5.4.2
     knip:
       specifier: ~6.7.0
       version: 6.7.0
@@ -168,105 +24,18 @@ catalogs:
     lint-staged:
       specifier: ~16.4.0
       version: 16.4.0
-    lodash:
-      specifier: ~4.18.1
-      version: 4.18.1
-    lodash-es:
-      specifier: ~4.18.1
-      version: 4.18.1
-    mathjs:
-      specifier: ~15.2.0
-      version: 15.2.0
-    memory-blob-store:
-      specifier: ~5.0.1
-      version: 5.0.1
-    mermaid:
-      specifier: ~10.8.0
-      version: 10.8.0
-    moment:
-      specifier: ~2.30.1
-      version: 2.30.1
-    moment-timezone:
-      specifier: ~0.6.0
-      version: 0.6.2
-    mongodb:
-      specifier: ~6.20.0
-      version: 6.20.0
-    mubsub-es:
-      specifier: ~2.1.0
-      version: 2.1.0
-    nock:
-      specifier: ~14.0.13
-      version: 14.0.13
-    osmtogeojson:
-      specifier: 3.0.0-beta.5
-      version: 3.0.0-beta.5
-    papaparse:
-      specifier: ~5.7.0
-      version: 5.7.0
-    pg:
-      specifier: ~8.23.0
-      version: 8.23.0
-    proj4:
-      specifier: ~2.20.4
-      version: 2.20.8
-    quasar:
-      specifier: ~2.18.7
-      version: 2.18.7
     rimraf:
       specifier: ~6.1.3
       version: 6.1.3
-    sanitize-html:
-      specifier: ~2.17.4
-      version: 2.17.7
-    sift:
-      specifier: ~17.1.3
-      version: 17.1.3
-    socket.io-client:
-      specifier: ~4.8.2
-      version: 4.8.3
     standard:
       specifier: ~17.1.2
       version: 17.1.2
-    tar:
-      specifier: ~7.5.22
-      version: 7.5.22
-    tough-cookie:
-      specifier: ~6.0.2
-      version: 6.0.2
-    unzipper:
-      specifier: ~0.12.3
-      version: 0.12.5
     vite:
       specifier: ~7.3.1
       version: 7.3.2
-    vite-bundle-visualizer:
-      specifier: ~1.2.1
-      version: 1.2.1
-    vitepress:
-      specifier: ~1.6.3
-      version: 1.6.4
-    vitepress-plugin-mermaid:
-      specifier: ~2.0.16
-      version: 2.0.17
     vitest:
       specifier: ~4.1.4
       version: 4.1.5
-    vue:
-      specifier: ~3.5.30
-      version: 3.5.33
-    winston:
-      specifier: ~3.19.0
-      version: 3.19.0
-    winston-daily-rotate-file:
-      specifier: ~4.7.1
-      version: 4.7.1
-    winston-mongodb:
-      specifier: ~7.0.1
-      version: 7.0.1
-    xml2js:
-      specifier: ~0.6.2
-      version: 0.6.2
 
 overrides:
   '@xmldom/xmldom@<0.8.4': '>=0.8.15 <0.9'
@@ -311,9 +80,6 @@ importers:
       vite:
         specifier: 'catalog:'
         version: 7.3.2(@types/node@25.6.0)(jiti@2.6.1)(stylus@0.54.8)(yaml@2.8.3)
-      vite-bundle-visualizer:
-        specifier: 'catalog:'
-        version: 1.2.1(rollup@4.60.2)
       vitest:
         specifier: 'catalog:'
         version: 4.1.5(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(stylus@0.54.8)(yaml@2.8.3))
@@ -398,10 +164,10 @@ importers:
         version: 5.0.50
       '@kalisio/common-core':
         specifier: 'catalog:'
-        version: 0.12.0(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.2)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.7)(sift@17.1.3)
+        version: 0.12.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.2)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.7)(sift@17.1.3)
       '@kalisio/common-geospatial':
         specifier: 'catalog:'
-        version: 0.12.0(@kalisio/common-core@0.12.0(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.2)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.7)(sift@17.1.3))(@tmcw/togeojson@7.1.2)(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(@xmldom/xmldom@0.9.12)(heap-js@2.7.1)(proj4@2.20.8)
+        version: 0.12.1(@kalisio/common-core@0.12.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.2)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.7)(sift@17.1.3))(@tmcw/togeojson@7.1.2)(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(@xmldom/xmldom@0.9.12)(heap-js@2.7.1)(proj4@2.20.8)
       '@kalisio/feathers-distributed':
         specifier: 'catalog:'
         version: 3.0.0
@@ -1551,8 +1317,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@kalisio/common-core@0.12.0':
-    resolution: {integrity: sha512-VZPuCCQFeMt2mHUjpuMu8Dm4Wppg3vyF8So0UWmY2xRBCsRwuxUW0dEOmOiYSVaviaaTHtAxPMfIJlicgTge8w==}
+  '@kalisio/common-core@0.12.1':
+    resolution: {integrity: sha512-nGTm7M9kpl/BlG1JLrRzLGf77LcWyMv8V72y3YK+6wOsXzqXmCFLPsWpiL44i6bqDGrABKmlzzZz6K3El1Zkxw==}
     engines: {node: '>=20'}
     peerDependencies:
       '@xmldom/xmldom': ~0.9.11
@@ -1587,11 +1353,11 @@ packages:
       sift:
         optional: true
 
-  '@kalisio/common-geospatial@0.12.0':
-    resolution: {integrity: sha512-+JDhpF5Yk9BUzJob7K3Ynn5PoD57ocKiUrEOd81UhuaNjmEO4lmH83Lw37IyoSrgR3ROYhaeaWpxyitur/gT+Q==}
+  '@kalisio/common-geospatial@0.12.1':
+    resolution: {integrity: sha512-7GtROGq3QNUItBM7j3RhXcDeTjxfiMkPdaPcY3gcc43qpEzrbn52dYv7MsPTt5Jw//vagOc2yYq6Ahkn2A35fA==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@kalisio/common-core': 0.12.0
+      '@kalisio/common-core': 0.12.1
       '@tmcw/togeojson': ~7.1.2
       '@turf/buffer': ~7.3.5
       '@turf/convex': ~7.3.5
@@ -2906,10 +2672,6 @@ packages:
     resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
     engines: {node: '>= 0.8'}
 
-  cac@6.7.14:
-    resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
-    engines: {node: '>=8'}
-
   cacheable-lookup@7.0.0:
     resolution: {integrity: sha512-+qJyx4xiKra8mZrcwhjMRMUhD5NR1R8esPkzIYxX96JiecFoxAXFuz/GpR3+ev4PE1WamHip78wV0vcmPQtp8w==}
     engines: {node: '>=14.16'}
@@ -3000,10 +2762,6 @@ packages:
 
   cliui@7.0.4:
     resolution: {integrity: sha512-OcRE68cOsVMXp1Yvonl/fzkQOyjLSu/8bhPDfQt0e0/Eb283TKP20Fs2MqoPsr9SwA595rRCA+QMzYc9nBP+JQ==}
-
-  cliui@8.0.1:
-    resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
-    engines: {node: '>=12'}
 
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
@@ -3387,10 +3145,6 @@ packages:
   define-data-property@1.1.4:
     resolution: {integrity: sha512-rBMvIzlpA8v6E+SJZoo++HAYqsLrkg7MSfIinMPFhmkorw7X+dOXVJQs+QT69zGkzMyfDnIMN2Wid1+NbL3T+A==}
     engines: {node: '>= 0.4'}
-
-  define-lazy-prop@2.0.0:
-    resolution: {integrity: sha512-Ds09qNh8yw3khSjiJjiUInaGX9xlqZDY7JVryGxdxV7NPeuqQfplOpQ66yJFZut3jLa5zOwkXw1g9EI2uKh4Og==}
-    engines: {node: '>=8'}
 
   define-properties@1.2.1:
     resolution: {integrity: sha512-8QmQKqEASLd5nx0U1B1okLElbUuuttJ/AnYmRXbbbGDWh6uS208EjD4Xqq/I9wK7u0v6O08XhTWnt5XtEbR6Dg==}
@@ -4142,13 +3896,6 @@ packages:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
     engines: {node: '>=6'}
 
-  import-from-esm@1.3.4:
-    resolution: {integrity: sha512-7EyUlPFC0HOlBDpUFGfYstsU7XHxZJKAAMzCT8wZ0hMW7b+hG51LIKTDcsgtz8Pu6YC0HqRVbX+rVUtsGMUKvg==}
-    engines: {node: '>=16.20'}
-
-  import-meta-resolve@4.2.0:
-    resolution: {integrity: sha512-Iqv2fzaTQN28s/FwZAoFq0ZSs/7hMAHJVX+w8PZl3cY19Pxk6jFFalxQoIfW2826i/fDLXv8IiEZRIT0lDuWcg==}
-
   imurmurhash@0.1.4:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
     engines: {node: '>=0.8.19'}
@@ -4217,11 +3964,6 @@ packages:
   is-date-object@1.1.0:
     resolution: {integrity: sha512-PwwhEakHVKTdRNVOw+/Gyh0+MzlCl4R6qKvkhuvLtPMggI1WAHt9sOwZxQLSGpUaDnrdyDsomoRgNnCfKNSXXg==}
     engines: {node: '>= 0.4'}
-
-  is-docker@2.2.1:
-    resolution: {integrity: sha512-F+i2BKsFrH66iaUFc0woD8sLy8getkwTwtOBjvs56Cx4CgJDeKQeqfz8wAYiSb8JOprWhHH5p77PbmYCvvUuXQ==}
-    engines: {node: '>=8'}
-    hasBin: true
 
   is-extglob@2.1.1:
     resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
@@ -4329,10 +4071,6 @@ packages:
   is-windows@1.0.2:
     resolution: {integrity: sha512-eXK1UInq2bPmjyX6e3VHIzMLobc4J94i4AWn+Hpq3OU5KkrRC96OAcR3PRJ/pGu6m8TRnBHP9dkXQVsT/COVIA==}
     engines: {node: '>=0.10.0'}
-
-  is-wsl@2.2.0:
-    resolution: {integrity: sha512-fKzAra0rGJUUBwGBgNkHZuToZcn+TtXHpeCgmkMJMMYx1sQDYaCSyjJBSCa2nH1DGm7s3n1oBnohoVTBaN7Lww==}
-    engines: {node: '>=8'}
 
   isarray@0.0.1:
     resolution: {integrity: sha512-D2S+3GLxWH+uhrNEcoh/fnmYeP8E8/zHl644d/jdA0g2uyXvy3sb0qxotE+ne0LtccHknQzWwZEzhak7oJ0COQ==}
@@ -4982,10 +4720,6 @@ packages:
   oniguruma-to-es@3.1.1:
     resolution: {integrity: sha512-bUH8SDvPkH3ho3dvwJwfonjlQ4R80vjyvrU8YpxuROddv55vAEJrTuCuCVUhhsHbtlD9tGGbaNApGQckXhS8iQ==}
 
-  open@8.4.2:
-    resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
-    engines: {node: '>=12'}
-
   optimist@0.3.7:
     resolution: {integrity: sha512-TCx0dXQzVtSCg2OgY/bO9hjM9cV4XYx09TVK+s3+FhkjT6LovsLe+pPMzpWf+6yXK/hUizs2gUoTw3jHM0VaTQ==}
 
@@ -5435,19 +5169,6 @@ packages:
   robust-predicates@3.0.3:
     resolution: {integrity: sha512-NS3levdsRIUOmiJ8FZWCP7LG3QpJyrs/TE0Zpf1yvZu8cAJJ6QMW92H1c7kWpdIHo8RvmLxN/o2JXTKHp74lUA==}
 
-  rollup-plugin-visualizer@5.14.0:
-    resolution: {integrity: sha512-VlDXneTDaKsHIw8yzJAFWtrzguoJ/LnQ+lMpoVfYJ3jJF4Ihe5oYLAqLklIK/35lgUY+1yEzCkHyZ1j4A5w5fA==}
-    engines: {node: '>=18'}
-    hasBin: true
-    peerDependencies:
-      rolldown: 1.x
-      rollup: 2.x || 3.x || 4.x
-    peerDependenciesMeta:
-      rolldown:
-        optional: true
-      rollup:
-        optional: true
-
   rollup@4.60.2:
     resolution: {integrity: sha512-J9qZyW++QK/09NyN/zeO0dG/1GdGfyp9lV8ajHnRVLfo/uFsbji5mHnDgn/qYdUHyCkM2N+8VyspgZclfAh0eQ==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
@@ -5862,10 +5583,6 @@ packages:
     resolution: {integrity: sha512-GgouD1B+sWwvkaEq8vXC15DjQitxbvs12oIXELpconwm+Tg3zfcEv4jgzq3vtKverDXsg3VI8aRgNL2Nra0Iog==}
     hasBin: true
 
-  tmp@0.2.5:
-    resolution: {integrity: sha512-voyz6MApa1rQGUxT3E+BK7/ROe8itEx7vD8/HEvt4xwXucvQ5G5oeEiHkmHZJuBO21RpOf+YYm9MOivj709jow==}
-    engines: {node: '>=14.14'}
-
   to-buffer@1.2.2:
     resolution: {integrity: sha512-db0E3UJjcFhpDhAF4tLo03oli3pwl3dbnzXOUIlRKrp+ldk/VUxzpWYZENsw2SZiuBjHAk7DfB0VU7NKdpb6sw==}
     engines: {node: '>= 0.4'}
@@ -6065,11 +5782,6 @@ packages:
 
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
-
-  vite-bundle-visualizer@1.2.1:
-    resolution: {integrity: sha512-cwz/Pg6+95YbgIDp+RPwEToc4TKxfsFWSG/tsl2DSZd9YZicUag1tQXjJ5xcL7ydvEoaC2FOZeaXOU60t9BRXw==}
-    engines: {node: ^18.19.0 || >=20.6.0}
-    hasBin: true
 
   vite@5.4.21:
     resolution: {integrity: sha512-o5a9xKjbtuhY6Bi5S3+HvbRERmouabWbyUcpXXUA1u+GNUKoROi9byOJ8M0nHbHYHkYICiMlqxkg1KkYmm25Sw==}
@@ -6375,17 +6087,9 @@ packages:
     resolution: {integrity: sha512-y11nGElTIV+CT3Zv9t7VKl+Q3hTQoT9a1Qzezhhl6Rp21gJ/IVTW7Z3y9EWXhuUBC2Shnf+DX0antecpAwSP8w==}
     engines: {node: '>=10'}
 
-  yargs-parser@21.1.1:
-    resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
-    engines: {node: '>=12'}
-
   yargs@16.2.0:
     resolution: {integrity: sha512-D1mvvtDG0L5ft/jGWkLpG1+m0eQxOfaBvTNELraWj22wSVUMWxZUvYgJYcKh6jGGIkJFhH4IZPQhR4TKpc8mBw==}
     engines: {node: '>=10'}
-
-  yargs@17.7.2:
-    resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}
-    engines: {node: '>=12'}
 
   yatag@1.3.0:
     resolution: {integrity: sha512-kkdqNFmWCWdz2FkGYnnkyhKlpJbd9zlZuMTtcKpDJZ3ZgfuX0beGhuZseI6npm120Ti5iMI+53JOK2EUgUVziw==}
@@ -7448,7 +7152,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@kalisio/common-core@0.12.0(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.2)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.7)(sift@17.1.3)':
+  '@kalisio/common-core@0.12.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.2)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.7)(sift@17.1.3)':
     optionalDependencies:
       '@xmldom/xmldom': 0.9.12
       ajv: 8.20.0
@@ -7460,9 +7164,9 @@ snapshots:
       sanitize-html: 2.17.7
       sift: 17.1.3
 
-  '@kalisio/common-geospatial@0.12.0(@kalisio/common-core@0.12.0(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.2)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.7)(sift@17.1.3))(@tmcw/togeojson@7.1.2)(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(@xmldom/xmldom@0.9.12)(heap-js@2.7.1)(proj4@2.20.8)':
+  '@kalisio/common-geospatial@0.12.1(@kalisio/common-core@0.12.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.2)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.7)(sift@17.1.3))(@tmcw/togeojson@7.1.2)(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(@xmldom/xmldom@0.9.12)(heap-js@2.7.1)(proj4@2.20.8)':
     dependencies:
-      '@kalisio/common-core': 0.12.0(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.2)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.7)(sift@17.1.3)
+      '@kalisio/common-core': 0.12.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.2)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.7)(sift@17.1.3)
       '@turf/buffer': 7.3.5
       '@turf/convex': 7.3.5
       '@turf/helpers': 7.3.5
@@ -8871,8 +8575,6 @@ snapshots:
 
   bytes@3.1.2: {}
 
-  cac@6.7.14: {}
-
   cacheable-lookup@7.0.0: {}
 
   cacheable-request@13.0.19:
@@ -8956,12 +8658,6 @@ snapshots:
       string-width: 8.2.0
 
   cliui@7.0.4:
-    dependencies:
-      string-width: 4.2.3
-      strip-ansi: 6.0.1
-      wrap-ansi: 7.0.0
-
-  cliui@8.0.1:
     dependencies:
       string-width: 4.2.3
       strip-ansi: 6.0.1
@@ -9390,8 +9086,6 @@ snapshots:
       es-define-property: 1.0.1
       es-errors: 1.3.0
       gopd: 1.2.0
-
-  define-lazy-prop@2.0.0: {}
 
   define-properties@1.2.1:
     dependencies:
@@ -10406,15 +10100,6 @@ snapshots:
       parent-module: 1.0.1
       resolve-from: 4.0.0
 
-  import-from-esm@1.3.4:
-    dependencies:
-      debug: 4.4.3
-      import-meta-resolve: 4.2.0
-    transitivePeerDependencies:
-      - supports-color
-
-  import-meta-resolve@4.2.0: {}
-
   imurmurhash@0.1.4: {}
 
   inflight@1.0.6:
@@ -10493,8 +10178,6 @@ snapshots:
     dependencies:
       call-bound: 1.0.4
       has-tostringtag: 1.0.2
-
-  is-docker@2.2.1: {}
 
   is-extglob@2.1.1: {}
 
@@ -10587,10 +10270,6 @@ snapshots:
   is-what@5.5.0: {}
 
   is-windows@1.0.2: {}
-
-  is-wsl@2.2.0:
-    dependencies:
-      is-docker: 2.2.1
 
   isarray@0.0.1: {}
 
@@ -11349,12 +11028,6 @@ snapshots:
       regex: 6.1.0
       regex-recursion: 6.0.2
 
-  open@8.4.2:
-    dependencies:
-      define-lazy-prop: 2.0.0
-      is-docker: 2.2.1
-      is-wsl: 2.2.0
-
   optimist@0.3.7:
     dependencies:
       wordwrap: 0.0.3
@@ -11863,15 +11536,6 @@ snapshots:
 
   robust-predicates@3.0.3: {}
 
-  rollup-plugin-visualizer@5.14.0(rollup@4.60.2):
-    dependencies:
-      open: 8.4.2
-      picomatch: 4.0.4
-      source-map: 0.7.6
-      yargs: 17.7.2
-    optionalDependencies:
-      rollup: 4.60.2
-
   rollup@4.60.2:
     dependencies:
       '@types/estree': 1.0.8
@@ -12155,7 +11819,8 @@ snapshots:
 
   source-map@0.6.1: {}
 
-  source-map@0.7.6: {}
+  source-map@0.7.6:
+    optional: true
 
   space-separated-tokens@2.0.2: {}
 
@@ -12415,8 +12080,6 @@ snapshots:
     dependencies:
       tldts-core: 7.4.10
 
-  tmp@0.2.5: {}
-
   to-buffer@1.2.2:
     dependencies:
       isarray: 2.0.5
@@ -12610,17 +12273,6 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
-
-  vite-bundle-visualizer@1.2.1(rollup@4.60.2):
-    dependencies:
-      cac: 6.7.14
-      import-from-esm: 1.3.4
-      rollup-plugin-visualizer: 5.14.0(rollup@4.60.2)
-      tmp: 0.2.5
-    transitivePeerDependencies:
-      - rolldown
-      - rollup
-      - supports-color
 
   vite@5.4.21(@types/node@25.6.0)(stylus@0.54.8):
     dependencies:
@@ -12921,8 +12573,6 @@ snapshots:
 
   yargs-parser@20.2.9: {}
 
-  yargs-parser@21.1.1: {}
-
   yargs@16.2.0:
     dependencies:
       cliui: 7.0.4
@@ -12932,16 +12582,6 @@ snapshots:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 20.2.9
-
-  yargs@17.7.2:
-    dependencies:
-      cliui: 8.0.1
-      escalade: 3.2.0
-      get-caller-file: 2.0.5
-      require-directory: 2.1.1
-      string-width: 4.2.3
-      y18n: 5.0.8
-      yargs-parser: 21.1.1
 
   yatag@1.3.0:
     dependencies:

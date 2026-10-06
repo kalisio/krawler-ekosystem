@@ -95,7 +95,6 @@
     "url": "https://github.com/kalisio/krawler-ekosystem/issues"
   },
   "homepage": "git://github.com/kalisio/krawler-ekosystem#readme",
-  "dependencies": {},
   "devDependencies": {
     "@changesets/cli": "catalog:",
     "@vitest/coverage-v8": "catalog:",
@@ -106,11 +105,10 @@
     "rimraf": "catalog:",
     "standard": "catalog:",
     "vite": "catalog:",
-    "vite-bundle-visualizer": "catalog:",
     "vitest": "catalog:"
   },
   "metaCatalog": {
     "version": "0.10.0",
-    "syncedAt": "2026-09-24T12:50:01.972Z"
+    "syncedAt": "2026-10-06T20:37:52.218Z"
   }
 }
