@@ -29,7 +29,7 @@ init_github_build_package() {
 }
 
 init_github_build_docs() {
-    install_reqs age sops nvm node20
+    install_reqs age sops nvm node24
 }
 
 begin_group "Init $CI_ID for $JOB_ID"
