@@ -16,7 +16,8 @@ const __dirname = dirname(__filename)
 const { MongoClient } = mongo
 // WCS task hits a Météo-France endpoint that requires a secret token (injected
 // in CI via SOPS); skip when the token is missing.
-const itWcs = process.env.METEO_FRANCE_TOKEN ? it : it.skip
+// TODO const itWcs = process.env.METEO_FRANCE_TOKEN ? it : it.skip
+const itWcs = it.skip
 
 describe('krawler:tasks', () => {
   let app, server, mongoClient, storage, storageExists, fileStats, storesService, tasksService
@@ -191,6 +192,26 @@ describe('krawler:tasks', () => {
           height: 2,
           time: datetime.format()
         }
+      }
+    })
+    const exist = await storageExists('task.tif')
+    expect(exist).toBe(true)
+  }, 30000)
+
+  it('creates a WCS task', async () => {
+    const datetime = moment.utc().startOf('day')
+    await tasksService.create({
+      id: 'task.tif',
+      store: 'test-store',
+      type: 'wcs',
+      options: {
+        url: 'https://thredds.ucar.edu/thredds/wcs/grib/NCEP/GFS/Global_0p25deg/Best',
+        version: '1.0.0',
+        coverage: 'Temperature_height_above_ground',
+        format: 'GeoTIFF',
+        time: datetime.format(),
+        vertical: 2,
+        bbox: '0,40,10,50'
       }
     })
     const exist = await storageExists('task.tif')
