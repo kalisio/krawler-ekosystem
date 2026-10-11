@@ -8,6 +8,7 @@ import { describe, it, expect, beforeAll } from 'vitest'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+
 describe('krawler:hooks:main', () => {
   const inputStore = fsStore({ path: path.join(__dirname, 'data') })
   const outputStore = fsStore({ path: path.join(__dirname, 'output') })
@@ -320,11 +321,12 @@ describe('krawler:hooks:main', () => {
 
   it('get WMS capabilities', () => {
     return pluginHooks.getCapabilities({
-      url: 'https://geoservices.brgm.fr/risques',
-      service: 'WMS'
+      url: 'https://data.geopf.fr/wms-r',
+      service: 'WMS',
+      version: '1.3.0'
     })(capabilitiesHook)
       .then(hook => {
-        expect(hook.result.data).toBeTruthy()
+        expect(hook.result.data.WMS_Capabilities).toBeTruthy()
       })
-  }, 5000)
+  }, 30000)
 })
