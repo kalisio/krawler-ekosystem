@@ -90,8 +90,14 @@
     "float64_to_float32": true,
     "pipelines": {
       "preprocess": [
-        { "type": "process", "name": "load_and_merge_from_grib", "params": { "discriminator": ["SP1"] }},
-        { "type": "process", "name": "keep_variables", "params": { "keep_vars": ["efg10", "fg10", "nfg10", "r2", "si10", "t2m", "tp", "tsnowp", "u10", "v10", "wdir10"] }},
+        { "type": "process", "name": "load_and_merge_from_grib", "params": {
+          "discriminator": ["SP1", "SP2"],
+          "dataset_backend_kwargs": [
+            {"filter_by_keys": {"shortName": ["max_10efg", "max_i10fg", "max_10nfg", "2r", "10si", "2t", "tp", "tsnowp", "10u", "10v", "10wdir"]}},
+            {"filter_by_keys": {"shortName": ["lcc", "mcc", "hcc"]}}
+          ]
+        }},
+        { "type": "process", "name": "keep_variables", "params": { "keep_vars": ["efg10", "fg10", "nfg10", "r2", "si10", "t2m", "tp", "tsnowp", "u10", "v10", "wdir10", "lcc", "mcc", "hcc"] }},
         { "type": "process", "name": "rename_variables", "params": { "renameMap": {
           "efg10": "eastwardWindGust10m",
           "fg10": "windGust10m",
@@ -103,7 +109,10 @@
           "tsnowp": "totalSnowPrecipitation",
           "u10": "uWind10m",
           "v10": "vWind10m",
-          "wdir10": "windDirection10m"
+          "wdir10": "windDirection10m",
+          "lcc": "lowCloudCover",
+          "mcc": "mediumCloudCover",
+          "hcc": "highCloudCover"
         } } },
         "delta_time_to_datetime",
         "unify_chunks",
