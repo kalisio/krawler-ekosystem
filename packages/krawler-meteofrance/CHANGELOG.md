@@ -1,5 +1,11 @@
 # @kalisio/krawler-meteofrance
 
+## 1.2.1
+
+### Patch Changes
+
+- Add missing variables to surface template (cloud cover)
+
 ## 1.2.0
 
 ### Minor Changes
