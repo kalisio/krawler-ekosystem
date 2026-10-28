@@ -33,6 +33,8 @@ yarn.lock
 Thumbs.db
 
 # Temporary files
+tmp/
+temp/
 *.tmp
 *.temp
 *.swp
@@ -52,6 +54,9 @@ jest-*.json
 packages/krawler/test/output/
 packages/krawler-meteofrance/output
 examples/output/
+
+# PNPM hook
+.pnpmfile.cjs
 
 # Husky hooks
 .husky/_
