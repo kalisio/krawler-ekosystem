@@ -11,12 +11,12 @@ THIS_DIR=$(dirname "$THIS_FILE")
 ### Github Actions
 
 init_github_run_tests() {
-    install_reqs age sops nvm node20 mongo7 sonar_scanner_cli
+    install_reqs age sops nvm node24 mongo7 sonar_scanner_cli
     sudo apt-get update && sudo apt-get install gdal-bin
 }
 
 init_github_additional_tests() {
-    install_reqs age sops nvm node20 node22 node24 mongo7 mongo8
+    install_reqs age sops nvm node24 node26 mongo7 mongo8
     sudo apt-get update && sudo apt-get install gdal-bin
 }
 
@@ -25,7 +25,7 @@ init_github_build_krawler() {
 }
 
 init_github_build_package() {
-    install_reqs age sops nvm node20
+    install_reqs age sops nvm node24
 }
 
 init_github_build_docs() {

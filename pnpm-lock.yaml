@@ -40,14 +40,14 @@ catalogs:
       specifier: 5.0.50
       version: 5.0.50
     '@kalisio/common-core':
-      specifier: 0.12.1
-      version: 0.12.1
+      specifier: 1.0.1
+      version: 1.0.1
     '@kalisio/common-geospatial':
-      specifier: 0.12.1
-      version: 0.12.1
+      specifier: 1.0.1
+      version: 1.0.1
     '@kalisio/feathers-distributed':
-      specifier: 3.0.0
-      version: 3.0.0
+      specifier: 3.1.0
+      version: 3.1.0
     '@kalisio/geo-pixel-stream':
       specifier: https://github.com/kalisio/geo-pixel-stream#gdal-async
       version: 1.0.0
@@ -133,8 +133,8 @@ catalogs:
       specifier: 5.2.1
       version: 5.2.1
     fs-extra:
-      specifier: 8.1.0
-      version: 8.1.0
+      specifier: 11.4.1
+      version: 11.4.1
     gdal-async:
       specifier: 3.12.3
       version: 3.12.3
@@ -163,8 +163,8 @@ catalogs:
       specifier: 6.7.0
       version: 6.7.0
     lcov-result-merger:
-      specifier: 5.0.1
-      version: 5.0.1
+      specifier: 6.0.0
+      version: 6.0.0
     lint-staged:
       specifier: 16.4.0
       version: 16.4.0
@@ -296,7 +296,7 @@ importers:
         version: 6.7.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
       lcov-result-merger:
         specifier: 'catalog:'
-        version: 5.0.1
+        version: 6.0.0
       lint-staged:
         specifier: 'catalog:'
         version: 16.4.0
@@ -356,7 +356,7 @@ importers:
         version: 5.2.1
       fs-extra:
         specifier: 'catalog:'
-        version: 8.1.0
+        version: 11.4.1
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
@@ -393,13 +393,13 @@ importers:
         version: 5.0.50
       '@kalisio/common-core':
         specifier: 'catalog:'
-        version: 0.12.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.4)(sift@17.1.3)
+        version: 1.0.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.4)(sift@17.1.3)
       '@kalisio/common-geospatial':
         specifier: 'catalog:'
-        version: 0.12.1(@kalisio/common-core@0.12.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.4)(sift@17.1.3))(@tmcw/togeojson@7.1.2)(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(@xmldom/xmldom@0.9.12)(heap-js@2.7.1)(proj4@2.20.4)
+        version: 1.0.1(@kalisio/common-core@1.0.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.4)(sift@17.1.3))(@tmcw/togeojson@7.1.2)(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(@xmldom/xmldom@0.9.12)(heap-js@2.7.1)(proj4@2.20.4)
       '@kalisio/feathers-distributed':
         specifier: 'catalog:'
-        version: 3.0.0
+        version: 3.1.0
       '@kalisio/geo-pixel-stream':
         specifier: 'catalog:'
         version: https://codeload.github.com/kalisio/geo-pixel-stream/tar.gz/7e7c0bdf708705f1e5a3d970f8eb05cb1d9eb8a7
@@ -453,7 +453,7 @@ importers:
         version: 5.2.1
       fs-extra:
         specifier: 'catalog:'
-        version: 8.1.0
+        version: 11.4.1
       gdal-async:
         specifier: 'catalog:'
         version: 3.12.3
@@ -1542,20 +1542,20 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@kalisio/common-core@0.12.1':
-    resolution: {integrity: sha512-nGTm7M9kpl/BlG1JLrRzLGf77LcWyMv8V72y3YK+6wOsXzqXmCFLPsWpiL44i6bqDGrABKmlzzZz6K3El1Zkxw==}
+  '@kalisio/common-core@1.0.1':
+    resolution: {integrity: sha512-ZYPJKoLNUek1bHWK1J7+cucVPsSg8T/Fy+hO7CZh1KZKsn+9eyA/Ob1tNKes0MdcAEdXBEUL2NfNTI6aXYcrLg==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@xmldom/xmldom': ~0.9.11
-      ajv: ~8.20.0
-      fast-xml-parser: ~5.11.1
-      js-yaml: ~5.4.1
-      lodash-es: ~4.18.1
-      mathjs: ~15.2.0
-      moment: ~2.30.1
-      papaparse: ~5.7.0
-      sanitize-html: ~2.17.4
-      sift: ~17.1.3
+      '@xmldom/xmldom': 0.9.12
+      ajv: 8.20.0
+      fast-xml-parser: 5.11.1
+      js-yaml: 5.4.3
+      lodash-es: 4.18.1
+      mathjs: 15.2.0
+      moment: 2.30.1
+      papaparse: 5.7.0
+      sanitize-html: 2.17.4
+      sift: 17.1.3
     peerDependenciesMeta:
       '@xmldom/xmldom':
         optional: true
@@ -1578,29 +1578,32 @@ packages:
       sift:
         optional: true
 
-  '@kalisio/common-geospatial@0.12.1':
-    resolution: {integrity: sha512-7GtROGq3QNUItBM7j3RhXcDeTjxfiMkPdaPcY3gcc43qpEzrbn52dYv7MsPTt5Jw//vagOc2yYq6Ahkn2A35fA==}
+  '@kalisio/common-geospatial@1.0.1':
+    resolution: {integrity: sha512-P72gVNteMLrALnYgJAdt+V+jRIiFILrIZdP15npox5PyY78Ex52IAWFfwUhdlVvUpelOwnNpx2G4l0/C2Bwwqg==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@kalisio/common-core': 0.12.1
-      '@tmcw/togeojson': ~7.1.2
-      '@turf/buffer': ~7.3.5
-      '@turf/convex': ~7.3.5
-      '@turf/helpers': ~7.3.5
-      '@turf/meta': ~7.3.5
-      '@xmldom/xmldom': ~0.9.11
-      heap-js: ~2.7.1
-      proj4: ~2.20.4
+      '@kalisio/common-core': 1.0.1
+      '@tmcw/togeojson': 7.1.2
+      '@turf/buffer': 7.3.5
+      '@turf/convex': 7.3.5
+      '@turf/helpers': 7.3.5
+      '@turf/meta': 7.3.5
+      '@xmldom/xmldom': 0.9.12
+      heap-js: 2.7.1
+      pmtiles: 4.5.0
+      proj4: 2.20.4
     peerDependenciesMeta:
       '@tmcw/togeojson':
         optional: true
+      pmtiles:
+        optional: true
 
-  '@kalisio/feathers-distributed@3.0.0':
-    resolution: {integrity: sha512-h1HcnNjjDN1+LmYjyTfCpQn+3gRb7W0ykxaZaCisITYbH2GeYq5tIU1oeCFHbmP+/NjHhNC1+0QarlNoGfu8ng==}
+  '@kalisio/feathers-distributed@3.1.0':
+    resolution: {integrity: sha512-6o6g03VVVH0De4yJTybnBcrSRB1N1/am6j7B33bh6FcXr0jFU/oJlRibfQTL+4fEf5leXOXHx3bXFVhwe7agqQ==}
     engines: {node: '>=20'}
 
   '@kalisio/geo-pixel-stream@https://codeload.github.com/kalisio/geo-pixel-stream/tar.gz/7e7c0bdf708705f1e5a3d970f8eb05cb1d9eb8a7':
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/kalisio/geo-pixel-stream/tar.gz/7e7c0bdf708705f1e5a3d970f8eb05cb1d9eb8a7}
+    resolution: {gitHosted: true, integrity: sha512-2d73ACiO/aFbshRcgCYRkpFttBQGah4ojX5FYF/FmgO83yvJB6qTwxB+iPhBvjznkOL0ccNjjaPLfS/s67QYRA==, tarball: https://codeload.github.com/kalisio/geo-pixel-stream/tar.gz/7e7c0bdf708705f1e5a3d970f8eb05cb1d9eb8a7}
     version: 1.0.0
 
   '@kalisio/vitepress-theme@2.1.0':
@@ -2941,6 +2944,7 @@ packages:
 
   charm@1.0.2:
     resolution: {integrity: sha512-wqW3VdPnlSWT4eRiYX+hcs+C6ViBPUWk1qTCd+37qw9kEm/a5n2qcyQDMBWvSYKN/ctqZzeXNQaeBjOetJJUkw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   chownr@1.1.4:
     resolution: {integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==}
@@ -2968,8 +2972,9 @@ packages:
     resolution: {integrity: sha512-xRwvIOMGrfOAnM1JYtqQImuaNtDEv9v6oIYAs4LIHwTiKee8uwvIi363igssOC0O5U04i4AlENs79LQLu9tEMw==}
     engines: {node: '>=20'}
 
-  cliui@7.0.4:
-    resolution: {integrity: sha512-OcRE68cOsVMXp1Yvonl/fzkQOyjLSu/8bhPDfQt0e0/Eb283TKP20Fs2MqoPsr9SwA595rRCA+QMzYc9nBP+JQ==}
+  cliui@9.0.1:
+    resolution: {integrity: sha512-k7ndgKhwoQveBL+/1tqGJYNz097I7WOvwbmmU2AR5+magtbjPWQTS1C5vzGkBC8Ym8UWRzfKUzUUqFLypY4Q+w==}
+    engines: {node: '>=20'}
 
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
@@ -3860,8 +3865,8 @@ packages:
   fs-constants@1.0.0:
     resolution: {integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==}
 
-  fs-extra@11.3.1:
-    resolution: {integrity: sha512-eXvGGwZ5CL17ZSwHWd3bbgk7UUpF6IFHtP57NYYakPvHOs8GDgDe5KJI36jIJzDkJ6eJjuzRA8eBQb6SkKue0g==}
+  fs-extra@11.4.1:
+    resolution: {integrity: sha512-KYAb4c9BJQI6QqGKthV68OHe0badztdXJWKo0WtBA9IuCFPTKvE5ZdUBglP833aMjhaSPNO4A5j/EkzZtGlKjA==}
     engines: {node: '>=14.14'}
 
   fs-extra@7.0.1:
@@ -4427,9 +4432,9 @@ packages:
   layout-base@2.0.1:
     resolution: {integrity: sha512-dp3s92+uNI1hWIpPGH3jK2kxE2lMjdXdr+DH8ynZHpd6PUlH6x6cbuXnoMmiNumznqaNO31xu9e79F0uuZ0JFg==}
 
-  lcov-result-merger@5.0.1:
-    resolution: {integrity: sha512-i53RjTYfqbHgerqGtuJjDfARDU340zNxXrJudQZU3o8ak9rrx8FDQUKf38Cjm6MtbqonqiDFmoKuUe++uZbvOg==}
-    engines: {node: '>=14'}
+  lcov-result-merger@6.0.0:
+    resolution: {integrity: sha512-RsXi/N4J9b37mu83d3L8WdCGU0jsftN6GlXaJySK6fu+zD48joHC579hpA3K4brPvwWOhbNX5NoT7mghxDi5qw==}
+    engines: {node: '>=20'}
     hasBin: true
 
   levn@0.4.1:
@@ -5299,10 +5304,6 @@ packages:
     resolution: {integrity: sha512-Cj+MK38VtNu1S5J73mEZY3ciQb9dJajNq1Q8inP4dn/MhJMjHwoAF3Z3FjspwAEV9pfABl565MQucmrjOkty4g==}
     engines: {node: '>= 4.0.0'}
 
-  require-directory@2.1.1:
-    resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
-    engines: {node: '>=0.10.0'}
-
   require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
     engines: {node: '>=0.10.0'}
@@ -5634,6 +5635,10 @@ packages:
 
   string-width@8.2.0:
     resolution: {integrity: sha512-6hJPQ8N0V0P3SNmP6h2J99RLuzrWz2gvT7VnK5tKvrNqJoyS9W4/Fb8mo31UiPvy00z7DQXkP2hnKBVav76thw==}
+    engines: {node: '>=20'}
+
+  string-width@8.3.0:
+    resolution: {integrity: sha512-ZbmZM0JCihQN91dWnxoipT2KOEyHqEyfRXUyjuRhW8b/xnqPDoq4gWEVApTVa9db2wN8mmoikgFBbjh71+cGeQ==}
     engines: {node: '>=20'}
 
   string.prototype.matchall@4.0.12:
@@ -6218,10 +6223,6 @@ packages:
   wordwrap@1.0.0:
     resolution: {integrity: sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==}
 
-  wrap-ansi@7.0.0:
-    resolution: {integrity: sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==}
-    engines: {node: '>=10'}
-
   wrap-ansi@9.0.2:
     resolution: {integrity: sha512-42AtmgqjV+X1VpdOfyTGOYRi0/zsoLqtXQckTmqTeybT+BDIbM/Guxo7x3pE2vtpr1ok6xRqM9OpBe+Jyoqyww==}
     engines: {node: '>=18'}
@@ -6278,13 +6279,13 @@ packages:
     engines: {node: '>= 14.6'}
     hasBin: true
 
-  yargs-parser@20.2.9:
-    resolution: {integrity: sha512-y11nGElTIV+CT3Zv9t7VKl+Q3hTQoT9a1Qzezhhl6Rp21gJ/IVTW7Z3y9EWXhuUBC2Shnf+DX0antecpAwSP8w==}
-    engines: {node: '>=10'}
+  yargs-parser@22.0.0:
+    resolution: {integrity: sha512-rwu/ClNdSMpkSrUb+d6BRsSkLUq1fmfsY6TOpYzTwvwkg1/NRG85KBy3kq++A8LKQwX6lsu+aWad+2khvuXrqw==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=23}
 
-  yargs@16.2.0:
-    resolution: {integrity: sha512-D1mvvtDG0L5ft/jGWkLpG1+m0eQxOfaBvTNELraWj22wSVUMWxZUvYgJYcKh6jGGIkJFhH4IZPQhR4TKpc8mBw==}
-    engines: {node: '>=10'}
+  yargs@18.2.0:
+    resolution: {integrity: sha512-9OpKOLeaoNFecEp7P6iYbzze/5CqWoH7N3SMs/6y1XF4nMvFMspEGZzJ6uFi9MmQwXhyzqYoSEKO3tvA3Z/o2w==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=23}
 
   yatag@1.3.0:
     resolution: {integrity: sha512-kkdqNFmWCWdz2FkGYnnkyhKlpJbd9zlZuMTtcKpDJZ3ZgfuX0beGhuZseI6npm120Ti5iMI+53JOK2EUgUVziw==}
@@ -7345,7 +7346,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@kalisio/common-core@0.12.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.4)(sift@17.1.3)':
+  '@kalisio/common-core@1.0.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.4)(sift@17.1.3)':
     optionalDependencies:
       '@xmldom/xmldom': 0.9.12
       ajv: 8.20.0
@@ -7357,9 +7358,9 @@ snapshots:
       sanitize-html: 2.17.4
       sift: 17.1.3
 
-  '@kalisio/common-geospatial@0.12.1(@kalisio/common-core@0.12.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.4)(sift@17.1.3))(@tmcw/togeojson@7.1.2)(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(@xmldom/xmldom@0.9.12)(heap-js@2.7.1)(proj4@2.20.4)':
+  '@kalisio/common-geospatial@1.0.1(@kalisio/common-core@1.0.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.4)(sift@17.1.3))(@tmcw/togeojson@7.1.2)(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(@xmldom/xmldom@0.9.12)(heap-js@2.7.1)(proj4@2.20.4)':
     dependencies:
-      '@kalisio/common-core': 0.12.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.4)(sift@17.1.3)
+      '@kalisio/common-core': 1.0.1(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(papaparse@5.7.0)(sanitize-html@2.17.4)(sift@17.1.3)
       '@turf/buffer': 7.3.5
       '@turf/convex': 7.3.5
       '@turf/helpers': 7.3.5
@@ -7370,7 +7371,7 @@ snapshots:
     optionalDependencies:
       '@tmcw/togeojson': 7.1.2
 
-  '@kalisio/feathers-distributed@3.0.0':
+  '@kalisio/feathers-distributed@3.1.0':
     dependencies:
       '@feathersjs/commons': 5.0.50
       '@feathersjs/errors': 5.0.50
@@ -8825,11 +8826,11 @@ snapshots:
       slice-ansi: 8.0.0
       string-width: 8.2.0
 
-  cliui@7.0.4:
+  cliui@9.0.1:
     dependencies:
-      string-width: 4.2.3
-      strip-ansi: 6.0.1
-      wrap-ansi: 7.0.0
+      string-width: 7.2.0
+      strip-ansi: 7.2.0
+      wrap-ansi: 9.0.2
 
   clsx@2.1.1: {}
 
@@ -9980,7 +9981,7 @@ snapshots:
 
   fs-constants@1.0.0: {}
 
-  fs-extra@11.3.1:
+  fs-extra@11.4.1:
     dependencies:
       graceful-fs: 4.2.11
       jsonfile: 6.2.1
@@ -10611,10 +10612,10 @@ snapshots:
   layout-base@2.0.1:
     optional: true
 
-  lcov-result-merger@5.0.1:
+  lcov-result-merger@6.0.0:
     dependencies:
       fast-glob: 3.3.3
-      yargs: 16.2.0
+      yargs: 18.2.0
 
   levn@0.4.1:
     dependencies:
@@ -11641,8 +11642,6 @@ snapshots:
 
   replace-last@1.2.6: {}
 
-  require-directory@2.1.1: {}
-
   require-from-string@2.0.2: {}
 
   resolve-alpn@1.2.1: {}
@@ -12068,6 +12067,11 @@ snapshots:
       get-east-asian-width: 1.5.0
       strip-ansi: 7.2.0
 
+  string-width@8.3.0:
+    dependencies:
+      get-east-asian-width: 1.5.0
+      strip-ansi: 7.2.0
+
   string.prototype.matchall@4.0.12:
     dependencies:
       call-bind: 1.0.9
@@ -12388,7 +12392,7 @@ snapshots:
     dependencies:
       bluebird: 3.7.2
       duplexer2: 0.1.4
-      fs-extra: 11.3.1
+      fs-extra: 11.4.1
       graceful-fs: 4.2.11
       node-int64: 0.4.0
 
@@ -12687,12 +12691,6 @@ snapshots:
 
   wordwrap@1.0.0: {}
 
-  wrap-ansi@7.0.0:
-    dependencies:
-      ansi-styles: 4.3.0
-      string-width: 4.2.3
-      strip-ansi: 6.0.1
-
   wrap-ansi@9.0.2:
     dependencies:
       ansi-styles: 6.2.3
@@ -12729,17 +12727,16 @@ snapshots:
 
   yaml@2.8.3: {}
 
-  yargs-parser@20.2.9: {}
+  yargs-parser@22.0.0: {}
 
-  yargs@16.2.0:
+  yargs@18.2.0:
     dependencies:
-      cliui: 7.0.4
+      cliui: 9.0.1
       escalade: 3.2.0
       get-caller-file: 2.0.5
-      require-directory: 2.1.1
-      string-width: 4.2.3
+      string-width: 8.3.0
       y18n: 5.0.8
-      yargs-parser: 20.2.9
+      yargs-parser: 22.0.0
 
   yatag@1.3.0:
     dependencies:

@@ -25,7 +25,7 @@ EXTRA_FULL_REBUILD_PATHS=()
 ## Parse options
 ##
 
-NODE_VER=20
+NODE_VER=24
 PUBLISH=false
 CI_STEP_NAME="Build package"
 while getopts "n:pr:" option; do
