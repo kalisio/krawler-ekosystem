@@ -6,7 +6,7 @@ import { hooks } from '@kalisio/krawler'
 const API_KEY = process.env.API_KEY
 const LOOKBACK_PERIOD = process.env.LOOKBACK_PERIOD || 'PT3H'
 const DELAY = +process.env.DELAY || 1200
-const TTL = +process.env.TTL || (7 * 24 * 60 * 60)  // duration in seconds
+const TTL = +process.env.TTL || (7 * 24 * 60 * 60) // duration in seconds
 const TIMEOUT = parseInt(process.env.TIMEOUT, 10) || (60 * 60 * 1000) // duration in milliseconds
 const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/openaq'
 const PARAMETERS = ['pm10', 'pm25', 'so2', 'no2', 'o3', 'co']
@@ -15,9 +15,9 @@ const LOCATIONS_COLLECTION = 'openaq-locations'
 const BASE_URL = 'https://api.openaq.org/v3/locations'
 
 // Create a custom hook to generate tasks
-let generateTasks = (options) => {
+const generateTasks = (options) => {
   return (hook) => {
-    let tasks = []
+    const tasks = []
     _.forEach(hook.data.locations, location => {
       tasks.push({
         taskId: location.properties.locationId,
@@ -56,10 +56,10 @@ export default {
         },
         apply: {
           function: (item) => {
-            // filter and map the results according the time 
+            // filter and map the results according the time
             const datetimeMin = moment.utc().subtract(LOOKBACK_PERIOD)
-            let results = {}
-            _.forEach(_.get(item, 'openaqResponse.results'), result =>{
+            const results = {}
+            _.forEach(_.get(item, 'openaqResponse.results'), result => {
               const time = result.datetime.utc
               if (moment.utc(time).isAfter(datetimeMin)) {
                 const value = result.value
@@ -72,9 +72,9 @@ export default {
               }
             })
             // create the measurements by aggregating the parameter values
-            let measurements = []
+            const measurements = []
             _.forOwn(results, (parameters, time) => {
-              let measurement = {
+              const measurement = {
                 type: 'Feature',
                 geometry: item.location.geometry,
                 properties: {
@@ -96,11 +96,11 @@ export default {
         updateMongoCollection: {
           collection: MEASUREMENTS_COLLECTION,
           filter: { 'properties.measurementId': '<%= properties.measurementId %>' },
-          upsert : true,
+          upsert: true,
           chunkSize: 256,
-          transform: { 
-            unitMapping: { 
-              time: { asDate: 'utc' },
+          transform: {
+            unitMapping: {
+              time: { asDate: 'utc' }
             }
           }
         },
@@ -115,8 +115,8 @@ export default {
           TTL,
           TIMEOUT
         },
-        createStores: { 
-          id: 'memory' 
+        createStores: {
+          id: 'memory'
         },
         createLogger: {
           loggerPath: 'taskTemplate.logger',
@@ -135,13 +135,13 @@ export default {
           collection: MEASUREMENTS_COLLECTION,
           indices: [
             [{ time: 1, 'properties.measurementId': 1 }, { unique: true }],
-            [ { 'properties.locationId': 1, pm10 : 1, time: -1 }, { background: true } ],
-            [ { 'properties.locationId': 1, pm25 : 1, time: -1 }, { background: true } ],            
-            [ { 'properties.locationId': 1, so2 : 1, time: -1 }, { background: true } ],
-            [ { 'properties.locationId': 1, no2 : 1, time: -1 }, { background: true } ],
-            [ { 'properties.locationId': 1, o3 : 1, time: -1 }, { background: true } ],
-            [ { 'properties.locationId': 1, co : 1, time: -1 }, { background: true } ],
-            [{ time: 1 }, { expireAfterSeconds: TTL }], // days in s  
+            [{ 'properties.locationId': 1, pm10: 1, time: -1 }, { background: true }],
+            [{ 'properties.locationId': 1, pm25: 1, time: -1 }, { background: true }],
+            [{ 'properties.locationId': 1, so2: 1, time: -1 }, { background: true }],
+            [{ 'properties.locationId': 1, no2: 1, time: -1 }, { background: true }],
+            [{ 'properties.locationId': 1, o3: 1, time: -1 }, { background: true }],
+            [{ 'properties.locationId': 1, co: 1, time: -1 }, { background: true }],
+            [{ time: 1 }, { expireAfterSeconds: TTL }], // days in s
             { geometry: '2dsphere' }
           ]
         },
@@ -150,7 +150,7 @@ export default {
           collection: LOCATIONS_COLLECTION,
           dataPath: 'data.locations'
         },
-        generateTasks: {}        
+        generateTasks: {}
       },
       after: {
         disconnectMongo: {

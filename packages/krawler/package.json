@@ -23,6 +23,7 @@
   },
   "scripts": {
     "build": "vite build",
+    "postbuild": "publint",
     "lint": "standard --fix",
     "test": "bash -c 'source ../../../development/workspaces/jobs/jobs.sh krawler && vitest run --coverage'"
   },
@@ -41,16 +42,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/kalisio/krawler-ekosystem.git",
+    "url": "git+https://github.com/kalisio/krawler-ekosystem.git",
     "directory": "packages/krawler"
   },
   "bugs": {
     "url": "https://github.com/kalisio/krawler-ekosystem/issues"
   },
   "homepage": "https://github.com/kalisio/krawler-ekosystem/tree/main/packages/krawler",
-  "engines": {
-    "node": ">= 20.0.0"
-  },
   "dependencies": {
     "@aws-sdk/client-s3": "catalog:",
     "@aws-sdk/lib-storage": "catalog:",
@@ -117,5 +115,8 @@
     "vitest": "catalog:",
     "winston-daily-rotate-file": "catalog:",
     "winston-mongodb": "catalog:"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }

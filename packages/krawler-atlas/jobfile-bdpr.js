@@ -11,22 +11,22 @@ const storePath = process.env.STORE_PATH || 'data/IGN/BDPR'
 // FIXME: download URL from IGN website does not work with wget and cannot found a new one on geoplatform
 const url = 'https://wxs.ign.fr/kpm72ua4hed0u26lqtymrem2/telechargement/prepackage/BDPR_PACK_DIFF_01-2018$BDPR_1-0_SHP_LAMB93_FXX_2018-07-31/file/BDPR_1-0_SHP_LAMB93_FXX_2018-07-31.7z'
 
-let generateTasks = (options) => {
+const generateTasks = (options) => {
   return async (hook) => {
-    let tasks = []
-    
+    const tasks = []
+
     const store = await utils.getStoreFromHook(hook, 'generateTasks')
     const pattern = path.join(store.path, '**/*.geojson')
     const files = sync(pattern)
     files.forEach(file => {
       const key = _.replace(path.normalize(file), path.normalize(store.path), '.')
-      let task = {
+      const task = {
         id: _.kebabCase(path.parse(file).name),
-        key: key,
+        key,
         collection: 'bdpr-' + _.kebabCase(path.parse(file).name)
       }
       console.log('creating task for ' + file)
-      tasks.push(task)  
+      tasks.push(task)
     })
     hook.data.tasks = tasks
     return hook
@@ -61,11 +61,11 @@ export default {
         },
         writeMongoCollection: {
           chunkSize: 256,
-          collection: '<%= collection %>',
+          collection: '<%= collection %>'
         },
         writeJson: {
           store: 's3',
-          key: path.posix.join(storePath, `<%= collection.replace('bdpr-', '') %>.geojson`)
+          key: path.posix.join(storePath, '<%= collection.replace(\'bdpr-\', \'\') %>.geojson')
         },
         clearData: {}
       }
@@ -76,7 +76,7 @@ export default {
           id: 'fs',
           options: {
             path: path.join(__dirname, 'bdpr')
-          }, 
+          }
         },
         {
           id: 's3',

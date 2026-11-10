@@ -7,11 +7,10 @@ import winston from 'winston'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/icos'
-const TTL = +process.env.TTL || (7 * 24 * 60 * 60)  // duration in seconds
-const HISTORY =  parseInt(process.env.HISTORY) || (1 * 24 * 60 * 60) // duration in seconds
+const TTL = +process.env.TTL || (7 * 24 * 60 * 60) // duration in seconds
+const HISTORY = parseInt(process.env.HISTORY) || (1 * 24 * 60 * 60) // duration in seconds
 const SPEC_FILTER = process.env.OBJECT_SPEC_FILTER || 'radon data'
 const VARIABLE = process.env.OBJECT_VARIABLE || 'rn'
-const START_TIME = moment.utc().subtract(HISTORY, 'seconds')
 
 export default {
   id: 'icos-observations',
@@ -21,12 +20,12 @@ export default {
   },
   taskTemplate: {
     // Default file name is raw data (eg as zip) instead of CSV, update to avois any confusion
-    id: `<%= fileName.replace('.zip', '.csv') %>`,
+    id: '<%= fileName.replace(\'.zip\', \'.csv\') %>',
     type: 'http',
     options: {
       // URL to download objects directly as CSV is slightly different from raw data (eg as zip)
       // See https://github.com/ICOS-Carbon-Portal/data#csv-download-for-tabular-time-series-data
-      url: `<%= objectUrl.replace('meta.icos-cp.eu/objects', 'data.icos-cp.eu/csv') %>`,
+      url: '<%= objectUrl.replace(\'meta.icos-cp.eu/objects\', \'data.icos-cp.eu/csv\') %>',
       auth: {
         url: 'https://cpauth.icos-cp.eu/password/login',
         form: {
@@ -51,11 +50,11 @@ export default {
               }
             },
             { $sort: { time: -1 } },
-            { $limit : 1 },
+            { $limit: 1 },
             {
               $group: {
-                _id: "$properties.stationId",
-                time: { $first: "$time" }
+                _id: '$properties.stationId',
+                time: { $first: '$time' }
               }
             }
           ],
@@ -70,7 +69,7 @@ export default {
           function: (item) => {
             const { longitude, latitude, altitude, samplingHeight, stationId, stationName, data } = item
             const latestData = _.get(item, 'mostRecentData[0]')
-            let features = []
+            const features = []
             _.forEach(data, (record) => {
               const time = moment.utc(record.TIMESTAMP)
               // Check if newer
@@ -139,8 +138,8 @@ export default {
             { 'properties.stationId': 1, time: -1 },
             { 'properties.stationId': 1, [`properties.${VARIABLE}`]: 1, time: -1 },
             [{ time: 1 }, { expireAfterSeconds: TTL }], // days in s
-            { geometry: '2dsphere' }                                                                                                              
-          ],
+            { geometry: '2dsphere' }
+          ]
         },
         runTask: {
           store: 'memory',
@@ -209,7 +208,7 @@ export default {
         removeLogger: {
           loggerPath: 'taskTemplate.logger'
         },
-        removeStores: [ 'memory', 'fs' ]
+        removeStores: ['memory', 'fs']
       },
       error: {
         disconnectMongo: {
@@ -218,7 +217,7 @@ export default {
         removeLogger: {
           loggerPath: 'taskTemplate.logger'
         },
-        removeStores: [ 'memory', 'fs' ]
+        removeStores: ['memory', 'fs']
       }
     }
   }

@@ -31,12 +31,12 @@ const FILTERS = Object.keys(LAYERS)
 // Topage download service URL
 const url = 'https://services.sandre.eaufrance.fr/telechargement/geo/ETH/BDTopage/2025/BD_Topage_FXX_2025-shp.zip'
 
-let generateTasks = () => {
+const generateTasks = () => {
   return async (hook) => {
     console.log('<i> Generating Topage tasks')
 
     const store = await utils.getStoreFromHook(hook, 'generateTasks')
-    const files = sync(path.join(store.path, '**/*shp*')) 
+    const files = sync(path.join(store.path, '**/*shp*'))
 
     console.log(`<i> Found ${files.length} files`)
 
@@ -81,30 +81,30 @@ export default {
       after: {
         extractShapefiles: {
           hook: 'runCommand',
-          command: `./generate-bdtopage-geojson.sh bdtopage-output bdtopage-workdir/archives/<%= key %> bdtopage-output/geojson/<%= id %>.geojson >bdtopage-workdir/generate-<%= id %>.log 2>&1`,
+          command: './generate-bdtopage-geojson.sh bdtopage-output bdtopage-workdir/archives/<%= key %> bdtopage-output/geojson/<%= id %>.geojson >bdtopage-workdir/generate-<%= id %>.log 2>&1'
         },
         readJson: {
           key: 'geojson/<%= id %>.geojson',
-          store: "output",
+          store: 'output'
         },
         createMongoCollection: {
-          collection : "bdtopage-<%= id %>",
+          collection: 'bdtopage-<%= id %>',
           indices: [
-            { geometry: '2dsphere' },
+            { geometry: '2dsphere' }
           ]
         },
         writeMongoCollection: {
           chunkSize: 256,
-          collection : "bdtopage-<%= id %>",
+          collection: 'bdtopage-<%= id %>',
           checkKeys: false,
-          ordered : false,
-          faultTolerant: true,
+          ordered: false,
+          faultTolerant: true
         },
         log: {
           hook: 'apply',
           function: (task) => console.log(`<i> Imported ${task.data.features.length} features for layer ${task.id}`)
         },
-        clearData: {},
+        clearData: {}
       }
     },
     jobs: {
@@ -113,15 +113,15 @@ export default {
           id: 'fs',
           options: {
             path: path.join(__dirname, 'bdtopage-workdir')
-          }, 
-          
+          }
+
         },
         {
           id: 'output',
           type: 'fs',
           options: {
             path: path.join(__dirname, 'bdtopage-output')
-          }, 
+          }
         }
         ],
         connectMongo: {
@@ -130,7 +130,7 @@ export default {
         },
         fetchTopage: {
           hook: 'runCommand',
-          command: './fetch-bdtopage.sh ' + url + ' bdtopage-workdir >bdtopage-workdir/fetch-bdtopage.log 2>&1',
+          command: './fetch-bdtopage.sh ' + url + ' bdtopage-workdir >bdtopage-workdir/fetch-bdtopage.log 2>&1'
         },
         generateTasks: {}
       },
@@ -138,7 +138,7 @@ export default {
         disconnectMongo: {
           clientPath: 'taskTemplate.client'
         },
-        removeStores: ['fs'],
+        removeStores: ['fs']
       },
       error: {
         disconnectMongo: {

@@ -8,7 +8,7 @@ export default {
   store: 'memory',
   options: {
     workersLimit: 1,
-    faultTolerant: true,
+    faultTolerant: true
   },
   tasks: [{
     id: 'stations',
@@ -23,22 +23,22 @@ export default {
         readJson: {},
         apply: {
           function: (item) => {
-            let stations = []
+            const stations = []
             for (const feature of _.get(item.data, 'features', [])) {
-              let name = feature.properties.libelle_station || feature.properties.libelle_site || feature.properties.libelle_commune
-              let station = _.cloneDeep(feature)
+              const name = feature.properties.libelle_station || feature.properties.libelle_site || feature.properties.libelle_commune
+              const station = _.cloneDeep(feature)
               _.set(station, 'properties.name', name)
-              _.set(station, 'properties.code_station', '#' + feature.properties.code_station)  // prefix the code to disable automatic data conversion
+              _.set(station, 'properties.code_station', '#' + feature.properties.code_station) // prefix the code to disable automatic data conversion
               stations.push(station)
             }
             item.data = stations
           }
         },
-        log: (logger, item) => { logger.info(`Found ${item.data.length} stations`)},
+        log: (logger, item) => { logger.info(`Found ${item.data.length} stations`) },
         updateMongoCollection: {
           collection: 'hubeau-hydro-stations',
           filter: { 'properties.code_station': '<%= properties.code_station %>' },
-          upsert : true,
+          upsert: true,
           chunkSize: 256
         },
         clearData: {}
@@ -74,7 +74,7 @@ export default {
         removeLogger: {
           loggerPath: 'taskTemplate.logger'
         },
-        removeStores: [ 'memory' ]
+        removeStores: ['memory']
       },
       error: {
         disconnectMongo: {
@@ -83,7 +83,7 @@ export default {
         removeLogger: {
           loggerPath: 'taskTemplate.logger'
         },
-        removeStores: [ 'memory' ]
+        removeStores: ['memory']
       }
     }
   }

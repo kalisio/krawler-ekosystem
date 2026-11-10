@@ -3,7 +3,7 @@ import path from 'path'
 import makeDebug from 'debug'
 import { fileURLToPath } from 'url'
 import centroid from '@turf/centroid'
-import input_tasks from './bdtopo-tasks.js'
+import inputTasks from './bdtopo-tasks.js'
 import { fetchInseeCodes } from './utils.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -45,19 +45,19 @@ function buildOGCFilter (filters) {
 
 function buildRequest (task, inseeCodes) {
   const allFilters = []
-  if (inseeCodes?.length)
-    allFilters.push({ insee_commune: inseeCodes.length === 1 ? inseeCodes[0] : inseeCodes })
-  if (task.filter && !Array.isArray(task.filter))
-    allFilters.push(task.filter)
+  if (inseeCodes?.length) { allFilters.push({ insee_commune: inseeCodes.length === 1 ? inseeCodes[0] : inseeCodes }) }
+  if (task.filter && !Array.isArray(task.filter)) { allFilters.push(task.filter) }
 
   const xmlFilter = buildOGCFilter(allFilters)
-  //if (xmlFilter) console.log(`\n[FILTER XML] ${task.typename}:\n${xmlFilter}\n`)
+  // if (xmlFilter) console.log(`\n[FILTER XML] ${task.typename}:\n${xmlFilter}\n`)
 
   const params = new URLSearchParams({
-    SERVICE: 'WFS', VERSION: '2.0.0', REQUEST: 'GetFeature',
+    SERVICE: 'WFS',
+    VERSION: '2.0.0',
+    REQUEST: 'GetFeature',
     TYPENAMES: task.typename,
     OUTPUTFORMAT: 'application/json',
-    SRSNAME: task.srsName || 'EPSG:4326',
+    SRSNAME: task.srsName || 'EPSG:4326'
   })
   if (xmlFilter) params.set('FILTER', xmlFilter)
 
@@ -67,7 +67,7 @@ function buildRequest (task, inseeCodes) {
 
 const generateTasks = () => (hook) => {
   const inseeCodes = hook.data.inseeCodes
-  hook.data.tasks = Object.entries(input_tasks)
+  hook.data.tasks = Object.entries(inputTasks)
     .filter(([id]) => {
       const ok = new RegExp(BDTOPO_TASK_FILTER).test(id)
       if (!ok) debug(`Skipping task ${id}`)
@@ -103,10 +103,10 @@ export default {
         readJson: {},
         apply: {
           function: (task) => {
-            if (task.options.out == "center") {
+            if (task.options.out === 'center') {
               task.data.features = task.data.features
-              .filter(f => f.geometry?.type === 'Polygon' || f.geometry?.type === 'MultiPolygon')
-              .map(f => centroid(f, { properties: f.properties }))
+                .filter(f => f.geometry?.type === 'Polygon' || f.geometry?.type === 'MultiPolygon')
+                .map(f => centroid(f, { properties: f.properties }))
             }
             const { _sourceSrs, ...cleanProps } = task.options.properties
             Object.assign(task.data, cleanProps)
@@ -132,7 +132,9 @@ export default {
     jobs: {
       before: {
         createStores: [{
-          id: 'output-store', type: 'fs', storePath: 'taskTemplate.outputStore',
+          id: 'output-store',
+          type: 'fs',
+          storePath: 'taskTemplate.outputStore',
           options: { path: path.join(__dirname, '.', 'output', 'bdtopo_output') }
         }],
         fetchInseeCodes: {},

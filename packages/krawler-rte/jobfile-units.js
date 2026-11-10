@@ -13,7 +13,7 @@ export default {
   store: 'memory',
   options: {
     workersLimit: 1,
-    faultTolerant: true,
+    faultTolerant: true
   },
   tasks: [{
     id: 'reactors.csv',
@@ -90,7 +90,7 @@ export default {
           clientPath: 'taskTemplate.client',
           collection: 'rte-units',
           indices: [
-            [{ 'properties.eicCode': 1 }, { unique: true }], 
+            [{ 'properties.eicCode': 1 }, { unique: true }],
             { geometry: '2dsphere' }
           ]
         },
@@ -108,7 +108,7 @@ export default {
         removeLogger: {
           loggerPath: 'taskTemplate.logger'
         },
-        removeStores: [ 'memory', 'fs' ]
+        removeStores: ['memory', 'fs']
       },
       error: {
         disconnectMongo: {
@@ -117,7 +117,7 @@ export default {
         removeLogger: {
           loggerPath: 'taskTemplate.logger'
         },
-        removeStores: [ 'memory', 'fs' ]
+        removeStores: ['memory', 'fs']
       }
     }
   }

@@ -1,5 +1,4 @@
 import path from 'path'
-import { hooks } from '@kalisio/krawler'
 // Initialize base job
 import job from './jobfile-osm-boundaries.js'
 
@@ -16,7 +15,7 @@ const level = 2
 const id = `osm-boundaries/${basename}.pbf`
 const key = `osm-boundaries/${level}/${basename}`
 const dir = path.dirname(key)
-let task = {
+const task = {
   id,
   key,
   dir,

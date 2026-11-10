@@ -4,16 +4,18 @@ import moment from 'moment'
 import { hooks } from '@kalisio/krawler'
 
 const API_KEY = process.env.API_KEY
-const COUNTRIES = process.env.COUNTRIES && process.env.COUNTRIES.split(',') || ['22', '129'] // see https://api.openaq.org/v3/countries
+// See https://api.openaq.org/v3/countries
+const DEFAULT_COUNTRIES = ['22', '129']
+const COUNTRIES = process.env.COUNTRIES ? process.env.COUNTRIES.split(',') : DEFAULT_COUNTRIES
 const LOOKBACK_PERIOD = process.env.LOOKBACK_PERIOD || 'P3M'
 const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/openaq'
 const LOCATIONS_COLLECTION = 'openaq-locations'
 const BASE_URL = 'https://api.openaq.org/v3/locations?limit=1000'
 
 // Create a custom hook to generate tasks
-let generateTasks = (options) => {
+const generateTasks = (options) => {
   return (hook) => {
-    let tasks = []
+    const tasks = []
     _.forEach(COUNTRIES, country => {
       tasks.push({
         taskId: country,
@@ -51,15 +53,14 @@ export default {
         apply: {
           function: (item) => {
             const datetimeMin = moment.utc().subtract(LOOKBACK_PERIOD).toISOString()
-            let locations = []
+            const locations = []
             _.forEach(_.get(item, 'openaqResponse.results'), result => {
-              let datetimeLast = _.get(result, 'datetimeLast.utc')
+              const datetimeLast = _.get(result, 'datetimeLast.utc')
               if (datetimeLast && moment(datetimeLast).isAfter(datetimeMin)) {
                 result.locationId = result.id
                 delete result.id
                 locations.push(result)
-              }
-              else console.log(`[!] skipping location ${result.id} (${result.name})`)
+              } else console.log(`[!] skipping location ${result.id} (${result.name})`)
             })
             item.data = locations
           }
@@ -72,7 +73,7 @@ export default {
         updateMongoCollection: {
           collection: LOCATIONS_COLLECTION,
           filter: { 'properties.locationId': '<%= properties.locationId %>' },
-          upsert : true,
+          upsert: true,
           chunkSize: 256
         },
         clearData: {}
@@ -84,7 +85,7 @@ export default {
           COUNTRIES,
           LOOKBACK_PERIOD
         },
-        createStores: { 
+        createStores: {
           id: 'memory'
         },
         createLogger: {

@@ -11,32 +11,31 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/atlas'
 
 const layerFilter = ['ARRONDISSEMENT', 'CANTON', 'COLLECTIVITE_TERRITORIALE', 'COMMUNE', 'DEPARTEMENT', 'EPCI', 'REGION', 'PAYS']
-const storePath = process.env.STORE_PATH || 'data/IGN/Admin-Express'
+// const storePath = process.env.STORE_PATH || 'data/IGN/Admin-Express'
 const collection = 'admin-express'
-
 
 // Geoplatform download service URL
 const url = 'https://data.geopf.fr/telechargement/download/ADMIN-EXPRESS-COG-CARTO/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03.7z'
 
-let generateTasks = (options) => {
+const generateTasks = (options) => {
   return async (hook) => {
-    //const data = 
-    let tasks = []
-    const store = await utils.getStoreFromHook(hook,'generateTasks')
+    // const data =
+    const tasks = []
+    const store = await utils.getStoreFromHook(hook, 'generateTasks')
     const pattern = path.join(store.path, '**/*.shp')
     const files = sync(pattern)
     files.forEach(file => {
       const layer = path.parse(file).name
       if (layerFilter.includes(layer)) {
         const key = _.replace(path.normalize(file), path.normalize(store.path), '.')
-        let task = {
+        const task = {
           id: _.kebabCase(layer),
           key: key.replace('.shp', ''),
           collection: 'admin-express-' + _.kebabCase(layer),
-          layer: layer
+          layer
         }
         console.log('<i> processing', layer)
-        tasks.push(task)  
+        tasks.push(task)
       } else {
         console.log('<!> skipping', layer)
       }
@@ -62,15 +61,15 @@ export default {
       after: {
         convertGeojson: {
           hook: 'runCommand',
-          command: `mapshaper -i admin-express/<%= key %>.shp -o format=geojson precision=0.000001 admin-express/<%= key %>.geojson`
+          command: 'mapshaper -i admin-express/<%= key %>.shp -o format=geojson precision=0.000001 admin-express/<%= key %>.geojson'
         },
         readJson: {
           key: '<%= key %>.geojson'
         },
-        /*writeJson: {
+        /* writeJson: {
           store: 's3',
           key: path.posix.join(storePath, `<%= collection.replace('admin-express-', '') %>.geojson`)
-        },*/
+        }, */
         generateLayer: {
           hook: 'apply',
           function: (item) => {
@@ -80,19 +79,19 @@ export default {
             })
             item.features = {
               type: 'FeatureCollection',
-              features: features
+              features
             }
           }
         },
         writeLayer: {
           hook: 'writeJson',
           dataPath: 'data.features',
-          key: `<%= key %>.geojson`
+          key: '<%= key %>.geojson'
         },
         generateToponyms: {
           hook: 'apply',
           function: (item) => {
-            let toponyms = []
+            const toponyms = []
             const features = item.data.features
             _.forEach(features, feature => {
               if (!_.get(feature, 'geometry') || !_.get(feature, 'properties.NOM')) return
@@ -109,7 +108,7 @@ export default {
                     NOM: feature.properties.NOM
                   }
                   if (_.has(feature, 'properties.NOM_M')) {
-                    _.set(toponym, 'properties.NOM_M', feature.properties['NOM_M'])
+                    _.set(toponym, 'properties.NOM_M', feature.properties.NOM_M)
                   }
                 }
               })
@@ -124,13 +123,13 @@ export default {
         writeToponyms: {
           hook: 'writeJson',
           dataPath: 'data.toponyms',
-          key: `<%= key %>-toponyms.geojson`
+          key: '<%= key %>-toponyms.geojson'
         },
         writeMongoCollection: {
           chunkSize: 256,
           collection,
           checkKeys: false,
-          ordered : false,
+          ordered: false,
           faultTolerant: true
         },
         clearData: {},
@@ -146,7 +145,7 @@ export default {
           id: 'fs',
           options: {
             path: path.join(__dirname, 'admin-express')
-          }, 
+          }
         },
         {
           id: 's3',

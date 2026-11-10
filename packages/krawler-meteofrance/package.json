@@ -39,15 +39,21 @@
     "postrelease": "git push origin \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git push origin @kalisio/krawler-meteofrance@0.0.0",
     "lint": "standard --fix"
   },
+  "dependencies": {
+    "lodash": "catalog:",
+    "moment": "catalog:",
+    "winston": "catalog:"
+  },
+  "peerDependencies": {
+    "@kalisio/krawler": "workspace:*"
+  },
+  "engines": {
+    "node": ">=24"
+  },
   "krawler": {
     "version": "2.10.0"
   },
   "kazarr": {
     "version": "1.0.1"
-  },
-  "dependencies": {
-    "lodash": "catalog:",
-    "moment": "catalog:",
-    "winston": "catalog:"
   }
 }

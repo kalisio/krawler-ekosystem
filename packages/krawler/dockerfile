@@ -1,5 +1,5 @@
 ARG DEBIAN_VERSION=bookworm
-ARG NODE_VERSION=20
+ARG NODE_VERSION=24
 
 #
 # Builder stage: install workspace deps and build @kalisio/krawler

@@ -2,13 +2,14 @@ import _ from 'lodash'
 import winston from 'winston'
 
 // MongoDB connection settings
-const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/k-teleray'
-const stationsCollection = process.env.STATIONS_COLLECTION || 'teleray-stations'
-const measuresCollection = process.env.MEASURES_COLLECTION || 'teleray-measures'
-const ttl = +process.env.TTL || (7 * 24 * 60 * 60)  // duration in seconds
+const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/k-teleray'
+const STATIONS_COLLECION = process.env.STATIONS_COLLECTION || 'teleray-stations'
+const MEASURES_COLLECION = process.env.MEASURES_COLLECTION || 'teleray-measures'
+const DEFAULT_TTL = 7 * 24 * 60 * 60
+const TTL = Number(process.env.TTL) || DEFAULT_TTL
 
 // Job configuration
-const chunkSize = 256
+const CHUNK_SIZE = 256
 
 export default {
   id: 'teleray',
@@ -30,14 +31,14 @@ export default {
       before: {
         createMongoAggregation: {
           dataPath: 'data.mostRecentMeasurement',
-          collection: measuresCollection,
+          collection: MEASURES_COLLECION,
           pipeline: [
             { $sort: { 'properties.irsnId': 1, time: 1 } },
             {
               $group:
                 {
-                  _id: "$properties.irsnId",
-                  lastMeasureDate: { $last: "$time" }
+                  _id: '$properties.irsnId',
+                  lastMeasureDate: { $last: '$time' }
                 }
             }
           ],
@@ -49,7 +50,7 @@ export default {
         apply: {
           function: (item) => {
             const { mostRecentMeasurement, logger } = item
-            let measurements = []
+            const measurements = []
             const mostRecentMeasurementIds = _.keyBy(mostRecentMeasurement, '_id')
             _.forEach(item.data.features, (feature) => {
               const irsnId = feature.properties.irsnId
@@ -68,18 +69,18 @@ export default {
         },
         writeMeasurements: {
           hook: 'writeMongoCollection',
-          collection: measuresCollection,
+          collection: MEASURES_COLLECION,
           transform: {
-            mapping: { 'properties.measurementDate': { path: 'time', delete: false }},
+            mapping: { 'properties.measurementDate': { path: 'time', delete: false } },
             unitMapping: { time: { asDate: 'utc' } }
           },
-          chunkSize
+          CHUNK_SIZE
         },
         updateStations: {
           hook: 'updateMongoCollection',
-          collection: stationsCollection,
+          collection: STATIONS_COLLECION,
           filter: { 'properties.irsnId': '<%= properties.irsnId %>' },
-          upsert : true,
+          upsert: true,
           transform: {
             omit: [
               'time',
@@ -87,12 +88,12 @@ export default {
               'properties.validation',
               'properties.libelle',
               'properties.measurementDate',
-              'properties.doseRateRaw', 
-              'properties.doseRateNet', 
+              'properties.doseRateRaw',
+              'properties.doseRateNet',
               'properties.measState'
             ]
           },
-          chunkSize
+          CHUNK_SIZE
         },
         clearData: {}
       },
@@ -110,7 +111,8 @@ export default {
         forceJsonContentType: {
           hook: 'apply',
           function: (item) => {
-            if (_.has(item, 'headers.content-type') && item.headers.content-type.includes('geo+json')) item.contentType = 'json'
+            const contentType = item.headers?.['content-type']
+            if (contentType?.includes('geo+json')) item.contentType = 'json'
           }
         },
         createStores: { id: 'memory' },
@@ -122,23 +124,23 @@ export default {
           }
         },
         connectMongo: {
-          url: dbUrl,
+          url: DB_URL,
           // Required so that client is forwarded from job to tasks
           clientPath: 'taskTemplate.client'
         },
         createStationsCollection: {
           hook: 'createMongoCollection',
           clientPath: 'taskTemplate.client',
-          collection: stationsCollection,
+          collection: STATIONS_COLLECION,
           indices: [
-            [{ 'properties.irsnId': 1 }, { unique: true, name: "properties_irsnId_index" }],
-            { geometry: '2dsphere' }                                                                                                              
+            [{ 'properties.irsnId': 1 }, { unique: true, name: 'properties_irsnId_index' }],
+            { geometry: '2dsphere' }
           ]
         },
         createMeasurementsCollection: {
           hook: 'createMongoCollection',
           clientPath: 'taskTemplate.client',
-          collection: measuresCollection,
+          collection: MEASURES_COLLECION,
           indices: [
             [{ time: 1, 'properties.irsnId': 1 }, { unique: true }],
             [{ 'properties.irsnId': 1, time: 1 }],
@@ -146,8 +148,8 @@ export default {
             { 'properties.doseRateNet': 1 },
             { 'properties.irsnId': 1, 'properties.doseRateNet': 1, time: -1 },
             { 'properties.irsnId': 1, 'properties.doseRateRaw': 1, time: -1 },
-            [{ time: 1 }, { expireAfterSeconds: ttl }],
-            { geometry: '2dsphere' }                                                                                                              
+            [{ time: 1 }, { expireAfterSeconds: TTL }],
+            { geometry: '2dsphere' }
           ]
         }
       },

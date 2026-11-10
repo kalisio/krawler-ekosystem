@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import moment from 'moment'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -7,14 +6,14 @@ import winston from 'winston'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/icos'
 const SPEC_FILTER = process.env.OBJECT_SPEC_FILTER || 'radon data'
-const HISTORY =  +process.env.HISTORY || (1 * 24 * 60 * 60) // duration in seconds
+const HISTORY = +process.env.HISTORY || (1 * 24 * 60 * 60) // duration in seconds
 
 export default {
   id: 'icos-stations',
   store: 'memory',
   options: {
     workersLimit: 1,
-    faultTolerant: true,
+    faultTolerant: true
   },
   tasks: [{
     id: 'stations',
@@ -72,7 +71,7 @@ export default {
           upsert: true,
           chunkSize: 256
         },
-        clearData: {},
+        clearData: {}
       }
     },
     jobs: {
@@ -102,7 +101,7 @@ export default {
           clientPath: 'taskTemplate.client',
           collection: 'icos-stations',
           indices: [
-            [{ 'properties.stationId': 1 }, { unique: true }], 
+            [{ 'properties.stationId': 1 }, { unique: true }],
             { geometry: '2dsphere' }
           ]
         }
@@ -114,7 +113,7 @@ export default {
         removeLogger: {
           loggerPath: 'taskTemplate.logger'
         },
-        removeStores: [ 'memory', 'fs' ]
+        removeStores: ['memory', 'fs']
       },
       error: {
         disconnectMongo: {
@@ -123,7 +122,7 @@ export default {
         removeLogger: {
           loggerPath: 'taskTemplate.logger'
         },
-        removeStores: [ 'memory', 'fs' ]
+        removeStores: ['memory', 'fs']
       }
     }
   }

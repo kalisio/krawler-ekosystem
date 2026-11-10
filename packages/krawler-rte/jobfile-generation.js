@@ -3,8 +3,8 @@ import moment from 'moment'
 import winston from 'winston'
 
 const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/rte'
-const TTL = +process.env.TTL || (7 * 24 * 60 * 60)  // duration in seconds
-const HISTORY =  +process.env.HISTORY || (1 * 24 * 60 * 60) // duration in seconds
+const TTL = +process.env.TTL || (7 * 24 * 60 * 60) // duration in seconds
+const HISTORY = +process.env.HISTORY || (1 * 24 * 60 * 60) // duration in seconds
 const TYPE_FILTER = process.env.PRODUCTION_TYPE_FILTER ? process.env.PRODUCTION_TYPE_FILTER.split(',') : ['NUCLEAR']
 const START_DATE = moment.utc().subtract(HISTORY, 'seconds').startOf('day')
 const END_DATE = moment.utc().add(1, 'day').startOf('day')
@@ -41,15 +41,17 @@ export default {
           dataPath: 'data.mostRecentData',
           collection: 'rte-generation',
           pipeline: [
-            { $match: {
-              'properties.power': { $exists: true },
-              time: { $gte: START_DATE.format() }
-            } },
+            {
+              $match: {
+                'properties.power': { $exists: true },
+                time: { $gte: START_DATE.format() }
+              }
+            },
             { $sort: { time: -1 } },
             {
-              $group:{
-                _id: "$properties.eicCode",
-                time: { $first: "$time" }
+              $group: {
+                _id: '$properties.eicCode',
+                time: { $first: '$time' }
               }
             }
           ],
@@ -70,7 +72,7 @@ export default {
             if (TYPE_FILTER) {
               generation = generation.filter(data => TYPE_FILTER.includes(_.get(data, 'unit.production_type')))
             }
-            let features = []
+            const features = []
             _.forEach(generation, (data) => {
               const eicCode = _.get(data, 'unit.eic_code')
               // Match unit using name for now
@@ -110,12 +112,12 @@ export default {
           logger.info(`Found ${item.count} new generation data`)
         },
         writeMongoCollection: {
-          collection: 'rte-generation',/*
+          collection: 'rte-generation', /*
           transform: {
             mapping: { 'properties.measureDate': 'time' },
             omit: [ 'properties.location' ],
-            unitMapping: { time: { asDate: 'utc' } } 
-          },*/
+            unitMapping: { time: { asDate: 'utc' } }
+          }, */
           chunkSize: 256
         },
         clearData: {}
@@ -156,8 +158,8 @@ export default {
             { 'properties.eicCode': 1, time: -1 },
             { 'properties.eicCode': 1, 'properties.power': 1, time: -1 },
             [{ time: 1 }, { expireAfterSeconds: TTL }], // days in s
-            { geometry: '2dsphere' }                                                                                                              
-          ],
+            { geometry: '2dsphere' }
+          ]
         }
       },
       after: {
