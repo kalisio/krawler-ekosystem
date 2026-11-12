@@ -32,7 +32,8 @@ COPY --from=builder --chown=node:node /app /app/
 
 # Replace the workspace-resolved @kalisio/krawler with the framework provided
 # by the krawler base image, so the KRAWLER_TAG actually drives the runtime.
-RUN mkdir /app/packages/krawler-openradiation/node_modules/@kalisio \
+RUN rm -rf /app/packages/krawler-openradiation/node_modules/@kalisio/krawler \
+ && mkdir -p /app/packages/krawler-openradiation/node_modules/@kalisio \
  && ln -s /krawler/packages/krawler /app/packages/krawler-openradiation/node_modules/@kalisio/krawler
 
 WORKDIR /app/packages/krawler-openradiation
