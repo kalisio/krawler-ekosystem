@@ -1,198 +1,207 @@
-import path, { dirname } from 'path'
-import _ from 'lodash'
-import moment from 'moment'
-import utils from 'util'
-import fs from 'fs-extra'
-import mongodb from 'mongodb'
-import { exec } from 'child_process'
-import { cli, getApp } from '../src/index.js'
-import { fileURLToPath, pathToFileURL } from 'url'
+import { execFile } from 'node:child_process'
+import { EventEmitter } from 'node:events'
+import fs from 'node:fs/promises'
+import os from 'node:os'
+import path from 'node:path'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+import { CronJob } from 'cron'
+import { createApp, destroyApp, getApp, getServer } from '../src/app.js'
+import { Healthcheck, healthcheck } from '../src/healthcheck.js'
+import { cli, run, runJob } from '../src/cli.js'
+import logger from '../src/logger.js'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-const { MongoClient } = mongodb
-// Can't use promisify here otherwise on error cases we cannot access stdout/stderr
+// This suite exercises CLI orchestration, not Feathers/Mubsub internals.
+// Those are covered by app.test.js with a real MongoDB instance.
+vi.mock('../src/app.js', () => ({
+  createApp: vi.fn(),
+  destroyApp: vi.fn(),
+  getApp: vi.fn(),
+  getServer: vi.fn()
+}))
+vi.mock('../src/healthcheck.js', () => ({
+  Healthcheck: {},
+  healthcheck: vi.fn()
+}))
+vi.mock('cron', () => ({
+  CronJob: class CronJob {
+    static instances = []
+    constructor (expression, tick) {
+      this.expression = expression
+      this.tick = tick
+      this.start = vi.fn()
+      this.stop = vi.fn()
+      CronJob.instances.push(this)
+    }
+  }
+}))
 
-async function runCommand (command) {
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      resolve({ error, stdout, stderr })
-    })
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const packageDir = path.join(__dirname, '..')
+const job = { id: 'cli-job', hooks: {} }
+
+function runFile (file, args = []) {
+  return new Promise(resolve => {
+    execFile(process.execPath, [file, ...args], {
+      cwd: packageDir,
+      timeout: 15000
+    }, (error, stdout, stderr) => resolve({ error, stdout, stderr }))
   })
 }
 
 describe('krawler:cli', () => {
-  const jobfilePath = pathToFileURL(path.join(__dirname, 'data', 'jobfile.cjs'))
-  let jobfile, outputPath, client, collection, appServer
+  let server, tasksService
 
-  beforeAll(async () => {
-    jobfile = (await import(jobfilePath)).default
-    outputPath = _.get(jobfile, 'hooks.jobs.before.createStores[0].options.path')
-    client = await MongoClient.connect('mongodb://127.0.0.1:27017/krawler-test')
-    client.db = client.db('krawler-test')
+  beforeEach(() => {
+    vi.resetAllMocks()
+    CronJob.instances.length = 0
+    for (const name of Object.keys(Healthcheck)) delete Healthcheck[name]
+    Healthcheck.isRunning = false
+    tasksService = { create: vi.fn().mockResolvedValue([{ id: 'task-1' }]) }
+    server = new EventEmitter()
+    createApp.mockResolvedValue(server)
+    destroyApp.mockResolvedValue(undefined)
+    getApp.mockReturnValue({ service: vi.fn().mockReturnValue(tasksService) })
+    getServer.mockReturnValue(server)
+    healthcheck.mockResolvedValue(undefined)
+    vi.spyOn(logger, 'info').mockImplementation(() => {})
+    vi.spyOn(logger, 'error').mockImplementation(() => {})
+  })
+  afterEach(() => {
+    vi.restoreAllMocks()
   })
 
-  it('runs successfully once using CLI', async () => {
+  it('dispatches setup mode to createApp without running a job', async () => {
+    const options = { mode: 'setup', port: 3030 }
+    expect(await cli(job, options)).toBe(server)
+    expect(createApp).toHaveBeenCalledTimes(1)
+    expect(createApp).toHaveBeenCalledWith(job, options)
+    expect(tasksService.create).not.toHaveBeenCalled()
+    expect(destroyApp).not.toHaveBeenCalled()
+  })
+  it('dispatches runJob mode without creating or destroying the application', async () => {
+    const tasks = await cli(job, { mode: 'runJob' })
+    expect(tasks).toEqual([{ id: 'task-1' }])
+    expect(tasksService.create).toHaveBeenCalledTimes(1)
+    expect(tasksService.create).toHaveBeenCalledWith(job)
+    expect(createApp).not.toHaveBeenCalled()
+    expect(destroyApp).not.toHaveBeenCalled()
+  })
+  it('runs a job and computes its success ratio', async () => {
+    tasksService.create.mockResolvedValue([
+      { id: 'successful-task' },
+      { id: 'failed-task', error: new Error('task failure') }
+    ])
+    const tasks = await runJob(job)
+    expect(tasks).toHaveLength(2)
+    expect(Healthcheck.isRunning).toBe(false)
+    expect(Healthcheck.error).toBeNull()
+    expect(Healthcheck.nbSuccessfulTasks).toBe(1)
+    expect(Healthcheck.nbFailedTasks).toBe(1)
+    expect(Healthcheck.successRate).toBe(0.5)
+    expect(Healthcheck.duration).toEqual(expect.any(Number))
+  })
+  it('logs job failures and stores the error in Healthcheck', async () => {
+    const failure = new Error('job failure')
+    tasksService.create.mockRejectedValue(failure)
+    expect(await runJob(job)).toBeUndefined()
+    expect(Healthcheck.isRunning).toBe(false)
+    expect(Healthcheck.error).toBe(failure)
+    expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('job failure'))
+  })
+  it('stops the application after a one-shot run', async () => {
+    const tasks = await run(job, { port: 3030 })
+    expect(tasks).toEqual([{ id: 'task-1' }])
+    expect(createApp).toHaveBeenCalledTimes(1)
+    expect(createApp).toHaveBeenCalledWith(job, { port: 3030 })
+    expect(tasksService.create).toHaveBeenCalledTimes(1)
+    expect(tasksService.create).toHaveBeenCalledWith(job)
+    expect(destroyApp).toHaveBeenCalledTimes(1)
+    expect(destroyApp).toHaveBeenCalledWith(server)
+    expect(tasksService.create.mock.invocationCallOrder[0]).toBeLessThan(destroyApp.mock.invocationCallOrder[0])
+  })
+  it('runs in default CLI mode and destroys the application', async () => {
+    expect(await cli(job, { port: 3030 })).toEqual([{ id: 'task-1' }])
+    expect(createApp).toHaveBeenCalledTimes(1)
+    expect(destroyApp).toHaveBeenCalledTimes(1)
+    expect(destroyApp).toHaveBeenCalledWith(server)
+  })
+  it('starts a scheduled job without destroying the application', async () => {
+    const result = await run(job, { cron: '*/5 * * * * *' })
+    expect(result).toBe(server)
+    expect(CronJob.instances).toHaveLength(1)
+    expect(CronJob.instances[0].start).toHaveBeenCalledTimes(1)
+    expect(tasksService.create).not.toHaveBeenCalled()
+    expect(destroyApp).not.toHaveBeenCalled()
+    server.emit('close')
+    expect(CronJob.instances[0].stop).toHaveBeenCalledTimes(1)
+  })
+  it('runs a scheduled job immediately when run is enabled', async () => {
+    const result = await run(job, { cron: '*/5 * * * * *', run: true })
+    expect(result).toEqual([{ id: 'task-1' }])
+    expect(CronJob.instances[0].start).toHaveBeenCalledTimes(1)
+    expect(tasksService.create).toHaveBeenCalledTimes(1)
+    expect(tasksService.create).toHaveBeenCalledWith(job)
+    expect(destroyApp).not.toHaveBeenCalled()
+    server.emit('close')
+  })
+  it('runs scheduled ticks and performs a healthcheck', async () => {
+    const options = { cron: '*/5 * * * * *' }
+    await runJob(job, options)
+    await CronJob.instances[0].tick()
+    expect(tasksService.create).toHaveBeenCalledTimes(1)
+    expect(tasksService.create).toHaveBeenCalledWith(job)
+    expect(healthcheck).toHaveBeenCalledTimes(1)
+    expect(healthcheck).toHaveBeenCalledWith(options)
+    expect(Healthcheck.nbSkippedJobs).toBe(0)
+    server.emit('close')
+  })
+  it('skips overlapping scheduled runs', async () => {
+    const options = { cron: '*/5 * * * * *' }
+    await runJob(job, options)
+    Healthcheck.isRunning = true
+    await CronJob.instances[0].tick()
+    expect(tasksService.create).not.toHaveBeenCalled()
+    expect(Healthcheck.nbSkippedJobs).toBe(1)
+    expect(healthcheck).toHaveBeenCalledTimes(1)
+    expect(healthcheck).toHaveBeenCalledWith(options)
+    server.emit('close')
+  })
+  it('loads Commander with native Node ESM and parses the options', async () => {
+    // Vitest may transform ESM imports. Run an unmocked child process like the CI healthcheck does.
+    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'krawler-cli-'))
     try {
-      const tasks = await cli(jobfile, { port: 3030, messageTemplate: process.env.MESSAGE_TEMPLATE, debug: true, slackWebhook: process.env.SLACK_WEBHOOK_URL })
-      // All other features should have been tested independently
-      // so we just test here the CLI run correctly
-      expect(tasks.length).toBe(1)
-      // Check intermediate products have been erased and final product are here
-      expect(fs.existsSync(path.join(outputPath, 'RJTT-30-18000-2-1.tif'))).toBe(false)
-      expect(fs.existsSync(path.join(outputPath, 'RJTT-30-18000-2-1.tif.csv'))).toBe(true)
-    } catch (error) {
-      console.log(error)
-      expect.fail('Healthcheck should not fail')
-    }
-  }, 10000)
-
-  it('runs unsuccessfully once using CLI', async () => {
-    try {
-      await cli(jobfile, { port: 3030, maxDuration: 0, messageTemplate: process.env.MESSAGE_TEMPLATE, debug: true, slackWebhook: process.env.SLACK_WEBHOOK_URL })
-      expect.fail('Healthcheck should fail')
-    } catch (error) {
-      // Check intermediate products have been erased and final product are here
-      expect(fs.existsSync(path.join(outputPath, 'RJTT-30-18000-2-1.tif'))).toBe(false)
-      expect(fs.existsSync(path.join(outputPath, 'RJTT-30-18000-2-1.tif.csv'))).toBe(true)
-    }
-  }, 10000)
-
-  it('runs as API using CLI', async () => {
-    try {
-      // Clean previous test output
-      fs.removeSync(path.join(outputPath, 'RJTT-30-18000-2-1.tif.csv'))
-      appServer = await cli(jobfile, { mode: 'setup', api: true, apiPrefix: '/api', port: 3030, messageTemplate: process.env.MESSAGE_TEMPLATE, debug: true, slackWebhook: process.env.SLACK_WEBHOOK_URL })
-      // Submit a job to be run
-      const response = await fetch('http://localhost:3030/api/jobs', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          id: 'job',
-          store: 'job-store',
-          tasks: [{
-            id: 'RJTT-30-18000-2-1.tif',
-            type: 'store',
-            options: {
-              store: 'task-store'
-            }
-          }]
-        })
+      const jobfile = path.join(tmp, 'jobfile.cjs')
+      const runner = path.join(tmp, 'runner.mjs')
+      const cliUrl = pathToFileURL(path.join(packageDir, 'src', 'cli.js')).href
+      await fs.writeFile(jobfile, "module.exports = { id: 'parsed-job', hooks: {} }\n")
+      await fs.writeFile(runner, `
+        import { processOptions } from ${JSON.stringify(cliUrl)}
+        const options = await processOptions()
+        console.log(JSON.stringify({
+          jobId: options.job.id,
+          mode: options.mode,
+          apiPrefix: options.apiPrefix,
+          sync: options.sync
+        }))
+      `)
+      // Without a jobfile, Commander should display help and exit successfully
+      const noArgs = await runFile(runner)
+      expect(noArgs.error, noArgs.stderr).toBeNull()
+      expect(noArgs.stdout).toContain('Usage:')
+      expect(noArgs.stdout).toContain('jobfile')
+      // With a jobfile
+      const { error, stdout, stderr } = await runFile(runner, [
+        jobfile, '--api', '--api-prefix', '/api', '--sync', 'mongodb://127.0.0.1:27017/test'
+      ])
+      expect(error, stderr).toBeNull()
+      expect(JSON.parse(stdout.trim().split('\n').at(-1))).toEqual({
+        jobId: 'parsed-job',
+        mode: 'setup',
+        apiPrefix: '/api',
+        sync: 'mongodb://127.0.0.1:27017/test'
       })
-      const tasks = await response.json()
-      await appServer.close()
-      expect(tasks.length).toBe(1)
-      // Check intermediate products have been erased and final product are here
-      expect(fs.existsSync(path.join(outputPath, 'RJTT-30-18000-2-1.tif'))).toBe(false)
-      expect(fs.existsSync(path.join(outputPath, 'RJTT-30-18000-2-1.tif.csv'))).toBe(true)
-    } catch (error) {
-      console.log(error)
-      expect.fail('Healthcheck should not fail')
+    } finally {
+      await fs.rm(tmp, { recursive: true, force: true })
     }
-  }, 15000)
-
-  it('runs as CRON using CLI with continuous healthcheck', async () => {
-    // As it runs every 10 seconds wait until some time before it starts
-    let seconds = Math.floor(moment().seconds())
-    let remainingSecondsForNextRun = 10 - seconds % 10
-    await utils.promisify(setTimeout)((1 + remainingSecondsForNextRun) * 1000)
-    // Clean previous test output
-    fs.removeSync(path.join(outputPath, 'RJTT-30-18000-2-1.tif.csv'))
-    // Setup the app
-    appServer = await cli(jobfile, {
-      mode: 'setup',
-      sync: 'mongodb://127.0.0.1:27017/krawler-test',
-      port: 3030,
-      cron: '*/10 * * * * *',
-      messageTemplate: process.env.MESSAGE_TEMPLATE,
-      debug: false,
-      slackWebhook: process.env.SLACK_WEBHOOK_URL
-    })
-    // Clean any previous healthcheck log
-    fs.removeSync(path.join(__dirname, '..', 'healthcheck.log'))
-    const app = getApp()
-    // Add hook to know how many times the job will run
-    const jobService = app.service('jobs')
-    let runCount = 0
-    jobService.hooks({
-      after: {
-        create: (hook) => {
-          runCount++
-          // First run is fine, second one raises an error
-          if (runCount === 1) return hook
-          else throw new Error('Test Error')
-        }
-      }
-    })
-    // Check for event emission
-    let eventCount = 0
-    app.on('krawler', event => {
-      if ((event.name === 'task-done') || (event.name === 'job-done')) eventCount++
-    })
-    // Only run as we already setup the app
-    await cli(jobfile, { mode: 'runJob', port: 3030, cron: '*/10 * * * * *', run: true, messageTemplate: process.env.MESSAGE_TEMPLATE, debug: false, slackWebhook: process.env.SLACK_WEBHOOK_URL })
-    expect(runCount).toBe(1) // First run
-    const response = await fetch('http://localhost:3030/healthcheck')
-    expect(response.status).toBe(200)
-    const healthcheck = await response.json()
-    // console.log(healthcheck)
-    const { error } = await runCommand('node ' + path.join(__dirname, '..', 'healthcheck.js'))
-    expect(error).toBeNull()
-    const healthcheckLog = fs.readJsonSync(path.join(__dirname, '..', 'healthcheck.log'))
-    expect(healthcheck).toEqual(healthcheckLog)
-    expect(healthcheck.isRunning).toBe(false)
-    expect(healthcheck.nbSkippedJobs).toBe(0)
-    expect(healthcheck.error).toBeUndefined()
-    expect(healthcheck.nbFailedTasks).toBe(0)
-    expect(healthcheck.nbSuccessfulTasks).toBe(1)
-    expect(healthcheck.successRate).toBe(1)
-    expect(healthcheck.state).toBeTruthy()
-    expect(eventCount).toBe(2) // 2 events
-    collection = client.db.collection('krawler-events')
-    const taskEvents = await collection.find({ event: 'task-done' }).toArray()
-    expect(taskEvents.length).toBe(1)
-    const jobEvents = await collection.find({ event: 'job-done' }).toArray()
-    expect(jobEvents.length).toBe(1)
-    // As it runs every 10 seconds wait until it should have ran at least once again
-    seconds = Math.floor(moment().seconds())
-    remainingSecondsForNextRun = 10 - seconds % 10
-    await utils.promisify(setTimeout)((1 + remainingSecondsForNextRun) * 1000)
-    try {
-      expect(runCount).toBeGreaterThanOrEqual(2) // 2 runs
-      const response = await fetch('http://localhost:3030/healthcheck')
-      expect(response.status).toBe(500)
-      const healthcheck = await response.json()
-      // console.log(healthcheck)
-      const { error } = await runCommand('node ' + path.join(__dirname, '..', 'healthcheck.js'))
-      expect(error).toBeTruthy()
-      const healthcheckLog = fs.readJsonSync(path.join(__dirname, '..', 'healthcheck.log'))
-      expect(healthcheck).toEqual(healthcheckLog)
-      expect(healthcheck.isRunning).toBe(false)
-      expect(healthcheck.duration).toBeUndefined()
-      expect(healthcheck.nbSkippedJobs).toBe(0)
-      expect(healthcheck.nbFailedTasks).toBeUndefined()
-      expect(healthcheck.nbSuccessfulTasks).toBeUndefined()
-      expect(healthcheck.successRate).toBeUndefined()
-      expect(healthcheck.error).toBeTruthy()
-      expect(healthcheck.error.message).toBeTruthy()
-      expect(healthcheck.error.message).toBe('Test Error')
-      expect(eventCount).toBeGreaterThanOrEqual(4) // 4 events
-      collection = client.db.collection('krawler-events')
-      const taskEvents = await collection.find({ event: 'task-done' }).toArray()
-      expect(taskEvents.length).toBeGreaterThanOrEqual(2)
-      const jobEvents = await collection.find({ event: 'job-done' }).toArray()
-      expect(jobEvents.length).toBeGreaterThanOrEqual(2)
-    } catch (error) {
-      console.log(error)
-      throw error
-    }
-  }, 30000)
-
-  // Cleanup
-  afterAll(async () => {
-    fs.removeSync(path.join(__dirname, '..', 'healthcheck.log'))
-    if (collection) await collection.drop()
-    if (client) await client.close()
-    if (appServer) await appServer.close()
-  })
+  }, 20000)
 })

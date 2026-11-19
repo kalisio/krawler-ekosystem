@@ -8,6 +8,7 @@ export * as stores from './stores/index.js'
 export * as jobs from './jobs/index.js'
 export * as tasks from './tasks/index.js'
 export * from './healthcheck.js'
+export * from './app.js'
 export * from './cli.js'
 
 export default plugin
