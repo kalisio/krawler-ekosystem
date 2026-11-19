@@ -1,6 +1,6 @@
 import feathers from '@feathersjs/feathers'
 import plugin from '../src/index.js'
-import { describe, it, expect, beforeAll } from 'vitest'
+
 describe('krawler', () => {
   let app
 

@@ -1,5 +1,6 @@
+import path, { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import _ from 'lodash'
-import path, { dirname } from 'path'
 import fs from 'fs-extra'
 import fsStore from 'fs-blob-store'
 import mongo from 'mongodb'
@@ -10,8 +11,6 @@ import socketio from '@feathersjs/socketio'
 import { MemoryService } from '@feathersjs/memory'
 import { MongoDBService } from '@feathersjs/mongodb'
 import { hooks as pluginHooks } from '../src/index.js'
-import { fileURLToPath } from 'url'
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 
 class CustomMemoryService extends MemoryService {
   // Add custom method

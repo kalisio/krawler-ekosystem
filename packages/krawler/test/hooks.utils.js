@@ -6,7 +6,6 @@ import _ from 'lodash'
 import utils from 'util'
 import { hooks as pluginHooks } from '../src/index.js'
 import { fileURLToPath } from 'url'
-import { describe, it, expect, beforeAll } from 'vitest'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

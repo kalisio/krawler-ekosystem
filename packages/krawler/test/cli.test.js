@@ -7,7 +7,6 @@ import mongodb from 'mongodb'
 import { exec } from 'child_process'
 import { cli, getApp } from '../src/index.js'
 import { fileURLToPath, pathToFileURL } from 'url'
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

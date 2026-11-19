@@ -1,12 +1,12 @@
-import path, { dirname } from 'path'
+import path, { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import utils from 'util'
 import moment from 'moment'
 import { cli } from '../src/index.js'
-import { fileURLToPath } from 'url'
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+
 describe('krawler:jobs:cron', () => {
   let appServer
 

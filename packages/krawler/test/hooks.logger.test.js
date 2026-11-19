@@ -4,7 +4,7 @@ import utility from 'util'
 import winston from 'winston'
 import { fileURLToPath } from 'url'
 import { hooks as pluginHooks } from '../src/index.js'
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 describe('krawler:hooks:logger', () => {

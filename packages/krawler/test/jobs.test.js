@@ -1,13 +1,12 @@
+import path, { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import feathers from '@feathersjs/feathers'
 import express from '@feathersjs/express'
 import errors from '@feathersjs/errors'
 import mongo from 'mongodb'
-import path, { dirname } from 'path'
 import nock from 'nock'
 import moment from 'moment'
 import plugin, { hooks as pluginHooks } from '../src/index.js'
-import { fileURLToPath } from 'url'
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

@@ -1,10 +1,9 @@
-import path, { dirname } from 'path'
+import os from 'node:os'
+import fs from 'node:fs'
+import path, { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import fsStore from 'fs-blob-store'
-import fs from 'fs'
-import os from 'os'
 import { hooks as pluginHooks } from '../src/index.js'
-import { fileURLToPath } from 'url'
-import { describe, it, expect, beforeAll } from 'vitest'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

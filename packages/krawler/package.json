@@ -17,6 +17,17 @@
     "healthcheck.js"
   ],
   "standard": {
+    "globals": [
+      "describe",
+      "it",
+      "test",
+      "expect",
+      "beforeAll",
+      "afterAll",
+      "beforeEach",
+      "afterEach",
+      "vi"
+    ],
     "ignore": [
       "dist/**"
     ]
@@ -110,9 +121,6 @@
     "@feathersjs/mongodb": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "nock": "catalog:",
-    "standard": "catalog:",
-    "vite": "catalog:",
-    "vitest": "catalog:",
     "winston-daily-rotate-file": "catalog:",
     "winston-mongodb": "catalog:"
   },

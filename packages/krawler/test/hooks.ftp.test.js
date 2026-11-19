@@ -3,7 +3,7 @@ import FsStore from 'fs-blob-store'
 import fs from 'fs'
 import path from 'path'
 import { hooks as pluginHooks } from '../src/index.js'
-import { describe, it, expect, beforeAll } from 'vitest'
+
 const outputDir = './test/output'
 
 // FTP hooks shell out to the `lftp` binary; skip these tests when unavailable.

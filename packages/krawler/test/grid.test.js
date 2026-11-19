@@ -1,5 +1,5 @@
 import { Grid } from '../src/index.js'
-import { describe, it, expect, beforeAll } from 'vitest'
+
 describe('krawler:grid', () => {
   const grid = new Grid({
     bounds: [-180, -90, 180, 90],
@@ -19,14 +19,12 @@ describe('krawler:grid', () => {
   it('is CommonJS compatible', () => {
     expect(typeof Grid).toBe('function')
   })
-
   it('gets grid values', () => {
     expect(grid.getValue(0, 0), 'vertex [0,0]').toBe(0)
     expect(grid.getValue(1, 0), 'vertex [1,0]').toBe(1)
     expect(grid.getValue(0, 1), 'vertex [0,1]').toBe(1)
     expect(grid.getValue(1, 1), 'vertex [1,1]').toBe(2)
   })
-
   it('interpolates grid values', () => {
     // Grid vertex values
     expect(grid.interpolate(-90, 0), 'left-centered vertex').toBe(2)
@@ -47,7 +45,6 @@ describe('krawler:grid', () => {
     expect(grid.interpolate(135, -45), 'bottom-right quad center').toBe(0.5)
     expect(grid.interpolate(-45, 0), 'grid center').toBe(2)
   })
-
   it('resamples grid values', () => {
     const resampled = grid.resample([-135, 45], [90, 90], [3, 2])
     // Interpolated grid at grid quad centers should be the following
@@ -55,7 +52,6 @@ describe('krawler:grid', () => {
     //   1 1.5 1 ]
     expect(resampled).toEqual([1, 1.5, 1, 1, 1.5, 1])
   })
-
   it('tiles grid values', () => {
     const tileset = grid.tileset([90, 90])
     expect(tileset.map(tile => tile.data)).toEqual([
