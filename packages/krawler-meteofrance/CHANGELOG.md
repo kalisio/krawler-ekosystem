@@ -1,5 +1,11 @@
 # @kalisio/krawler-meteofrance
 
+## 1.2.2
+
+### Patch Changes
+
+- Add precipitation type variable (https://github.com/kalisio/krawler-ekosystem/milestone/1)
+
 ## 1.2.1
 
 ### Patch Changes
