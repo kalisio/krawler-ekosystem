@@ -8,6 +8,7 @@
     },
     "concat_dim": "step",
     "float64_to_float32": true,
+    "chunk_size": "100MiB",
     "pipelines": {
       "preprocess": [
         { "type": "process", "name": "load_and_merge_from_grib", "params": {
@@ -47,6 +48,7 @@
     },
     "concat_dim": "step",
     "float64_to_float32": true,
+    "chunk_size": "100MiB",
     "pipelines": {
       "preprocess": [
         { "type": "process", "name": "load_and_merge_from_grib", "params": {
@@ -88,6 +90,7 @@
       "variable": "time"
     },
     "float64_to_float32": true,
+    "chunk_size": "100MiB",
     "pipelines": {
       "preprocess": [
         { "type": "process", "name": "load_and_merge_from_grib", "params": {
